@@ -1,0 +1,523 @@
+{
+  "name": "AGENT ORCHESTRATEUR - RESERVATION SALLE DE REUNION",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        -420
+      ],
+      "id": "84c3608e-cc00-4d68-802b-6b48f3bb8859",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.id || 'test-session' }}"
+      },
+      "id": "596d259b-58a6-42a8-925f-4f13173dfb06",
+      "name": "Simple Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2600,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {
+          "maxRetries": 2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2420,
+        -80
+      ],
+      "id": "92607b32-a2c2-4c5e-ba3c-352db8ca95b7",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"emailAddress\":\"tristan.bernard.alpesia@gmail.com\",  \n  \"text\": \"Bonjour,\\nJe cherche une salle de réunion pour acceuillir 7 personnes entre 9h et\\n17h le 28 Juillet. J'ai vu que vous aviez une salle \\\"aquarium\\\" dans votre cowork.\\nPouvez-vous me faire un devis pour la location de cette salle, avec et sans\\nrepas compris (j'imagine qu'il est possible de faire un repas le midi dans\\nvotre restaurant?).\\n\\nMerci et bonne semaine,\\nTristan Bernard\\n--\\n06-58-32-38-06\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2600,
+        -420
+      ],
+      "id": "900c33e8-438c-4685-ad4e-d82dbec26368",
+      "name": "Set Init-Data1"
+    },
+    {
+      "parameters": {
+        "description": "Analyse un email et détermine l’intention du client.  \nRenvoie l’un des types suivants : \"reservation\", \"modification\", \"facture\", \"infos_incompletes\", \"relance\", \"autre\".\nL’input est un champ unique : \"emailText\" (contenu brut de l’email).\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "RjvY3P0vsiKvK2Jz",
+          "mode": "list",
+          "cachedResultName": "TOOL_ClassifyEmail"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "emailText": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('emailText', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "emailText",
+              "displayName": "emailText",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2840,
+        80
+      ],
+      "id": "3a98a9a3-fa2a-4896-9d6b-00f35cd904c1",
+      "name": "Tool_ClassifyEmail"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40e3f209-3c93-4a15-8a6c-b0dab21866bb",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3340,
+        -420
+      ],
+      "id": "9a4362f9-02d4-4236-abe3-32c8cf8d40c4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "description": "This tool is an AI Agent that will help you find the best meeting rooms available according to client needs.\n\nExpected inputs:\n- date of meeting\n- start time\n- end time\n- required number of participants",
+        "workflowId": {
+          "__rl": true,
+          "value": "fbyd7KsPTfh6gaAZ",
+          "mode": "list",
+          "cachedResultName": "AGENT_ROOMS_MANAGEMENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', `The date when the client is requesting a meeting room.`, 'string') }}",
+            "start_time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('start_time', `The start time for which the client is requesting a meeting room.`, 'string') }}",
+            "end_time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('end_time', `The end time for which the client is requesting a meeting room.`, 'string') }}",
+            "nb_of_participants": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nb_of_participants', `The number of participants the client requests a meeting room for.`, 'number') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start_time",
+              "displayName": "start_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end_time",
+              "displayName": "end_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nb_of_participants",
+              "displayName": "nb_of_participants",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3260,
+        80
+      ],
+      "id": "bfc0ef14-4efd-453b-9eeb-f70d29d644b6",
+      "name": "AGENT_ROOMS_MANAGEMENT"
+    },
+    {
+      "parameters": {
+        "description": "This tool is an ai agent that will help you manage client information. It may help you\n* Create a new client record in the database\n* Find information about the client from its email address\n* Update client information from its email address (invoice address, company name, name, etc)\n\nTo do that, you will always provide the client email address.",
+        "workflowId": {
+          "__rl": true,
+          "value": "GOF5UgT40kUpM5sd",
+          "mode": "list",
+          "cachedResultName": "AGENT_CLIENT_MANAGEMENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `The email from the client you are dealing with.`, 'string') }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3480,
+        80
+      ],
+      "id": "6bd14430-c2ae-4898-a576-7d5dcdc60cba",
+      "name": "AGENT_CLIENT_MANAGEMENT"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Voici un email reçu : {{ $json.text }} depuis l'adresse {{ $json.emailAddress }}\n\nTon objectif est de générer tous les appels nécessaires pour créer et envoyer un devis.\n\nTu dois répondre uniquement avec format_final_json_response([...])",
+        "options": {
+          "systemMessage": "=## ROLE ET OBJECTIF\nTu es un agent IA commercial pour un hôtel d'affaires.\n\nTa mission est de réceptionner l'email du client et de lui réserver une salle de réunion en fonction de sa demande.\n\nVoici un exemple du process que tu dois suivre pour mener à bien ta mission.\n1. lis l'email reçu du client,\n2. comprend s'il s'agit d'une demande de réservation de salle,\n3. Si oui, récupére ses informations,\n4. Vérifie les disponibilités de salle,\n5. Crée ou met à jour la reservation du client\n6. Génére un devis,\n7. Rédige une réponse email prête à être envoyée.\n\n---\n## INFORMATIONS COMPLEMENTAIRES\n- La date du jour est {{ $today.format('yyyy-MM-dd') }}.\n- If the rooms management agent returns a proposal to use two different rooms during the time range required by the client, use this opportunity to suggest the use of two rooms during the time range.\n- If the rooms management agent returns a proposal to use two different rooms during the time range required by the client, create two different reservations, one for each time slot.\n- Use the Think tool whenever you need to step back and understand what else you need to do to complete your task.\n- When you create a new reservation for a client, you don't need to add the reservation status, it will be set to \"waiting_for_confirmation\" by default. The client will need to send an explicit confirmation by email later.\n---\n## DONNEES INPUT\nLes données d’entrée disponibles sont :\n- Le texte de l’email du client\n- L’adresse email de l’émetteur\n\n---\n\n## TOOLS DISPONIBLES :\n\n1. Tool_ClassifyEmail(emailText)  \n→ Retourne l'intention de l'email client : \"reservation\", \"autre\", etc.\n\n2. AGENT_CLIENT_MANAGEMENT(email)  \n→ AI Agent that returns client details such as the name, the company name and the client's address, or null if unknown.\n\n3. AGENT_ROOMS_MANAGEMENT(date, start_time, end_time, nb_of_participants)  \n→ AI Agent that will select an available meeting for you according to client needs and requirements.\n\n4. AGENT_CLIENT_RESERVATION(email, date, start_time, end_time,nb_of_participants, room_name, reservation_status)\n→ AI Agent that manages meeting room reservation according to client request.\n\n5. Think\n→ Use the Think tool whenever you need to step back and understand what else you need to do to complete your task.\n\n---\n\n## OBJECTIF FINAL :\n\nSi l’email est une demande de réservation **et** qu’une salle est disponible :\n- Rédige un email clair et professionnel à destination du client\n- Confirme la disponibilité de la salle\n- Intègre le lien vers le devis\n- Termine par une invitation à confirmer\n\n---\n\n## FORMAT DE RÉPONSE ATTENDU :\n\nTu dois répondre uniquement avec :\n\nformat_final_json_response([\n  {\n    \"finalEmail\": \"Bonjour M. Dupont,\\n\\nMerci pour votre demande. Nous avons le plaisir de vous confirmer la disponibilité de notre salle Mont-Blanc pour le 10 juillet de 9h à 17h, pour 10 personnes.\\n\\nVous trouverez votre devis ici : https://fichier/pdf/devis123.pdf\\n\\nSouhaitez-vous que nous procédions à la réservation ?\\n\\nCordialement,\\nL'équipe Réservation\"\n  }\n])\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "9bc56aba-46aa-4851-b8da-5dc6aedc8be6",
+      "name": "Agent Orchestrateur",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        2980,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "description": "Use the tool to think about where you are in the reservation process. Ask yourself if you have all required information about the client, if a meeting room is available or not and if so, create a new reservation for the client."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        -80
+      ],
+      "id": "e75f24e1-ca4e-4283-82da-83da8516e5be",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "description": "This tool is an AI Agent dedicated to meeting room reservation management. It allows you to create new reservation for the client, get information about the last reservation made by the client (if there is one) and update reservation status.\n\nExpected input:\n- client_email (string)(required)\n- start_time (string)\n- end_time (string)\n- nb_of_participants (number)\n- room_name (string)\n- reservation_status (string)\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "AP922sjs8oLaRCvc",
+          "mode": "list",
+          "cachedResultName": "AGENT_CLIENT_RESERVATION_MANAGEMENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', ``, 'string') }}",
+            "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', ``, 'string') }}",
+            "start_time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('start_time', ``, 'string') }}",
+            "end_time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('end_time', ``, 'string') }}",
+            "nb_of_participants": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nb_of_participants', ``, 'string') }}",
+            "room_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('room_name', ``, 'string') }}",
+            "reservation_status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reservation_status', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start_time",
+              "displayName": "start_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end_time",
+              "displayName": "end_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nb_of_participants",
+              "displayName": "nb_of_participants",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "room_name",
+              "displayName": "room_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "reservation_status",
+              "displayName": "reservation_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3060,
+        80
+      ],
+      "id": "b6dac5c5-43ae-4100-8bae-56a19a8482e6",
+      "name": "AGENT_CLIENT_RESERVATION"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Init-Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Init-Data1": {
+      "main": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool_ClassifyEmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AGENT_ROOMS_MANAGEMENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AGENT_CLIENT_MANAGEMENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Orchestrateur": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AGENT_CLIENT_RESERVATION": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ceabc8a2-cce0-45e3-9123-6a3a3fbca745",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "iX7OL1hIXMmOHSga",
+  "tags": [
+    {
+      "createdAt": "2025-05-03T12:40:05.376Z",
+      "updatedAt": "2025-05-03T12:40:05.376Z",
+      "id": "C7ParoXyUmmYDvCQ",
+      "name": "WhatsApp"
+    },
+    {
+      "createdAt": "2025-05-03T12:40:08.866Z",
+      "updatedAt": "2025-05-03T12:40:08.866Z",
+      "id": "xEfLVeLt7iT32rK2",
+      "name": "Agent IA"
+    }
+  ]
+}
