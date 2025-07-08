@@ -56,7 +56,7 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "{\n  \"emailAddress\":\"tristan.bernard.alpesia@gmail.com\",  \n  \"text\": \"Bonjour,\\nJe cherche une salle de réunion pour acceuillir 7 personnes entre 9h et\\n17h le 28 Juillet. J'ai vu que vous aviez une salle \\\"aquarium\\\" dans votre cowork.\\nPouvez-vous me faire un devis pour la location de cette salle, avec et sans\\nrepas compris (j'imagine qu'il est possible de faire un repas le midi dans\\nvotre restaurant?).\\n\\nMerci et bonne semaine,\\nTristan Bernard\\n--\\n06-58-32-38-06\"\n}",
+        "jsonOutput": "{\n  \"emailAddress\":\"tristan.bernard.alpesia@gmail.com\",  \n  \"text\": \"Bonjour,\\nJe cherche une salle de réunion pour acceuillir 7 personnes entre 9h et\\n17h le 28 Juillet.\\nPouvez-vous me faire un devis pour la location de cette salle, avec et sans\\nrepas compris (j'imagine qu'il est possible de faire un repas le midi dans\\nvotre restaurant?).\\n\\nMerci et bonne semaine,\\nTristan Bernard\\n--\\n06-58-32-38-06\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.set",
@@ -102,8 +102,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        2840,
-        80
+        2760,
+        180
       ],
       "id": "3a98a9a3-fa2a-4896-9d6b-00f35cd904c1",
       "name": "Tool_ClassifyEmail"
@@ -194,8 +194,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        3260,
-        80
+        3420,
+        180
       ],
       "id": "bfc0ef14-4efd-453b-9eeb-f70d29d644b6",
       "name": "AGENT_ROOMS_MANAGEMENT"
@@ -246,8 +246,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        3480,
-        80
+        3640,
+        180
       ],
       "id": "6bd14430-c2ae-4898-a576-7d5dcdc60cba",
       "name": "AGENT_CLIENT_MANAGEMENT"
@@ -257,7 +257,7 @@
         "promptType": "define",
         "text": "=Voici un email reçu : {{ $json.text }} depuis l'adresse {{ $json.emailAddress }}\n\nTon objectif est de générer tous les appels nécessaires pour créer et envoyer un devis.\n\nTu dois répondre uniquement avec format_final_json_response([...])",
         "options": {
-          "systemMessage": "=## ROLE ET OBJECTIF\nTu es un agent IA commercial pour un hôtel d'affaires.\n\nTa mission est de réceptionner l'email du client et de lui réserver une salle de réunion en fonction de sa demande.\n\nVoici un exemple du process que tu dois suivre pour mener à bien ta mission.\n1. lis l'email reçu du client,\n2. comprend s'il s'agit d'une demande de réservation de salle,\n3. Si oui, récupére ses informations,\n4. Vérifie les disponibilités de salle,\n5. Crée ou met à jour la reservation du client\n6. Génére un devis,\n7. Rédige une réponse email prête à être envoyée.\n\n---\n## INFORMATIONS COMPLEMENTAIRES\n- La date du jour est {{ $today.format('yyyy-MM-dd') }}.\n- If the rooms management agent returns a proposal to use two different rooms during the time range required by the client, use this opportunity to suggest the use of two rooms during the time range.\n- If the rooms management agent returns a proposal to use two different rooms during the time range required by the client, create two different reservations, one for each time slot.\n- Use the Think tool whenever you need to step back and understand what else you need to do to complete your task.\n- When you create a new reservation for a client, you don't need to add the reservation status, it will be set to \"waiting_for_confirmation\" by default. The client will need to send an explicit confirmation by email later.\n---\n## DONNEES INPUT\nLes données d’entrée disponibles sont :\n- Le texte de l’email du client\n- L’adresse email de l’émetteur\n\n---\n\n## TOOLS DISPONIBLES :\n\n1. Tool_ClassifyEmail(emailText)  \n→ Retourne l'intention de l'email client : \"reservation\", \"autre\", etc.\n\n2. AGENT_CLIENT_MANAGEMENT(email)  \n→ AI Agent that returns client details such as the name, the company name and the client's address, or null if unknown.\n\n3. AGENT_ROOMS_MANAGEMENT(date, start_time, end_time, nb_of_participants)  \n→ AI Agent that will select an available meeting for you according to client needs and requirements.\n\n4. AGENT_CLIENT_RESERVATION(email, date, start_time, end_time,nb_of_participants, room_name, reservation_status)\n→ AI Agent that manages meeting room reservation according to client request.\n\n5. Think\n→ Use the Think tool whenever you need to step back and understand what else you need to do to complete your task.\n\n---\n\n## OBJECTIF FINAL :\n\nSi l’email est une demande de réservation **et** qu’une salle est disponible :\n- Rédige un email clair et professionnel à destination du client\n- Confirme la disponibilité de la salle\n- Intègre le lien vers le devis\n- Termine par une invitation à confirmer\n\n---\n\n## FORMAT DE RÉPONSE ATTENDU :\n\nTu dois répondre uniquement avec :\n\nformat_final_json_response([\n  {\n    \"finalEmail\": \"Bonjour M. Dupont,\\n\\nMerci pour votre demande. Nous avons le plaisir de vous confirmer la disponibilité de notre salle Mont-Blanc pour le 10 juillet de 9h à 17h, pour 10 personnes.\\n\\nVous trouverez votre devis ici : https://fichier/pdf/devis123.pdf\\n\\nSouhaitez-vous que nous procédions à la réservation ?\\n\\nCordialement,\\nL'équipe Réservation\"\n  }\n])\n",
+          "systemMessage": "=📌 ROLE & MAIN OBJECTIVE\nYou are a commercial AI agent for a business hotel.\nYour mission is to handle incoming client emails and manage meeting room bookings based on their requests.\nYour goal is to provide a fast, professional, and clear answer confirming the booking conditions and sharing a quote.\n\n🧭 PROCESS TO FOLLOW\n1. Read the client's email.\n2. Understand whether the email is a meeting room booking request.\n3. If it is a booking request, extract all necessary details.\n4. Check available meeting rooms according to the client’s requirements.\n5. Create or update the client’s booking accordingly.\n6. Generate a quote.\n7. Write a clear, professional reply email.\n8. If the request is not about a meeting room booking, reply politely to inform the client that their request will be handled by a human agent.\n\n📚 ADDITIONAL INFORMATION\n- Today’s date is: {{ $today.format('yyyy-MM-dd') }}\n- If the Rooms Management Agent suggests using two different rooms for the requested time range, offer the client this option.\nIn that case, create two separate bookings, one for each time slot.\n- Always use the Think tool whenever you need to reason, verify missing steps, or clarify your next action.\n- When you create a new booking, you don’t need to set the reservation status manually — it will default to waiting_for_confirmation. The client must send an explicit confirmation by email later.\n- Make sure that you generate a quote **AFTER** you made the reservation for the client.\n- If you see that any of your tool is not working properly, do not attempt to use it anymore. Forget about it and create the email without the thing you miss.\n\n🗂️ AVAILABLE TOOLS\n1. Tool_ClassifyEmail(emailText)\nDescription: Classifies the client’s email intent.\nInput: emailText\nOutput: { intent: \"reservation\" | \"other\" | ... }\n\n2. AGENT_CLIENT_MANAGEMENT(email)\nDescription: Retrieves client details such as name, company name, and address based on their email, or returns null if unknown.\nInput: email\nOutput: { name, company_name, address } or null\n\n3. AGENT_ROOMS_MANAGEMENT(date, start_time, end_time, nb_of_participants)\nDescription: Selects an available meeting room according to the client’s needs.\nInput: date, start_time, end_time, nb_of_participants\nOutput: { room_name, availability_details }\n\n4. AGENT_CLIENT_RESERVATION(action, email, date, start_time, end_time, nb_of_participants, room_name, reservation_status)\nDescription: Creates or updates the client’s meeting room booking.\nInput: action, email, date, start_time, end_time, nb_of_participants, room_name, reservation_status\nOutput: { reservation_id, confirmation_details }\n\n5. WORKFLOW_GENERATE_DOCUMENTS(client_email, document_type, reservation_date)\nDescription: Generates a quote or an invoice and returns the URL of the document.\nInput: client_email, document_type, reservation_date\nOutput: { url }\n\n6. Think\nDescription: Use the Think tool to step back and analyze what else you need to do to complete your task correctly.\n\n⚙️ EXCEPTIONS HANDLING\nIf no meeting room is available, write a polite email informing the client about the unavailability and suggest alternative dates or solutions if possible.\n\nIf any tool returns an error or null value that blocks the workflow, use the Think tool to find an alternative or write an email informing the client that a human will handle their request manually.\n\n✍️ STYLE & LANGUAGE\n- The final email must be written in French.\n- Use a professional, polite, and clear tone.\n- Keep the message short and focused on next steps.\n\n✅ EXPECTED OUTPUT FORMAT\nYou must respond only using the following format:\n\nformat_final_json_response([\n  {\n    \"finalEmail\": \"Bonjour M. Dupont,\\n\\nMerci pour votre demande. Nous avons le plaisir de vous confirmer la disponibilité de notre salle Mont-Blanc pour le 10 juillet de 9h à 17h, pour 10 personnes.\\n\\nVous trouverez votre devis ici : https://fichier/pdf/devis123.pdf\\n\\nSouhaitez-vous que nous procédions à la réservation ?\\n\\nCordialement,\\nL'équipe Réservation\"\n  }\n])\n✔️ REMEMBER\n- Never include any other text outside the JSON response.\n- Always check your reasoning with Think if needed.\n- Prioritize client satisfaction and clarity.",
           "returnIntermediateSteps": true
         }
       },
@@ -285,7 +285,7 @@
     },
     {
       "parameters": {
-        "description": "This tool is an AI Agent dedicated to meeting room reservation management. It allows you to create new reservation for the client, get information about the last reservation made by the client (if there is one) and update reservation status.\n\nExpected input:\n- client_email (string)(required)\n- start_time (string)\n- end_time (string)\n- nb_of_participants (number)\n- room_name (string)\n- reservation_status (string)\n",
+        "description": "This tool is an AI Agent dedicated to meeting room reservation management. It allows you to create new reservation for the client, get information about the last reservation made by the client (if there is one) and update reservation status.\n\nExpected input:\n- action (string)(required) --> explain here what you need from the agent to do\n- client_email (string)(required)\n- start_time (string)\n- end_time (string)\n- nb_of_participants (number)\n- room_name (string)\n- reservation_status (string)\n",
         "workflowId": {
           "__rl": true,
           "value": "AP922sjs8oLaRCvc",
@@ -301,10 +301,21 @@
             "end_time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('end_time', ``, 'string') }}",
             "nb_of_participants": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nb_of_participants', ``, 'string') }}",
             "room_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('room_name', ``, 'string') }}",
-            "reservation_status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reservation_status', ``, 'string') }}"
+            "reservation_status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reservation_status', ``, 'string') }}",
+            "action": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('action', `Explain in details what you need from the agent`, 'string') }}"
           },
           "matchingColumns": [],
           "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
             {
               "id": "email",
               "displayName": "email",
@@ -376,11 +387,73 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        3060,
-        80
+        3220,
+        180
       ],
       "id": "b6dac5c5-43ae-4100-8bae-56a19a8482e6",
       "name": "AGENT_CLIENT_RESERVATION"
+    },
+    {
+      "parameters": {
+        "description": "This workflow will generate a quote or an invoice for your client's reservation, and add it to the database.\nIt will return the URL of the document.\n\nExpected input:\n- client_email (string)(required)\n- document_type (string)(required) --> could be only \"quote\" or \"invoice\" with the same case. Anything else will be rejected.\n- reservation_date (date string format YYYY-MM-dd)(required) --> the date of the reservation requested by the client\n\nExpect output:\n- url : the URL of the generated document (quote or invoice)",
+        "workflowId": {
+          "__rl": true,
+          "value": "N6DMwN6GYsEtgfnY",
+          "mode": "list",
+          "cachedResultName": "WORKFLOW_GENERATE_INVOICE_OR_QUOTE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('client_email', ``, 'string') }}",
+            "document_type": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('document_type', `can be only \"quote\" or \"invoice\" with the same case. Anything else will be rejected.`, 'string') }}",
+            "reservation_date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reservation_date', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_email",
+              "displayName": "client_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "document_type",
+              "displayName": "document_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "reservation_date",
+              "displayName": "reservation_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3000,
+        200
+      ],
+      "id": "04d0ca6e-ab93-48a6-851a-9f8081e0c98b",
+      "name": "WORKFLOW_GENERATE_DOCUMENTS"
     }
   ],
   "pinData": {},
@@ -494,13 +567,26 @@
           }
         ]
       ]
+    },
+    "WORKFLOW_GENERATE_DOCUMENTS": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Orchestrateur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 20
   },
-  "versionId": "ceabc8a2-cce0-45e3-9123-6a3a3fbca745",
+  "versionId": "f7f6c5cb-9de9-49ee-bd8d-18c9dbf62eb4",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"

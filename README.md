@@ -3,7 +3,7 @@
 ## 📌 Overview
 
 This **n8n workflow** is an AI-powered orchestrator agent for managing **meeting room booking requests** in a business hotel context.  
-It processes incoming client emails, extracts booking details, checks room availability, creates or updates reservations, generates quotes, and drafts a professional reply email in French.
+It processes incoming client emails, extracts booking details, checks room availability, creates or updates reservations, generates quotes or invoices, and drafts a professional reply email in French.
 
 ---
 
@@ -26,7 +26,7 @@ It processes incoming client emails, extracts booking details, checks room avail
 5. **Agent Orchestrator**  
    Core orchestrator node with the system prompt defining:
    - Agent role and objectives  
-   - Process steps (classification, extraction, availability check, reservation creation, quote generation, email drafting)  
+   - Process steps (classification, extraction, availability check, reservation creation, document generation, email drafting)  
    - Available tools and their usage  
    - Expected output format (`format_final_json_response`) with the final email in French.
 
@@ -34,18 +34,21 @@ It processes incoming client emails, extracts booking details, checks room avail
    Classifies email intent (reservation, modification, invoice, incomplete info, follow-up, other).
 
 7. **Tool: AGENT_CLIENT_MANAGEMENT**  
-   Retrieves client details or updates client records based on the email address.
+   Retrieves or updates client details based on the email address.
 
 8. **Tool: AGENT_ROOMS_MANAGEMENT**  
    Finds available meeting rooms based on date, time range, and number of participants.
 
 9. **Tool: AGENT_CLIENT_RESERVATION**  
-   Creates or updates reservations with provided details and status.
+   Creates or updates reservations with provided details, including action parameter to specify intent.
 
-10. **Think Tool**  
+10. **Tool: WORKFLOW_GENERATE_DOCUMENTS**  
+    Generates **quotes or invoices** for reservations and returns their URLs.
+
+11. **Think Tool**  
     Allows the agent to reason, step back, and decide on missing information or next actions.
 
-11. **Edit Fields**  
+12. **Edit Fields**  
     Formats the final output fields as required by downstream processes.
 
 ---
@@ -62,8 +65,8 @@ It processes incoming client emails, extracts booking details, checks room avail
 3. Retrieve client information.  
 4. Check room availability.  
 5. Create or update the reservation.  
-6. Generate a quote.  
-7. Draft and output a professional email reply in French, confirming availability and including the quote link.
+6. Generate a quote (or invoice if applicable).  
+7. Draft and output a professional email reply in French, confirming availability and including the quote or invoice link.
 
 ✅ **Output:**  
 A structured JSON containing the final email ready to be sent to the client.
@@ -79,6 +82,7 @@ A structured JSON containing the final email ready to be sent to the client.
   - AGENT_CLIENT_MANAGEMENT
   - AGENT_ROOMS_MANAGEMENT
   - AGENT_CLIENT_RESERVATION_MANAGEMENT
+  - WORKFLOW_GENERATE_INVOICE_OR_QUOTE
 
 ---
 
@@ -94,12 +98,18 @@ A structured JSON containing the final email ready to be sent to the client.
 ## 📄 Notes
 
 - The final client-facing email is generated **entirely in French**, ensuring communication consistency.  
-- The agent defaults new reservation statuses to `waiting_for_confirmation`, pending explicit client confirmation.
+- The agent defaults new reservation statuses to `waiting_for_confirmation`, pending explicit client confirmation.  
+- If any tool fails or returns null, the agent writes a fallback email explaining that a human will handle the request.
 
 ---
 
 ### 🔒 Repository Tags
 
 - `Agent IA`  
+- `WhatsApp` (if integrated for input channel)
 
+---
+
+✉️ **Maintainer:** *[Your Name or Team]*  
+📅 **Last updated:** 2025-07-07
 
