@@ -125,7 +125,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3340,
+        3420,
         -420
       ],
       "id": "9a4362f9-02d4-4236-abe3-32c8cf8d40c4",
@@ -285,7 +285,7 @@
     },
     {
       "parameters": {
-        "description": "This tool is an AI Agent dedicated to meeting room reservation management. It allows you to create new reservation for the client, get information about the last reservation made by the client (if there is one) and update reservation status.\n\nExpected input:\n- action (string)(required) --> explain here what you need from the agent to do\n- client_email (string)(required)\n- start_time (string)\n- end_time (string)\n- nb_of_participants (number)\n- room_name (string)\n- reservation_status (string)\n",
+        "description": "This tool is an AI Agent dedicated to meeting room reservation management. It allows you to create new reservation for the client, get information about the last reservation made by the client (if there is one) and update reservation status.\n\nExpected input:\n- action (string)(required) --> explain here with a sentence what you need from the agent to do\n- client_email (string)(required)\n- start_time (string)\n- end_time (string)\n- nb_of_participants (number)\n- room_name (string)\n- reservation_status (string)\n",
         "workflowId": {
           "__rl": true,
           "value": "AP922sjs8oLaRCvc",
@@ -302,7 +302,7 @@
             "nb_of_participants": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nb_of_participants', ``, 'string') }}",
             "room_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('room_name', ``, 'string') }}",
             "reservation_status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reservation_status', ``, 'string') }}",
-            "action": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('action', `Explain in details what you need from the agent`, 'string') }}"
+            "action": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('action', `Explain in a sentence in details what you need from the agent`, 'string') }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -454,9 +454,89 @@
       ],
       "id": "04d0ca6e-ab93-48a6-851a-9f8081e0c98b",
       "name": "WORKFLOW_GENERATE_DOCUMENTS"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3720,
+        -200
+      ],
+      "id": "8b4535a6-0a7d-4e52-b18a-4446ec6fb095",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=here is the raw AI Agent answer :  {{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=## ROLE\n\nYou are an AI email formatter specialized in generating production-ready HTML emails.\n\n## OBJECTIVE\n\nYour mission is to process the agent's response, which always arrives in the following format:\n\n<agent_answer>\nformat_final_json_response([\n  {\n    \"finalEmail\": \"...\"\n  }\n])\n</agent_answer>\n\nExtract the email text contained in the `\"finalEmail\"` field and format it as a simple, clean, responsive HTML email that can be sent directly to clients.\n\n---\n\n## RULES\n\n1. Always return **only the final HTML code**, with no explanations or additional text.  \n2. Preserve the original email content exactly as written, including accents and punctuation.  \n3. Convert line breaks (`\\n`) into appropriate HTML `<br>` tags to maintain readability.  \n4. Wrap the content in a minimal, professional HTML email structure with `<html>`, `<head>`, and `<body>` tags.  \n5. Use UTF-8 encoding and specify it in the `<meta>` tag.  \n6. Use inline CSS for basic styling (font family, size, line-height, color) to ensure compatibility with most email clients.  \n7. Keep the design clean, neutral, and business-oriented (white background, black text).\n\n---\n\n## EXAMPLE\n\n### Input:\n\n<agent_answer>\nformat_final_json_response([\n  {\n    \"finalEmail\": \"Bonjour M. Bernard,\\n\\nMerci pour votre demande. Nous avons le plaisir de vous confirmer la disponibilité de notre salle Chartreuse pour le 28 juillet de 9h à 17h, pour 7 personnes.\\n\\nVous trouverez votre devis ici : https://example.com/devis.pdf\\n\\nSouhaitez-vous que nous procédions à la réservation ?\\n\\nCordialement,\\nL'équipe Réservation\"\n  }\n])\n</agent_answer>\n\n### Output:\n\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Confirmation de réservation</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #000000; background-color: #ffffff; padding: 20px;\">\n  Bonjour M. Bernard,<br><br>\n  Merci pour votre demande. Nous avons le plaisir de vous confirmer la disponibilité de notre salle Chartreuse pour le 28 juillet de 9h à 17h, pour 7 personnes.<br><br>\n  Vous trouverez votre devis ici : <a href=\"https://example.com/devis.pdf\">https://example.com/devis.pdf</a><br><br>\n  Souhaitez-vous que nous procédions à la réservation ?<br><br>\n  Cordialement,<br>\n  L'équipe Réservation\n</body>\n</html>\n\n## FINAL INSTRUCTION\nAlways return only the final HTML email code as shown in the example above, with correct encoding and formatting ready to send.\n\n---\n\n### ✅ **Key improvements**\n\n✔️ Converts line breaks to `<br>`  \n✔️ Uses a neutral, professional inline-styled HTML structure  \n✔️ Returns pure HTML code without extra explanations  \n✔️ Ready for Mailjet, Sendgrid, or direct SMTP send\n\nLet me know if you want a version with your **brand colors, header logo, or footer** standardised for your agency templates.\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        3640,
+        -420
+      ],
+      "id": "b00846cf-ef7f-4e45-86c1-dcb298f8f939",
+      "name": "Extract AI Agent Answer"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Set Init-Data1').item.json.emailAddress }}",
+        "subject": "Votre devis",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4000,
+        -420
+      ],
+      "id": "571c6bd1-0209-41b0-afd8-7ea531e67b70",
+      "name": "Send a message",
+      "webhookId": "d3061f0e-4a23-4ec3-950a-2193b14dd8d0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cp3sgqpYGECz9c8a",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Edit Fields": [
+      {
+        "json": {
+          "output": "format_final_json_response([\n  {\n    \"finalEmail\": \"Bonjour M. Bernard,\\n\\nMerci pour votre demande. Nous avons le plaisir de vous confirmer la disponibilité de notre salle Chartreuse pour le 28 juillet de 9h à 17h, pour 7 personnes.\\n\\nVous trouverez votre devis pour la location de la salle ici : https://nocodb.cloudron.alpes-ia.fr/dltemp/QVdna8zXlrkz5wi_/1752069000000/2025/07/09/3b80a5a4edc44e4c8874f822b7df09949e242d83/devis_2025-07-09_pZ2zT.pdf\\n\\nLe devis avec repas sera envoyé séparément. Souhaitez-vous que nous procédions à la réservation ?\\n\\nCordialement,\\nL'équipe Réservation\"\n  }\n])"
+        }
+      }
+    ]
+  },
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
@@ -578,6 +658,39 @@
           }
         ]
       ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Extract AI Agent Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract AI Agent Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract AI Agent Answer": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -586,7 +699,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "timeSavedPerExecution": 20
   },
-  "versionId": "f7f6c5cb-9de9-49ee-bd8d-18c9dbf62eb4",
+  "versionId": "272434f9-d757-4e27-9dd1-4953e1800b6c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
