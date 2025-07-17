@@ -1,0 +1,1588 @@
+{
+  "name": "AGENT RESERVATION SALLE DE REUNION v3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        225
+      ],
+      "id": "8c2df8a2-5833-4c34-b9bf-c2a2fe3cbce7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{  \n  \"text\": \"Bonjour,\\nmerci pour voter réponse rapide.\\nJe vous confirme la réservation.\\nPouvez-vous m'envoyer la facture svp?.\\n\\nMerci et bonne semaine,\\nTristan Bernard\\n--\\n06-58-32-38-06\",\n  \"emailAddress\":\"client_001@test.com\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        300
+      ],
+      "id": "ccfd6499-7efa-4e99-9349-3255b33b3903",
+      "name": "Confirmation de réservation1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "RjvY3P0vsiKvK2Jz",
+          "mode": "list",
+          "cachedResultName": "TOOL_ClassifyEmail"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "emailText": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "emailText"
+          ],
+          "schema": [
+            {
+              "id": "emailText",
+              "displayName": "emailText",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2760,
+        460
+      ],
+      "id": "2baa9561-16a7-4274-9d81-8f98d26b41aa",
+      "name": "Classify Email"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "confirm_and_invoice",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bb0da3d5-036b-43c5-9b25-8c330aedecf0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "confirm_and_invoice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "238c9d83-5247-4030-8edf-9aca93511126",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "booking_request",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "booking_request"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c798404f-3d0a-4218-8cfe-f17dd45425cf",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "other",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "other"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2980,
+        460
+      ],
+      "id": "2814cb85-c155-4dec-a895-6a531bdb310d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "emailAddress"
+            },
+            {
+              "name": "text"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        750
+      ],
+      "id": "edd8983b-0b97-4ab7-bd4f-25f9a612ddab",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2540,
+        400
+      ],
+      "id": "09023e40-d01e-4b59-b8b8-0c496c3aa9f6",
+      "name": "INPUT DATA"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bfe2b6cd-4c90-4e83-869a-2a47082d0c7c",
+              "name": "=tools_description",
+              "value": "=`- AGENT_CLIENT_MANAGEMENT(client_email, action, client_information)   \nDescription: Manage client details (get information, update information, create new client).   \nInput: client_email, action, client_information   \nOutput: a brief about what the agent has done.  \n- AGENT_ROOMS_MANAGEMENT(date, start_time, end_time, nb_of_participants) \nDescription: Selects an available meeting room according to the client’s needs.   \nInput: date, start_time, end_time, nb_of_participants   \nOutput: { room_name, availability_details }  \n- AGENT_CLIENT_RESERVATION(action, client_email, date, start_time, end_time, nb_of_participants, room_name, reservation_status)   \nDescription: Creates or updates the client’s meeting room booking.   \nInput: action, email, date, start_time, end_time, nb_of_participants, room_name, reservation_status   \nOutput: { reservation_id, confirmation_details }  \n- WORKFLOW_GENERATE_DOCUMENTS(client_email, document_type, reservation_date)   \nDescription: Generates a quote or an invoice and returns the URL of the document.   \nInput: client_email, document_type, reservation_date   \nOutput: { url }  - Think   Description: Use the Think tool to step back and analyze what else you need to do to complete your task correctly.   Input: none   Output: internal reflection or reasoning.`",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2540,
+        100
+      ],
+      "id": "5adecb8d-648a-41e0-abb5-3dbe51edea75",
+      "name": "Input fixed-data"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3460,
+        260
+      ],
+      "id": "4275666e-5d92-4f45-9557-0679c77fd49e",
+      "name": "Merge inputs"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3340,
+        480
+      ],
+      "id": "0b7721ba-fed7-48dd-9373-453c75872e88",
+      "name": "Merge inputs1"
+    },
+    {
+      "parameters": {
+        "content": "## Classification et routing de l'email",
+        "height": 360,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2680,
+        360
+      ],
+      "typeVersion": 1,
+      "id": "69d2b254-7788-4c78-8191-f93d3efe084a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Extract email info",
+        "height": 480,
+        "width": 1120
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3600,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "da2fa7cf-0242-4380-b0da-97e9795ac29c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Check room availability and select the best one",
+        "height": 480,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        5180,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "43f990af-5172-42d1-ba85-ef384037dbe6",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Create booking",
+        "height": 480,
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6140,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "68011bcf-8355-4165-8a52-0f2aaf79cfc5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Quote",
+        "height": 480,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6820,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "16a1f156-eff2-4778-af26-91cab8ca5a20",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Reply to client",
+        "height": 480,
+        "width": 680
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        7240,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "ab95d7a8-02ff-4940-a96d-910ccb780a64",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3660,
+        700
+      ],
+      "id": "598b930b-5808-460e-97ca-fe6152f8d2d4",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Liste des champs obligatoires à vérifier\nconst requiredFields = [\n  \"client_full_name\",\n  \"company_name\",\n  \"meeting_date\",\n  \"start_time\",\n  \"end_time\",\n  \"number_of_participants\",\n  \"billing_address\"\n];\n\n// Données à vérifier (ici, on prend les données de l'item courant)\nconst data = $input.first().json;\n\n// Vérification\nconst isMissing = requiredFields.some(field => {\n  return !data.hasOwnProperty(field) || data[field] === null || data[field] === '';\n});\n\n// Retourne true si un champ est manquant ou vide\nreturn [{ json: { missingRequiredInfo: isMissing, ...data, } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4380,
+        480
+      ],
+      "id": "3aa73741-b84e-4648-9e16-53f4f4bb847f",
+      "name": "If any required info is missing"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.missingRequiredInfo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "9bf9d272-cdb5-4632-aed5-1b9d77ef08d0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "info required"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "40cf3c32-79ed-41e4-9626-40d9fdb89601",
+                    "leftValue": "={{ $json.missingRequiredInfo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "all info are here"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        4600,
+        480
+      ],
+      "id": "a288b345-0fee-4edd-b9de-7a502a0cd460",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "content": "## Reply to client and ask for missing information",
+        "height": 360,
+        "width": 820
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4640,
+        -260
+      ],
+      "typeVersion": 1,
+      "id": "547c53fb-aacc-47ef-816d-63389f7547ef",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        5640,
+        -40
+      ],
+      "id": "e8fb0715-3445-46ac-a87b-0a51dce96be0",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here are all info we received. The missing ones are set to \"null\" or empty:\n\n- client full name :  {{ $('Convert email info to JSON').item.json.client_full_name }}\n- client's company name :{{ $('Convert email info to JSON').item.json.company_name }}\n- meeting date : {{ $('Convert email info to JSON').item.json.meeting_date }}\n- start time :{{ $('Convert email info to JSON').item.json.start_time }}\n- end time : {{ $('Convert email info to JSON').item.json.end_time }}\n- number of participants : {{ $('Convert email info to JSON').item.json.number_of_participants }}\n- billing address : {{ $('Convert email info to JSON').item.json.billing_address }}\n\nYou can assume the client's first email was polite. You are replying to that message.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an assistant working at the reception desk of a business hotel.\nYou have received an email in French from a client who wants to book a meeting room, but some essential information is missing to provide a quote and/or create a booking.\n\nYour task is to write a polite and professional reply email in French, asking the client to provide the missing information.\n\nThe email should:\n-Thank the client for their request\n-Mention clearly which information is missing\n-Explain that this information is necessary to proceed with the reservation\n-Ask the client to reply with the missing details\n-End with a polite closing and signature (e.g., “L’équipe Réservation”)\n-Return only the final email text, no explanations, no email subject, only the email text.\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        5640,
+        -180
+      ],
+      "id": "7ae41f9a-ca06-428f-bbde-426e78b9d929",
+      "name": "Reply with missing info"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c531c1e-937f-4f9e-a6df-2f020a258379",
+              "name": "client_email",
+              "value": "={{ $('INPUT DATA').item.json.emailAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "b21e41cd-b6f4-4382-95e0-f0be6d191904",
+              "name": "email_subject",
+              "value": "Votre demande de réservation",
+              "type": "string"
+            },
+            {
+              "id": "841bb72e-d821-4b61-b7a0-6596835a0ed1",
+              "name": "email_content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6060,
+        -180
+      ],
+      "id": "b90f6deb-f4bb-4eae-a1a5-62a207533544",
+      "name": "Email settings"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SgnGga4luRlP9XLe",
+          "mode": "list",
+          "cachedResultName": "TOOL_GetAvailableRooms"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $('Convert email info to JSON').item.json.meeting_date }}",
+            "start_time": "={{ $('Convert email info to JSON').item.json.start_time }}",
+            "end_time": "={{ $('Convert email info to JSON').item.json.end_time }}",
+            "nb_of_participants": "={{ $('Convert email info to JSON').item.json.number_of_participants }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start_time",
+              "displayName": "start_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end_time",
+              "displayName": "end_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nb_of_participants",
+              "displayName": "nb_of_participants",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        5240,
+        500
+      ],
+      "id": "6bfe638c-e77d-4da5-81f8-5624a0e9005e",
+      "name": "Check room availability",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n\"emailAddress\": \n\"client_001@test.com\",\n\"text\": \"Bonjour, je me permets de vous contacter, nous aimerions réserver une salle pour le mardi 23 juillet prochain pour 8 personnes, toute la journée. Bien cordialement, \\nJean Dupuis \\nSociété TechNova\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2280,
+        540
+      ],
+      "id": "66f07256-e0ce-43e4-923b-177d57e77bba",
+      "name": "Demande de réservation"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c7f91c7a-b931-4534-9d8e-44a7ccd06b5c",
+              "leftValue": "={{ $node[\"Check room availability\"].json.length > 0 }}\n",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "fda36ca1-bc1f-489e-862c-89dfbf343add",
+              "leftValue": "={{ $node[\"Check room availability\"].json}}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5480,
+        500
+      ],
+      "id": "2622b748-5cbe-4493-8a0f-f9d29dfea3fb",
+      "name": "If there is any available room"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an assistant working at the reception desk of a business hotel.\nYou have received an email in French from a client who wants to book a meeting room, but there is no room available on the requested date or for the requested number of participants.\n\nYour task is to write a polite and professional reply email in French, informing the client that there is currently no available room at the requested date and asking if there could be another date that would suit them.\n\nThe email should:\n-Thank the client for their request\n- call them with their name if provided\n- adopt an empathic tone, showing the customer that we want to help them.\n-End with a polite closing and signature (e.g., “L’équipe Réservation”)\n-Return only the final email text, no explanations, no email subject, only the email text.\n\nHere are the client request information we have\n- client full name :  {{ $('Convert email info to JSON').item.json.client_full_name }}\n- meeting date : {{ $('Convert email info to JSON').item.json.meeting_date }}\n- start time :{{ $('Convert email info to JSON').item.json.start_time }}\n- end time : {{ $('Convert email info to JSON').item.json.end_time }}\n- number of participants : {{ $('Convert email info to JSON').item.json.number_of_participants }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        6460,
+        1000
+      ],
+      "id": "e0dbd167-19bd-4704-bd99-48be0a8d399f",
+      "name": "Reply with no room available",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        6520,
+        1180
+      ],
+      "id": "35afe8ed-6f34-4ee2-801d-6527132f64fe",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c531c1e-937f-4f9e-a6df-2f020a258379",
+              "name": "client_email",
+              "value": "={{ $('INPUT DATA').item.json.emailAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "b21e41cd-b6f4-4382-95e0-f0be6d191904",
+              "name": "email_subject",
+              "value": "Votre demande de réservation",
+              "type": "string"
+            },
+            {
+              "id": "841bb72e-d821-4b61-b7a0-6596835a0ed1",
+              "name": "email_content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6860,
+        1000
+      ],
+      "id": "063a9628-1f46-4e51-9600-5de0e1f132ee",
+      "name": "Return email reply - no room available",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "YzaO0u5U0Y5kvpmb",
+          "mode": "list",
+          "cachedResultName": "TOOL_CreateNewReservationFromClient"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_email": "={{ $json.client_email }}",
+            "date": "={{ $json.date }}",
+            "start_time": "={{ $json.start_time }}",
+            "end_time": "={{ $json.end_time }}",
+            "nb_of_participants": "={{ $json.nb_of_participants }}",
+            "room_name": "={{ $json.room_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_email",
+              "displayName": "client_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start_time",
+              "displayName": "start_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end_time",
+              "displayName": "end_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nb_of_participants",
+              "displayName": "nb_of_participants",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "room_name",
+              "displayName": "room_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        6620,
+        480
+      ],
+      "id": "9dc81ecc-2ec9-403d-adec-af5888c44f48",
+      "name": "Create booking"
+    },
+    {
+      "parameters": {
+        "jsCode": "const requestedParticipants = $('Convert email info to JSON').first().json.number_of_participants; // Remplace par une variable dynamique si nécessaire\n\nconst rooms = $input.all().map(item => item.json);\n\n// Filtrer uniquement les salles assez grandes\nconst suitableRooms = rooms.filter(room => room.capacity >= requestedParticipants);\n\n// Trier par capacité croissante\nsuitableRooms.sort((a, b) => a.capacity - b.capacity);\n\n// Prendre la salle avec la capacité la plus proche\nconst selectedRoom = suitableRooms[0];\n\nreturn [{ selectedRoom }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5900,
+        480
+      ],
+      "id": "81704c96-2eef-45e3-90a4-94d55763fab8",
+      "name": "Select the best room for client"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e719128b-0e5d-4ae7-8786-ebf2a7990927",
+              "name": "client_email",
+              "value": "={{ $('INPUT DATA').first().json.emailAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "3bd9ac7d-bfd7-4e43-9764-83c610ef60d1",
+              "name": "",
+              "value": "={{ $('Convert email info to JSON').first().json.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7a892192-1d32-4add-b8ac-1e2d92f5ed4f",
+              "name": "date",
+              "value": "={{ $('Convert email info to JSON').first().json.meeting_date }}",
+              "type": "string"
+            },
+            {
+              "id": "457831ab-ffa7-4ccc-9268-bf098278f896",
+              "name": "start_time",
+              "value": "={{ $('Convert email info to JSON').first().json.start_time }}",
+              "type": "string"
+            },
+            {
+              "id": "4b6b4d26-ccb5-4e6a-99ac-e38b16c75f45",
+              "name": "end_time",
+              "value": "={{ $('Convert email info to JSON').first().json.end_time }}",
+              "type": "string"
+            },
+            {
+              "id": "516ed645-7d8f-45c2-b97c-23ce0e47ae62",
+              "name": "nb_of_participants",
+              "value": "={{ $('Convert email info to JSON').first().json.number_of_participants }}",
+              "type": "string"
+            },
+            {
+              "id": "ae58940c-d74d-41b5-b013-cad49c79dde4",
+              "name": "invoice_address",
+              "value": "={{ $('Convert email info to JSON').first().json.billing_address }}",
+              "type": "string"
+            },
+            {
+              "id": "375d7c04-c6e2-455b-b6a7-8c5aec65a10c",
+              "name": "room_name",
+              "value": "={{ $json.selectedRoom.room_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c1276322-f8f5-459c-8f68-32861d8be319",
+              "name": "room_equipments",
+              "value": "={{ $json.selectedRoom.equipments }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6380,
+        520
+      ],
+      "id": "98776d6f-110c-49ef-871f-e1e65ecb3cff",
+      "name": "Booking info"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "N6DMwN6GYsEtgfnY",
+          "mode": "list",
+          "cachedResultName": "WORKFLOW_GENERATE_INVOICE_OR_QUOTE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_email": "={{ $('Booking info').item.json.client_email }}",
+            "document_type": "quote",
+            "reservation_date": "={{ $('Booking info').item.json.date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_email",
+              "displayName": "client_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "document_type",
+              "displayName": "document_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "reservation_date",
+              "displayName": "reservation_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        6960,
+        480
+      ],
+      "id": "da7af0b2-bbdf-4b67-80ad-df3c93768d6e",
+      "name": "Generate quote"
+    },
+    {
+      "parameters": {
+        "content": "## Create client in database",
+        "height": 480,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4740,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "e0e92ba0-c151-4acc-9bab-0b21dd2db0f3",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const parsed = JSON.parse(item.json.text);\n  return {\n    json: parsed\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3980,
+        480
+      ],
+      "id": "bbaab846-0d69-4f9d-aeef-d75d9f7d8aed",
+      "name": "Convert email info to JSON"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the email sent by the client :  {{ $('INPUT DATA').item.json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=## Context\nYou will receive an email from a client, written in French, who wants to book a meeting room in a business hotel.\n\n## Goal\nYour task is to extract the following information from the email and return it as structured JSON. If any information is missing, return null for that field.\n\nHere is the list of fields to extract:\n\n{\n  \"client_full_name\": \"...\",           // Full name of the person making the request\n  \"company_name\": \"...\",               // Name of the company\n  \"meeting_date\": \"...\",               // Date of the meeting (format: YYYY-MM-DD)\n  \"start_time\": \"...\",                 // Start time of the meeting (24h format: HH:MM)\n  \"end_time\": \"...\",                   // End time of the meeting (24h format: HH:MM)\n  \"number_of_participants\": ...,      // Total number of participants\n  \"billing_address\": \"...\",            // Billing address (if provided)\n  \"additional_information\": \"...\"      // Any other relevant details or requests\n}\n\n## Instructions:\n\nReturn the result in valid JSON only.\n\nDo not hallucinate missing information. Use null when information is not provided.\n\nMake sure to extract time and date properly if the client uses vague expressions like \"toute la journée\" (all day), \"le matin\" (morning), or \"de 9h à 12h\".\n\nUse French language understanding to interpret common expressions used in meeting room booking requests.\n\nIgnore greetings, signatures, and irrelevant content."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        3680,
+        480
+      ],
+      "id": "50e8cba1-d4c7-4b61-a7d2-559b80a6364c",
+      "name": "Extract email info"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1e72b955-db74-465f-bec4-dff46f4d5974",
+              "name": "emailAddress",
+              "value": "={{ $('INPUT DATA').item.json.emailAddress }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4200,
+        480
+      ],
+      "id": "70c815bf-4d9a-444f-8d67-49f40fee7264",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1e72b955-db74-465f-bec4-dff46f4d5974",
+              "name": "emailAddress",
+              "value": "={{ $('INPUT DATA').item.json.emailAddress }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3420,
+        760
+      ],
+      "id": "c2ca54ed-baf2-4fbf-82c5-e51a5b74294a",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "GOF5UgT40kUpM5sd",
+          "mode": "list",
+          "cachedResultName": "AGENT_CLIENT_MANAGEMENT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_email": "={{ $json.emailAddress }}",
+            "action": "create the client if they don't exist and update information",
+            "client_information": "=here are current know information about the client : name = {{ $json.client_full_name }}, company name = {{ $json.company_name }}, invoice address = {{ $json.billing_address }}, email address = {{ $json.emailAddress }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_email",
+              "displayName": "client_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "client_information",
+              "displayName": "client_information",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4900,
+        500
+      ],
+      "id": "47fa5556-6dd2-477e-b184-24bf5cfe1ac0",
+      "name": "Create client"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=here is the URL of the quote :   {{ $json.url }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an assistant working for a business hotel.  \nYour task is to write a polite and professional confirmation email in **French**, informing the client that their quote (devis) is available.\n\nThe email must:\n- Thank the client for their request\n- Confirm that the quote has been prepared\n- Include a clickable HTML link using the placeholder [LIEN] where the client can view or download the quote\n- End with a polite closing and signature (e.g., “L’équipe Réservation”)\n\nYou must return the full email body **as HTML only**, with no explanation, no markdown, and no plain text version.  \nInclude `<html>`, `<head>` and `<body>` tags — plus the email content in HTML format (paragraphs, links, etc.).\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        7280,
+        480
+      ],
+      "id": "c4dc195e-cb25-48c2-9d3e-d73fda609bc7",
+      "name": "Write email reply with quote"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        7360,
+        700
+      ],
+      "id": "3217bbcb-13af-4c71-8484-b6b1dbb08914",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "emailAddress": "client_001@test.com",
+          "text": "Bonjour, je me permets de vous contacter, nous aimerions réserver une salle pour le mardi 23 juillet prochain, toute la journée. Bien à vous,"
+        }
+      }
+    ],
+    "Convert email info to JSON": [
+      {
+        "json": {
+          "client_full_name": "Jean Dupuis",
+          "company_name": "Société TechNova",
+          "meeting_date": "2024-07-23",
+          "start_time": "09:00",
+          "end_time": "17:00",
+          "number_of_participants": 8,
+          "billing_address": "3 rue de la ré 74333 Annecy",
+          "additional_information": "Réservation pour toute la journée"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Confirmation de réservation1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Demande de réservation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Input fixed-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirmation de réservation1": {
+      "main": [
+        []
+      ]
+    },
+    "Classify Email": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge inputs",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Merge inputs1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "INPUT DATA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Input fixed-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "INPUT DATA": {
+      "main": [
+        [
+          {
+            "node": "Classify Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input fixed-data": {
+      "main": [
+        [
+          {
+            "node": "Merge inputs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge inputs": {
+      "main": [
+        []
+      ]
+    },
+    "Merge inputs1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract email info",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If any required info is missing": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Reply with missing info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reply with missing info",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply with missing info": {
+      "main": [
+        [
+          {
+            "node": "Email settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demande de réservation": {
+      "main": [
+        [
+          {
+            "node": "INPUT DATA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check room availability": {
+      "main": [
+        [
+          {
+            "node": "If there is any available room",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If there is any available room": {
+      "main": [
+        [
+          {
+            "node": "Select the best room for client",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply with no room available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reply with no room available",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply with no room available": {
+      "main": [
+        [
+          {
+            "node": "Return email reply - no room available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create booking": {
+      "main": [
+        [
+          {
+            "node": "Generate quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select the best room for client": {
+      "main": [
+        [
+          {
+            "node": "Booking info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking info": {
+      "main": [
+        [
+          {
+            "node": "Create booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert email info to JSON": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract email info": {
+      "main": [
+        [
+          {
+            "node": "Convert email info to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If any required info is missing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Extract email info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create client": {
+      "main": [
+        [
+          {
+            "node": "Check room availability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate quote": {
+      "main": [
+        [
+          {
+            "node": "Write email reply with quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write email reply with quote",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 20
+  },
+  "versionId": "57185a5d-4ecb-4954-a253-66d08f6ab90c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "oFbhQshbIHRk48q3",
+  "tags": [
+    {
+      "createdAt": "2025-05-03T12:40:05.376Z",
+      "updatedAt": "2025-05-03T12:40:05.376Z",
+      "id": "C7ParoXyUmmYDvCQ",
+      "name": "WhatsApp"
+    },
+    {
+      "createdAt": "2025-05-03T12:40:08.866Z",
+      "updatedAt": "2025-05-03T12:40:08.866Z",
+      "id": "xEfLVeLt7iT32rK2",
+      "name": "Agent IA"
+    }
+  ]
+}
