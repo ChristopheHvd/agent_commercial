@@ -1,0 +1,624 @@
+{
+  "name": "2.0 Email Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "utONqqk8qoDSTj28",
+          "mode": "list",
+          "cachedResultName": "3.1 AGENT Workflow based"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "emailAddress": "={{ $json.from.value[0].address }}",
+            "rawEmailText": "={{ $json.rawEmail }}",
+            "emailTextOnly": "={{ $json.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "emailAddress",
+              "displayName": "emailAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "rawEmailText",
+              "displayName": "rawEmailText",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "emailTextOnly",
+              "displayName": "emailTextOnly",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1340,
+        40
+      ],
+      "id": "1fcb63d8-7dc0-48cc-97d6-93094774708b",
+      "name": "Call Workflow Reservation"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=here is the text from the email :  {{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a specialized assistant for classifying incoming customer emails for a business hotel.\n\nYour task is to read the email content and determine whether it is about a **meeting room booking request** or not.\n\n---\n\n## INSTRUCTIONS\n\nCarefully read the email and respond with exactly one of the following two labels:\n\n- `booking_request` → if the email is related to a meeting room booking request (even if the message is vague, incomplete, or informal)\n- `other` → if the email is about anything else (invoice, general info, follow-up, spam, etc.)\n\nDo not explain your reasoning. Respond with the label only.\n\n---\n\n## EXAMPLES\n\n**Email:**  \n> Bonjour, je cherche une salle pour organiser une réunion avec 12 personnes la semaine prochaine.  \n✅ Answer: `booking_request`\n\n**Email:**  \n> Merci encore pour l'accueil, tout s’est bien passé !  \n✅ Answer: `other`\n\n**Email:**  \n> Pouvez-vous m’envoyer le devis mis à jour avec les options du déjeuner ?  \n✅ Answer: `other`\n\n**Email:**  \n> Nous aimerions réserver une salle de réunion pour jeudi prochain, de 10h à 17h.  \n✅ Answer: `booking_request`\n\n**Email:**  \n> Je souhaite simplement visiter vos locaux avant de décider.  \n✅ Answer: `other`\n\n---\n\nRespond only with one of the labels: `booking_request` or `other`. Nothing else.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -180,
+        -100
+      ],
+      "id": "6e36046e-5af7-45e8-b814-91dfc78ea933",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        100
+      ],
+      "id": "a4a43281-1bb1-4bfe-a87c-3d96674797bf",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "booking_request",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7997644e-28bb-44e3-bd21-88f966c9f469"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "booking"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        200,
+        -100
+      ],
+      "id": "f3d27f6f-96ed-4311-a7d4-1ebabca865d9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -820,
+        -100
+      ],
+      "id": "5f342b8e-e768-4e7f-9ea2-3ee552e669c5",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dCsjXAYTE06LQtD6",
+          "name": "Hotel Alpilles"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1040,
+        100
+      ],
+      "id": "72771e56-b50c-4f5b-a29f-19430875156c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        -100
+      ],
+      "id": "f33da7a5-af4d-40ee-a0a9-1feae0be3a79",
+      "name": "Mark a message as read",
+      "webhookId": "c1278dbe-efdf-4e65-8718-f9c779aeca1d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dCsjXAYTE06LQtD6",
+          "name": "Hotel Alpilles"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3126619408221429104"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        -100
+      ],
+      "id": "37a10dad-6abc-480b-a142-8b0b2b2ff9c4",
+      "name": "Mark message as treated by AI",
+      "webhookId": "d9436a58-69a6-4781-8302-220ff8c99c2e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dCsjXAYTE06LQtD6",
+          "name": "Hotel Alpilles"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Votre demande de réservation</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      color: #2c2c2c;\n      background-color: #ffffff;\n      margin: 0;\n      padding: 40px 20px;\n    }\n    .container {\n      max-width: 600px;\n      margin: auto;\n    }\n    .title {\n      font-size: 24px;\n      font-weight: bold;\n      margin-bottom: 30px;\n      color: #1a1a1a;\n    }\n    .content {\n      font-size: 16px;\n      line-height: 1.7;\n      margin-bottom: 40px;\n    }\n    .signature {\n      border-top: 1px solid #ddd;\n      padding-top: 20px;\n      font-size: 14px;\n      color: #555;\n    }\n    .logo {\n      margin-top: 10px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"title\">Votre demande de réservation</div>\n    <div class=\"content\">\n      {{ $json.email_content }}\n    </div>\n    <div class=\"signature\">\n      <img class=\"logo\" src=\"https://files.cloudron.alpes-ia.fr/Logo%20Hotel%20Alpilles.png\" alt=\"Logo Hôtel Alpilles\" width=\"120\">\n    </div>\n  </div>\n</body>\n</html>\n"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1860,
+        -200
+      ],
+      "id": "d4380873-78d6-4791-9af7-d40b42d7efe3",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2100,
+        -80
+      ],
+      "id": "43623d9e-0baf-4c13-a909-0f9a0cb29724",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "398eaac5-ca58-4ae8-bdd2-e13959938343",
+              "name": "threadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "9b0ba53e-206e-4a0a-b94f-3d5b08f3ac30",
+              "name": "inReplyTo",
+              "value": "={{ $json.inReplyTo }}",
+              "type": "string"
+            },
+            {
+              "id": "8ed122f2-2faa-4dc4-b1a3-5a909f80657f",
+              "name": "messageId",
+              "value": "={{ $json.messageId }}",
+              "type": "string"
+            },
+            {
+              "id": "864e1eaa-3111-4b9c-8e39-063469abae7b",
+              "name": "from.value[0].address",
+              "value": "={{ $json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "53e40774-3638-4072-a703-d44f493beeef",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "30a9943e-45c4-47ba-b52a-c9bd63be93c8",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f5ed2127-5034-41e6-a179-fdfce248f15b",
+              "name": "rawEmail",
+              "value": "={{ $json.html }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -60,
+        400
+      ],
+      "id": "bbd973f7-1d14-4d59-873f-a723d49d5d61",
+      "name": "Email Input Data"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json.id }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Hôtel Alpilles"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2440,
+        -80
+      ],
+      "id": "0073ca62-9b4b-41fd-9f8f-7acc9bd5669c",
+      "name": "Reply to a message",
+      "webhookId": "d14ff41f-2720-413b-8d8b-4c1ff14c861e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dCsjXAYTE06LQtD6",
+          "name": "Hotel Alpilles"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const json = $input.first().json;\n\nreturn [\n  {\n    json: {\n      ...json,\n      email_content: json.email_content?.replace(/\\n/g, \"\") || \"\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1620,
+        -80
+      ],
+      "id": "e5ce3638-0a2b-432e-ad1a-2be06c8df923",
+      "name": "Remove extra line breaks"
+    },
+    {
+      "parameters": {
+        "content": "## TODO\n- gestion des erreurs : remettre l'email à UNREAD si jamais ça plante\n",
+        "height": 240,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "4921625a-89ad-4dd7-88cc-a628c79ab3ab",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "198373ebef41a82a",
+          "threadId": "198373ebef41a82a",
+          "labelIds": [
+            "UNREAD",
+            "INBOX"
+          ],
+          "sizeEstimate": 6937,
+          "headers": {
+            "delivered-to": "Delivered-To: hotel.alpilles@gmail.com",
+            "received": "Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])\r\n        by mx.google.com with SMTPS id 8926c6da1cb9f-50887a75c82sor2190912173.9.2025.07.23.05.25.14\r\n        for <hotel.alpilles@gmail.com>\r\n        (Google Transport Security);\r\n        Wed, 23 Jul 2025 05:25:15 -0700 (PDT)",
+            "x-received": "X-Received: by 2002:a05:6e02:144c:b0:3df:5283:ac73 with SMTP id\r\n e9e14a558f8ab-3e335584d19mr61115235ab.12.1753273514069; Wed, 23 Jul 2025\r\n 05:25:14 -0700 (PDT)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1753273515; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=QrMXXCZ+82dbbnovoeFhRcaC1ZHLUZIFRqDIuQs/d3diPCtoqrYYEQtQ+H13mGRXYM\r\n         agl/uOaNvSXXRJnjoXSqOTcWEvZMlN4pv2WVjBACV18G7KH4Ohdp1u1youDuuYtvKcWx\r\n         jtmIhSeKtwgfbGhen95jEFN/qoUfrzj9cuU04XpO6/JrP1VZ4cYePEVqYpZsdjTztif/\r\n         L3FpeaIzK0aUNTC609ekGUaZgYKoNQeD3Th8ef321b3cWi5AnafJ5wbEq6HKjiSvGgMf\r\n         y4WNrIOzzC3r+zLL4AKtn4RI3pY3HDL62WmEXU3dGcn0g/MACe5tjF0ZWGr5albIOldo\r\n         B02A==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=to:subject:message-id:date:from:mime-version:dkim-signature;\r\n        bh=oKyVj/hS532hUfUY4UD70PQEqVS4lfrnY4iEHcKfGuc=;\r\n        fh=44yoMiobvYzFNq2TsyGUWiKIgbd8rAM51SMuG4bDxyI=;\r\n        b=UoCjxDzwj2wAekkilqOO/1Viaovcrs+qRp4HkIE30jjNE+LB1lkmiAt96AVVR1cyFS\r\n         AJNzDNaYX/GCWetQWAbUPzc7VzqScqt2xRu9u9JwTu2c9GGjM4YsO7ggsnH9GqMU5Uij\r\n         VJA2siZwpc7Yjtv8Q8ZWBySooEgfGYE1YPr5u724KtZInQMYqpR9rDtKWz1JlAf6p9wc\r\n         cbfvZyOFzkFTeNhDoYK/76P7WbHdmq4mH0yIgCfFIwRGzl0QA5snaeiY/Dy5qNL3lXM8\r\n         DxCgcaVdZEB//ngeRTMIrvjXagAAD3ovobZYYyolWpJ6XaO7kq23X9h26krUbAz74T2G\r\n         ZqPg==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com;\r\n       dkim=pass header.i=@gmail.com header.s=20230601 header.b=HWd2Ea5E;\r\n       spf=pass (google.com: domain of havard.christophe@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=havard.christophe@gmail.com;\r\n       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;\r\n       dara=pass header.i=@gmail.com",
+            "return-path": "Return-Path: <havard.christophe@gmail.com>",
+            "received-spf": "Received-SPF: pass (google.com: domain of havard.christophe@gmail.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@gmail.com header.s=20230601 header.b=HWd2Ea5E;\r\n       spf=pass (google.com: domain of havard.christophe@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=havard.christophe@gmail.com;\r\n       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;\r\n       dara=pass header.i=@gmail.com",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=gmail.com; s=20230601; t=1753273514; x=1753878314; dara=google.com;\r\n        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject\r\n         :date:message-id:reply-to;\r\n        bh=oKyVj/hS532hUfUY4UD70PQEqVS4lfrnY4iEHcKfGuc=;\r\n        b=HWd2Ea5E7H7LzuvItNaR3ukAUUNXjFFzSBZXxYWGzrc99JqAr1kupri5HHZWUa1x7I\r\n         xuCBBHtMfYAXnlM84ufT03J4v+qKXRkaduTqOcHpbUcshiJ0aySDDHyMjO71UB9KBqDP\r\n         nYtFePzWEuIt39hQi93EleoIYDGAm82F0JBl4JHVonLvZrtbzTkty3G5otLYRNLQWXup\r\n         9Hj0Ty0YbUEiDF4WPlY8IC7txFr8pbQce9zm6RJdv2NDipjOy06cw39AbN5oV9Yel/An\r\n         7cTJcU8itjQGDkKA8WjVCCVOM8lubaUC5dugScbbwR2omYeQGb7kmHrNBAWfCmCgdGwx\r\n         UqBQ==",
+            "x-google-dkim-signature": "X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=1e100.net; s=20230601; t=1753273514; x=1753878314;\r\n        h=to:subject:message-id:date:from:mime-version:x-gm-message-state\r\n         :from:to:cc:subject:date:message-id:reply-to;\r\n        bh=oKyVj/hS532hUfUY4UD70PQEqVS4lfrnY4iEHcKfGuc=;\r\n        b=dUvSuzEpNESownKuIOxS1KIoP1XCZPdc8H+MmfKxIT/49w7RFQgYl82WGAk4KAcwH1\r\n         Gp8KtvmquHb8BOPasKpYVaM6cpnB13dHuvGcXqX+ZjChqBmUqRVw4bs0s4koXlM2zk9M\r\n         B0NfDi7s8SpebVZjr4Cxg3hlHKy6A0sY5ZmNBh4uw/N1uTEWCve8L0CYHaHwhAXmgPPJ\r\n         pT6im7foBsuhZjOzOLtG2lGW7hzjpgohNmmm+7J+dGhGNAKTtMkeVUbXUIX7jgWTBrY9\r\n         jxi8JuWrQMi4faZHKx5BNGsj60wQ5xQE6L8G1DGiYkRmIlUH2pT39q9B79U1thHMSLIu\r\n         mihA==",
+            "x-gm-message-state": "X-Gm-Message-State: AOJu0Yzs/Vspg3+jtWub+VRDO+Bnhe7XuBRsyy2a4QWl/t2LW0KcNVIf\r\n\tK5oocaVdiZk1gQP8fJFfZtuG/Cm5J3RNhvaUglPFAsgflg03UheIyj6Ppd/W9L4O7Tee3vZPpMF\r\n\tXwZ9A82Zkf3HgB1VjMPo4k77LvDB4lx7R8DiPfRu2dw==",
+            "x-gm-gg": "X-Gm-Gg: ASbGncursxGBJMLsFYkKizlJh6k1OFwzVnRAEyBji60OBVgati+WxRIF13SbGbTbx0B\r\n\tBsr1iZH8fVDI/EuMEkAOf9iVZAFe92CDQpXZ8zVTad5aAhcuYT1bsMVCpxyCt5w+nYPUlaeSdWW\r\n\tgCS4nr/4+wTtJ5ROEIcWdYP6jO3Vtc64vCIia3xpzPszqC65zyAKz2nRL4wJQIwNLEwLCi2pzyy\r\n\tHbn7sq/n5sDZnO/",
+            "x-google-smtp-source": "X-Google-Smtp-Source: AGHT+IG/luNmX1GIyMFpSoVvVwg58sfbrkWSahCpPbFfa/45k0QMfCzlehuyw4B+Jsvj8qxB50qdrODwEYaPXtBLncU=",
+            "mime-version": "MIME-Version: 1.0",
+            "from": "From: Christophe Havard <havard.christophe@gmail.com>",
+            "date": "Date: Wed, 23 Jul 2025 14:25:03 +0200",
+            "x-gm-features": "X-Gm-Features: Ac12FXyuhzgnJO2Wa00IsaPfDpv1Uc81E_glWsMwL0Y9cYcm9RPhXSeJSJ8kGrc",
+            "message-id": "Message-ID: <CAEYdJuNd2=AHcvHdVewLvmvERw02mOGRE_pVU+UHiChUhpLnKQ@mail.gmail.com>",
+            "subject": "Subject: =?UTF-8?B?UsOpc2VydmF0aW9u?=",
+            "to": "To: \"hotel.alpilles@gmail.com\" <hotel.alpilles@gmail.com>",
+            "content-type": "Content-Type: multipart/alternative; boundary=\"0000000000000012b4063a97cd41\""
+          },
+          "html": "<div dir=\"ltr\"><div><div>Bonjour,</div><div>je souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre 9h et 13h.</div><div>La réservation est pour la société TechInnov, l&#39;adresse de facturation est 34 Avenue de Thones 74000 Annecy.</div><div>Merci.</div><div>Cordialement,</div><div>Christophe Havard</div></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div>06-58-32-38-06</div><div><span style=\"color:rgb(0,0,0)\"><font face=\"arial, sans-serif\"><a href=\"http://www.linkedin.com/in/christophe-havard-b38b4849\" target=\"_blank\">http://www.linkedin.com/in/christophe-havard-b38b4849</a></font></span></div></div></div></div>\n",
+          "text": "Bonjour,\nje souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre\n9h et 13h.\nLa réservation est pour la société TechInnov, l'adresse de facturation est\n34 Avenue de Thones 74000 Annecy.\nMerci.\nCordialement,\nChristophe Havard\n\n-- \n06-58-32-38-06\nhttp://www.linkedin.com/in/christophe-havard-b38b4849\n",
+          "textAsHtml": "<p>Bonjour,<br/>je souhaite r&eacute;server une salle de r&eacute;union pour 5 personnes le 02 Ao&ucirc;t entre<br/>9h et 13h.<br/>La r&eacute;servation est pour la soci&eacute;t&eacute; TechInnov, l&apos;adresse de facturation est<br/>34 Avenue de Thones 74000 Annecy.<br/>Merci.<br/>Cordialement,<br/>Christophe Havard</p><p>--<br/>06-58-32-38-06<br/><a href=\"http://www.linkedin.com/in/christophe-havard-b38b4849\">http://www.linkedin.com/in/christophe-havard-b38b4849</a></p>",
+          "subject": "Réservation",
+          "date": "2025-07-23T12:25:03.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "hotel.alpilles@gmail.com",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:hotel.alpilles@gmail.com\" class=\"mp_address_email\">hotel.alpilles@gmail.com</a></span>",
+            "text": "hotel.alpilles@gmail.com"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "havard.christophe@gmail.com",
+                "name": "Christophe Havard"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Christophe Havard</span> &lt;<a href=\"mailto:havard.christophe@gmail.com\" class=\"mp_address_email\">havard.christophe@gmail.com</a>&gt;</span>",
+            "text": "\"Christophe Havard\" <havard.christophe@gmail.com>"
+          },
+          "messageId": "<CAEYdJuNd2=AHcvHdVewLvmvERw02mOGRE_pVU+UHiChUhpLnKQ@mail.gmail.com>"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Call Workflow Reservation": {
+      "main": [
+        [
+          {
+            "node": "Remove extra line breaks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Input Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Call Workflow Reservation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark a message as read": {
+      "main": [
+        [
+          {
+            "node": "Mark message as treated by AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark message as treated by AI": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Input Data": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Reply to a message": {
+      "main": [
+        []
+      ]
+    },
+    "Remove extra line breaks": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8d17b215-3ec5-4010-9262-ebf5862e0be6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "dcDZIhEFnWEMXCQl",
+  "tags": []
+}
