@@ -1,0 +1,884 @@
+{
+  "name": "Save conversation + extract data",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "emailAddress"
+            },
+            {
+              "name": "rawEmailText"
+            },
+            {
+              "name": "emailTextOnly"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        480
+      ],
+      "id": "7d6ffd47-ac13-4a39-b6eb-c5c34339fb19",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -660,
+        480
+      ],
+      "id": "2fbcb1aa-f9b6-4293-a6ba-03efa6096c0d",
+      "name": "INPUT DATA"
+    },
+    {
+      "parameters": {
+        "content": "## Principe\n- Principes fondamentaux\nUn email ≠ une conversation\n\n- Une même adresse peut ouvrir plusieurs demandes simultanées.\n\n- Le lien entre les échanges ne doit pas reposer uniquement sur client_email.\n\n- Chaque demande = une conversation unique\nElle est identifiée par un conversation_id que tu génères au moment de la première réponse.\n\n- Les conversations sont persistées\n\nOn conserves à la fois :\n- le fil des messages (messages[])\n- les informations extraites sous forme structurée (structured_data)\n- le statut (in_progress, completed, etc.)\n\n",
+        "height": 440,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        320,
+        860
+      ],
+      "typeVersion": 1,
+      "id": "8daf8bf9-96db-411e-a4ba-2642e78d1228",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "## Logique complète du système\n📥 1. Réception d’un email\nSi l’email contient un conversation_id (dans l’objet ou dans le corps HTML) →\n🔁 tu retrouves la conversation correspondante.\n\nSinon →\n🆕 tu crées une nouvelle conversation avec un nouvel ID.\n\n📦 2. Mise à jour de la conversation\nTu ajoutes le message reçu dans la liste messages[].\n\nTu passes ce message (et éventuellement les précédents) à un LLM pour :\n- mettre à jour le structured_data,\n- détecter les éléments encore manquants.\n\n\n🧾 3. Vérification des informations\nTu vérifies si les champs suivants sont tous présents dans le structured_data :\n- nom complet du demandeur\n- entreprise concernée\n- date de la réservation\n- horaire de début et de fin\n- nombre de participants\n- adresse de facturation\n\n\n🤖 4. Génération de la réponse\nS’il manque des informations →\n✉️ l’agent répond avec une demande claire des éléments manquants, en rappelant ceux déjà reçus.\n\nSi tout est là →\n🧾 l’agent envoie un devis ou une confirmation, et la conversation passe en completed.\n\n🔁 5. Boucle de suivi\nChaque réponse de l’agent contient le conversation_id :\n- dans l’objet ou le corps HTML (visible ou caché),\n- ce qui permet d’identifier sans ambiguïté la conversation à la prochaine réponse du client.",
+        "height": 1020,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        860
+      ],
+      "typeVersion": 1,
+      "id": "3643cc16-7902-4256-8f2f-1301d0d357d3",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawHtml = $input.first().json.rawEmailText || \"\";\nlet conversationId = null;\n\n// Regex : match C-ID: suivi d'un identifiant alphanumérique (underscore et tiret autorisés)\nconst match = rawHtml.match(/C-ID:([a-zA-Z0-9_-]+)/);\n\nif (match) {\n  conversationId = match[1];\n}\n\n// Retourne le résultat pour usage ultérieur\nreturn [\n  {\n    json: {\n      ...$json,\n      conversation_id: conversationId || null,\n      conversation_found: !!conversationId\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        480
+      ],
+      "id": "a9d62809-2bdb-4b12-a818-042b55482cc0",
+      "name": "Extract conversation_id",
+      "notesInFlow": true,
+      "notes": "ex: C-ID:a1b2c3d4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a6e04e2b-acc5-4236-b5b1-cf5f05f4ef83",
+              "leftValue": "={{ $json.conversation_found }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        140,
+        480
+      ],
+      "id": "4f37a8f7-c47b-4673-a977-96e9c9ac3c21",
+      "name": "If conversation_id exists"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "p08z5m8h0rcxumi",
+        "table": "m4fehzqtmfdppl6",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "conversation_id",
+              "fieldValue": "={{ $json.conversation_id }}"
+            },
+            {
+              "fieldName": "client_email",
+              "fieldValue": "={{ $json.emailAddress }}"
+            },
+            {
+              "fieldName": "status",
+              "fieldValue": "in_progress"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        700,
+        600
+      ],
+      "id": "f6355246-6aa5-496f-8523-a9db39839d09",
+      "name": "Create new conversation",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "p08z5m8h0rcxumi",
+        "table": "mgrufs3hdat514n",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "content",
+              "fieldValue": "={{ $json.emailTextOnly }}"
+            },
+            {
+              "fieldName": "timestamp",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "sender",
+              "fieldValue": "client"
+            },
+            {
+              "fieldName": "raw_html",
+              "fieldValue": "={{ $json.rawEmailText }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        360,
+        140
+      ],
+      "id": "8cb37e02-9557-464e-bdc9-d4f4fa7964fe",
+      "name": "Create new message entry",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "p08z5m8h0rcxumi",
+        "table": "m4fehzqtmfdppl6",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.conversation.Id }}"
+            },
+            {
+              "fieldName": "structured_data",
+              "fieldValue": "={{ JSON.parse($json.text) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        3320,
+        300
+      ],
+      "id": "17a7d8fe-d967-40d9-9efc-e9f73d95ffc3",
+      "name": "Update conversation with new data",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Below is the latest email received from the client regarding their meeting room booking request:\n\n\"\"\"{{ $json.message.content || \"\" }}\"\"\"\n\nIf available, here is the previous email from the same conversation:\n\n\"\"\"{{ $json.previousMessage.content || \"No previous message available.\" }}\"\"\"\n\nHere is the current structured data that has already been extracted from earlier messages (if any):\n\n{{ JSON.stringify($json.conversation.structured_data) || \"no data available\" }}\n\nYour task is to analyze the new email in context of the previous one and return an **updated version** of the structured data.  \n- Keep existing values unless the new email explicitly updates them.  \n- Set any newly provided values accordingly.  \n- Leave values as `null` if still missing or not mentioned.  \n- Return only a JSON object called \"text\". No comments or explanations.\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert assistant tasked with extracting structured information from client emails written in French. These emails typically involve requests to book a meeting room in a business hotel.\n\nYou will receive:\n- the most recent email from the client,\n- the previous email from the same conversation (if any),\n- and the current structured data already extracted from earlier messages.\n\nYour goal is to return a valid and updated JSON object with the fields listed below. You must:\n- update the values only if the new message explicitly provides updated information,\n- preserve existing values in the structured data if they are still valid,\n- and set any missing or unspecified information to `null`.\n\nDo not guess or hallucinate. Only extract what is explicitly stated in the content. If a field is not clearly mentioned, leave it unchanged (if already present), or set it to `null`.\n\nToday’s date is: {{ $today }}\n\nHere are the fields to extract and maintain:\n\n- `\"client_full_name\"`: Full name of the person making the request or the person the quote should be addressed to.\n- `\"company_name\"`: The name of the company requesting the booking.\n- `\"meeting_date\"`: The specific date of the requested meeting.\n- `\"start_time\"`: The start time of the booking (e.g., \"09:00\").\n- `\"end_time\"`: The end time of the booking (e.g., \"17:00\").\n- `\"number_of_participants\"`: The number of expected participants.\n- `\"billing_address\"`: The billing address of the company.\n- `\"required_equipments\"`: A list of requested equipment (e.g., projector, flipchart, etc.).\n- `\"extra_service\"`: A list of additional requested services (e.g., coffee break, lunch, etc.).\n\nFormat requirements:\n- Dates must be in `\"YYYY-MM-DD\"` format.\n- Times must be in `\"HH:MM\"` format.\n- Output must be a valid JSON object called \"text\" with all the above fields, in English.\n- Do not include any explanation or comment, only the JSON object.\n\nBe strict: only extract what is clearly stated in the email content.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2620,
+        320
+      ],
+      "id": "100f24a2-d939-4331-a585-46f0c8b2a697",
+      "name": "Extract email structured_data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupération du conversation_id s'il a été extrait précédemment\nconst input = $input.first().json;\nlet conversationId = input.conversation_id;\n\n// Si aucun conversation_id trouvé, on en génère un nouveau\nif (!conversationId) {\n  // Génération d'un ID court basé sur timestamp + aléatoire\n  const base = Date.now().toString(36); // timestamp en base36\n  const random = Math.random().toString(36).substr(2, 4); // 4 chars aléatoires\n  conversationId = `C-ID:${base}${random}`;\n}\n\nreturn [\n  {\n    json: {\n      ...input,\n      conversation_id: conversationId\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        600
+      ],
+      "id": "c1f5d1dd-d720-4eff-bbd5-5bedde07f37a",
+      "name": "Generate new converation_id if needed"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2660,
+        480
+      ],
+      "id": "3562a07c-2a88-42b9-b7a4-8bdac8aba739",
+      "name": "OpenAI Chat Model8",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Hypothèses\nLe conversation_id est injecté dans le corps de l’email, sous forme de :\n\n- commentaire HTML : <!-- C-ID:abc123 -->\n\n- ou texte : C-ID:abc123\n\n- ou signature HTML : <div style=\"display:none;\">C-ID:abc123</div>\n\nLe format attendu est toujours C-ID:xxxxx avec un ID alphanumérique (ex: C-ID:a1b2c3d4)",
+        "height": 500,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -280,
+        140
+      ],
+      "typeVersion": 1,
+      "id": "1aeb96fd-d0ab-4995-9e33-6871cd603937",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://nocodb.cloudron.alpes-ia.fr/api/v2/tables/m4fehzqtmfdppl6/links/cctpuqmqpf0twhe/records/{{ $json.conversation.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"Id\":{{ $json.message.Id }}\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        420
+      ],
+      "id": "83d00726-30ac-4991-a702-a25371dcd1f3",
+      "name": "Update conversation with linked message",
+      "credentials": {
+        "nocoDb": {
+          "id": "XxkE4DTJrfHUhPGP",
+          "name": "NocoDB account"
+        },
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1740,
+        420
+      ],
+      "id": "dda53ab1-aee2-46d5-a04c-3231e32ac909",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "content": "## Link the message to conversation\napi/v2/tables/{id table conversations}/links/{field_id du champ conversations.messages}/records/{id de la conversation}\n\nInput = array of message ids",
+        "height": 340,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1000,
+        260
+      ],
+      "typeVersion": 1,
+      "id": "3eaddaa0-0ba7-4795-ba42-8b0a6af6a4c9",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3040,
+        300
+      ],
+      "id": "3b24278a-b6af-4927-8fe0-6ea61f59cffe",
+      "name": "Merge avec conversation_id"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1080,
+        420
+      ],
+      "id": "c20d5384-5e6d-42c2-a5d0-a304562aa633",
+      "name": "Merge new message with existing conversation"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "p08z5m8h0rcxumi",
+        "table": "m4fehzqtmfdppl6",
+        "limit": 1,
+        "options": {
+          "fields": [],
+          "where": "=(conversation_id,eq,{{ $json.conversation_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        500,
+        380
+      ],
+      "id": "5044a315-801d-4744-9517-ad81a7e0fbfc",
+      "name": "Get conversation",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const first = $input.first();\nreturn [\n  { json: { conversation: first ? first.json : null } }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        600
+      ],
+      "id": "95256af1-de9c-466e-bb1d-996f4102f4e3",
+      "name": "Create conversation object"
+    },
+    {
+      "parameters": {
+        "jsCode": "const first = $input.first();\nreturn [\n  { json: { message: first ? first.json : null } }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        140
+      ],
+      "id": "97e78a7f-aaee-4ffd-9dae-c6f25be679d2",
+      "name": "Create message object"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2400,
+        340
+      ],
+      "id": "83ac69a8-bbbf-412f-8bc5-b55e01cdf028",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "p08z5m8h0rcxumi",
+        "table": "mgrufs3hdat514n",
+        "limit": 1,
+        "options": {
+          "sort": {
+            "property": [
+              {
+                "field": "CreatedAt",
+                "direction": "desc"
+              }
+            ]
+          },
+          "where": "=(conversation_id,eq,{{ $json.conversation.conversation_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1960,
+        220
+      ],
+      "id": "3dd98264-ddc2-4601-b28d-935c500c2c9c",
+      "name": "Get previous message from conversation",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const first = $input.first();\nreturn [\n  { json: { previousMessage: first ? first.json : null } }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        220
+      ],
+      "id": "11a824c7-413c-4c38-a9ed-8017de0e9681",
+      "name": "Create previousMessage object"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61087426-ecb3-4ce2-8005-bf29d47009a5",
+              "name": "structured_data",
+              "value": "={{ $json.structured_data }}",
+              "type": "object"
+            },
+            {
+              "id": "48f6dc75-8945-479e-9c98-a06119aab2e7",
+              "name": "conversationId",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3540,
+        300
+      ],
+      "id": "3df147ff-db72-469a-88a9-00914b202cd0",
+      "name": "RETURN Conversation structured data"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "emailAddress": "havard.christophe@gmail.com",
+          "rawEmailText": "<div dir=\"ltr\"><div><div>Bonjour,</div><div>je souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre 9h et 13h.</div><div>La réservation est pour la société TechInnov, l&#39;adresse de facturation est 34 Avenue de Thones 74000 Annecy.</div><div>Merci.</div><div>Cordialement,</div><div>Christophe Havard</div></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div>06-58-32-38-06</div><div><span style=\"color:rgb(0,0,0)\"><font face=\"arial, sans-serif\"><a href=\"http://www.linkedin.com/in/christophe-havard-b38b4849\" target=\"_blank\">http://www.linkedin.com/in/christophe-havard-b38b4849</a></font></span></div></div></div></div>\n",
+          "emailTextOnly": "Bonjour,\nje souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre\n9h et 13h.\nLa réservation est pour la société TechInnov, l'adresse de facturation est\n34 Avenue de Thones 74000 Annecy.\nMerci.\nCordialement,\nChristophe Havard\n\n-- \n06-58-32-38-06\nhttp://www.linkedin.com/in/christophe-havard-b38b4849\n"
+        }
+      }
+    ],
+    "Extract conversation_id": [
+      {
+        "json": {
+          "emailAddress": "havard.christophe@gmail.com",
+          "rawEmailText": "<div dir=\"ltr\"><div><div>Bonjour,</div><div>je souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre 9h et 13h.</div><div>La réservation est pour la société TechInnov, l&#39;adresse de facturation est 34 Avenue de Thones 74000 Annecy.</div><div>Merci.</div><div>Cordialement,</div><div>Christophe Havard</div></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div>06-58-32-38-06</div><div><span style=\"color:rgb(0,0,0)\"><font face=\"arial, sans-serif\"><a href=\"http://www.linkedin.com/in/christophe-havard-b38b4849\" target=\"_blank\">http://www.linkedin.com/in/christophe-havard-b38b4849</a></font></span></div></div></div></div>\n",
+          "emailTextOnly": "Bonjour,\nje souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre\n9h et 13h.\nLa réservation est pour la société TechInnov, l'adresse de facturation est\n34 Avenue de Thones 74000 Annecy.\nMerci.\nCordialement,\nChristophe Havard\n\n-- \n06-58-32-38-06\nhttp://www.linkedin.com/in/christophe-havard-b38b4849\n",
+          "conversation_id": "C-ID:mdilxthjbbzo",
+          "conversation_found": true
+        }
+      }
+    ],
+    "Merge": [
+      {
+        "json": {
+          "previousMessage": {
+            "Id": 16,
+            "CreatedAt": "2025-07-25 10:27:42+00:00",
+            "UpdatedAt": null,
+            "content": "Bonjour,\nje souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre\n9h et 13h.\nLa réservation est pour la société TechInnov, l'adresse de facturation est\n34 Avenue de Thones 74000 Annecy.\nMerci.\nCordialement,\nChristophe Havard\n\n-- \n06-58-32-38-06\nhttp://www.linkedin.com/in/christophe-havard-b38b4849\n",
+            "sender": "client",
+            "timestamp": "2025-07-25 10:27:42+00:00",
+            "raw_html": "<div dir=\"ltr\"><div><div>Bonjour,</div><div>je souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre 9h et 13h.</div><div>La réservation est pour la société TechInnov, l&#39;adresse de facturation est 34 Avenue de Thones 74000 Annecy.</div><div>Merci.</div><div>Cordialement,</div><div>Christophe Havard</div></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div>06-58-32-38-06</div><div><span style=\"color:rgb(0,0,0)\"><font face=\"arial, sans-serif\"><a href=\"http://www.linkedin.com/in/christophe-havard-b38b4849\" target=\"_blank\">http://www.linkedin.com/in/christophe-havard-b38b4849</a></font></span></div></div></div></div>\n",
+            "conversations_id": 7,
+            "conversation_id": {
+              "Id": 7,
+              "conversation_id": "C-ID:mdilxthjbbzo"
+            }
+          },
+          "data": "true",
+          "message": {
+            "content": "Bonjour,\nje souhaite réserver une salle de réunion pour 10 personnes le 02 Août entre\n9h et 13h.\nLa réservation est pour la société TechInnov, l'adresse de facturation est\n34 Avenue de Thones 74000 Annecy.\nMerci.\nCordialement,\nChristophe Havard\n\n-- \n06-58-32-38-06\nhttp://www.linkedin.com/in/christophe-havard-b38b4849\n",
+            "timestamp": "2025-07-25T06:27:42.129-04:00",
+            "sender": "client",
+            "raw_html": "<div dir=\"ltr\"><div><div>Bonjour,</div><div>je souhaite réserver une salle de réunion pour 5 personnes le 02 Août entre 9h et 13h.</div><div>La réservation est pour la société TechInnov, l&#39;adresse de facturation est 34 Avenue de Thones 74000 Annecy.</div><div>Merci.</div><div>Cordialement,</div><div>Christophe Havard</div></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div>06-58-32-38-06</div><div><span style=\"color:rgb(0,0,0)\"><font face=\"arial, sans-serif\"><a href=\"http://www.linkedin.com/in/christophe-havard-b38b4849\" target=\"_blank\">http://www.linkedin.com/in/christophe-havard-b38b4849</a></font></span></div></div></div></div>\n",
+            "Id": 16
+          },
+          "conversation": {
+            "Id": 7,
+            "CreatedAt": "2025-07-25 09:17:01+00:00",
+            "UpdatedAt": "2025-07-25 10:16:47+00:00",
+            "conversation_id": "C-ID:mdilxthjbbzo",
+            "client_email": "havard.christophe@gmail.com",
+            "status": "in_progress",
+            "structured_data": {
+              "client_full_name": "Christophe Havard",
+              "company_name": "TechInnov",
+              "meeting_date": "2025-08-02",
+              "start_time": "09:00",
+              "end_time": "13:00",
+              "number_of_participants": 5,
+              "billing_address": "34 Avenue de Thones 74000 Annecy",
+              "required_equipments": null,
+              "extra_service": null
+            },
+            "messages": 3
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "INPUT DATA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "INPUT DATA": {
+      "main": [
+        [
+          {
+            "node": "Extract conversation_id",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create new message entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract conversation_id": {
+      "main": [
+        [
+          {
+            "node": "If conversation_id exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If conversation_id exists": {
+      "main": [
+        [
+          {
+            "node": "Get conversation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate new converation_id if needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create new conversation": {
+      "main": [
+        [
+          {
+            "node": "Create conversation object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create new message entry": {
+      "main": [
+        [
+          {
+            "node": "Create message object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract email structured_data": {
+      "main": [
+        [
+          {
+            "node": "Merge avec conversation_id",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Generate new converation_id if needed": {
+      "main": [
+        [
+          {
+            "node": "Create new conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model8": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract email structured_data",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update conversation with linked message": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Get previous message from conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge avec conversation_id": {
+      "main": [
+        [
+          {
+            "node": "Update conversation with new data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge new message with existing conversation": {
+      "main": [
+        [
+          {
+            "node": "Update conversation with linked message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get conversation": {
+      "main": [
+        [
+          {
+            "node": "Create conversation object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create conversation object": {
+      "main": [
+        [
+          {
+            "node": "Merge new message with existing conversation",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create message object": {
+      "main": [
+        [
+          {
+            "node": "Merge new message with existing conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get previous message from conversation": {
+      "main": [
+        [
+          {
+            "node": "Create previousMessage object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create previousMessage object": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Extract email structured_data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge avec conversation_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update conversation with new data": {
+      "main": [
+        [
+          {
+            "node": "RETURN Conversation structured data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3ab2e70b-8ad2-4ecd-96ec-78f3aefa7902",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "aDRzBNyaZli1odRu",
+  "tags": []
+}
