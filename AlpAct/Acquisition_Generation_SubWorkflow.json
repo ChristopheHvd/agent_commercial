@@ -1,0 +1,314 @@
+{
+  "name": "Acquisition_Generation_SubWorkflow",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        2960
+      ],
+      "id": "b000625e-3229-4285-a9ee-4f6e5deea5a0",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"acq_brief\":{\n    \"project_name\": \"\",\n    \"hypothesis\": { \"id\": \"\", \"statement\": \"\" },\n    \"uvp\": \"\",\n    \"product_summary\": \"\",\n    \"tone\": \"sobre\",\n    \"constraints\": [],\n    \"proof_points\": [],\n    \"segments\": [\n      {\n        \"name\": \"\",\n        \"slug\": \"\",\n        \"description\": \"\",\n        \"pains\": [],\n        \"gains\": [],\n        \"priority\": \"Haute|Moyenne|Basse\"\n      }\n    ],\n    \"channels\": { \"ads\": [\"Meta\",\"LinkedIn\",\"Google Search\"], \"organic\": [\"LinkedIn\",\"Instagram\"] },\n    \"budgets\": { \"low\": 50, \"med\": 200, \"high\": 500 },\n    \"language\": \"fr\",\n    \"brief_hash\": \"\"\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1860,
+        2960
+      ],
+      "id": "d20f80b0-b556-47c5-937d-7a2fc5f7005c",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Voici le acq_brief : {{ $json.output }}\nPour le segment \"{{segment_name}}\", propose 3 angles marketing distincts.\n\nJSON attendu :\n{\n  \"segment\": \"{{segment_name}}\",\n  \"angles\": [\n    {\n      \"id\": \"A1\",\n      \"label\": \"Image RSE forte\",\n      \"core_message\": \"…\",\n      \"promise\": \"…\",\n      \"pain_addressed\": \"…\",\n      \"proof_to_use\": [\"…\"],\n      \"cta\": \"…\",\n      \"objections_to_preempt\": [\"…\"]\n    }\n  ]\n}\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.system_prompt }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2480,
+        2700
+      ],
+      "id": "a5c5f1f3-c319-4294-91f8-691fc51b40a0",
+      "name": "Basic LLM Chain",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es à l’étape NORMALISATION.\nNettoie et consolide les informations ci-dessous en un unique objet `acq_brief` conforme au schéma demandé.\n\nDonnées projet (brut) :\n- Nom projet : {{ $json.project_name }}\n- Vision : {{ $json.vision }}\n- Mission : {{ $json.mission }}\n- Valeurs : {{ $json.values }}\n- Hypothèse testée : {{ $json.hypothesis }}\n- UVP : {{ $json.property_proposition_de_valeur }}\n- Description produit/offre : {{ $json.solution }}\n- Preuves/atouts : {{ $json.differentiation }}\n- Ton/contraintes : /\n- Segments (texte ou JSON) : {{ $json.property_segment_client }}\n- Canaux souhaités (optionnel) : {{ $json.priority_channels }}\n\nExigences :\n- Déduplique, harmonise la casse, crée un `slug` pour chaque segment (kebab-case).\n- Priorité par défaut = \"Moyenne\" si absente.\n- Ne pas inventer de chiffres ni d’e-mails/URLs.\n- Respecte STRICTEMENT le schéma `acq_brief` suivant et renvoie uniquement du JSON.\n\nSchéma `acq_brief` à respecter :\n{\n  \"acq_brief\":{\n    \"project_name\": \"\",\n    \"hypothesis\": { \"id\": \"\", \"statement\": \"\" },\n    \"uvp\": \"\",\n    \"product_summary\": \"\",\n    \"tone\": \"sobre\",\n    \"constraints\": [],\n    \"proof_points\": [],\n    \"segments\": [\n      {\n        \"name\": \"\",\n        \"slug\": \"\",\n        \"description\": \"\",\n        \"pains\": [],\n        \"gains\": [],\n        \"priority\": \"Haute|Moyenne|Basse\"\n      }\n    ],\n    \"channels\": { \"ads\": [\"Meta\",\"LinkedIn\",\"Google Search\"], \"organic\": [\"LinkedIn\",\"Instagram\"] },\n    \"budgets\": { \"low\": 50, \"med\": 200, \"high\": 500 },\n    \"language\": \"fr\",\n    \"brief_hash\": \"\"\n  }\n}\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.system_prompt }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1740,
+        2680
+      ],
+      "id": "f97a3de5-e6f8-4655-a940-a7c380af3d51",
+      "name": "Create brief"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2140,
+        2660
+      ],
+      "id": "47e60d69-4d8e-4366-b344-f78cc11dd85e",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "property_proposition_de_valeur",
+              "type": "any"
+            },
+            {
+              "name": "property_segment_client",
+              "type": "any"
+            },
+            {
+              "name": "priority_channels",
+              "type": "any"
+            },
+            {
+              "name": "differentiation",
+              "type": "any"
+            },
+            {
+              "name": "project_name",
+              "type": "any"
+            },
+            {
+              "name": "hypothesis",
+              "type": "any"
+            },
+            {
+              "name": "solution",
+              "type": "any"
+            },
+            {
+              "name": "mission",
+              "type": "any"
+            },
+            {
+              "name": "vision",
+              "type": "any"
+            },
+            {
+              "name": "values",
+              "type": "any"
+            },
+            {
+              "name": "system_prompt",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "de79c449-e91e-44b8-afed-f21222df0416",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1520,
+        2680
+      ]
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "Id": 1,
+          "CreatedAt": "2025-08-18 14:47:16+00:00",
+          "UpdatedAt": "2025-08-20 13:52:26+00:00",
+          "project_name": "GreenPack",
+          "founders_contact": "Alice Dupont - alice@greenpack.io",
+          "mission": "Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés.",
+          "vision": "Devenir la référence européenne des emballages circulaires pour la restauration rapide.",
+          "values": "Durabilité, accessibilité, simplicité",
+          "hypothesis": "Les restaurants de fast-food sont prêts à tester un système d’emballages consignés pour leurs clients.",
+          "test_objective": "tester l'Intérêt du marché",
+          "first_use_case": "Un restaurant pilote à Chambéry teste nos emballages consignés pendant 1 mois.",
+          "pain_point": "Les fast-foods utilisent beaucoup d’emballages jetables qui coûtent cher et polluent.",
+          "solution": "Proposer des boîtes consignées, lavables et réutilisables, avec une logistique simplifiée.",
+          "measurable_benefit": "Réduction de 70% des déchets d’emballage.",
+          "differentiation": "Consigne digitale (QR code) + logistique intégrée pour lavage.",
+          "market_type": "B2B",
+          "persona": "Gérant de fast-food indépendant, 35-50 ans, sensible aux coûts et à l’image éco-responsable.",
+          "current_alternatives": "Emballages jetables classiques ou biodégradables.",
+          "adoption_barriers": "Coût initial, crainte de complexité logistique.",
+          "early_adopters": "Restaurants bio, indépendants engagés RSE.",
+          "existing_channels": "Bouche-à-oreille, réseaux locaux d’entrepreneurs, LinkedIn.",
+          "priority_channels": "LinkedIn, emailing direct aux gérants, salons RSE.",
+          "test_budget": "1000 €",
+          "test_duration": "1 mois",
+          "outputs_requested": "Landing page avec CTA; Posts LinkedIn; Supports visuels",
+          "kpi": "Nombre de restaurants intéressés; Nombre de clients qui acceptent la consigne",
+          "success_threshold": "5 restaurants pilotes signés en 1 mois",
+          "tracking_tools": "Google Analytics; CRM HubSpot; Formulaire en ligne",
+          "id": "25534db9-30fe-819b-b89d-c1b4fcd50b46",
+          "name": "Simplification logistique des emballages",
+          "url": "https://www.notion.so/Simplification-logistique-des-emballages-25534db930fe819bb89dc1b4fcd50b46",
+          "property_proposition_de_valeur": "Fournir une solution logistique simplifiée pour les emballages réutilisables",
+          "property_segment_client": "Gérants de fast-food indépendants",
+          "property_date_de_d_but": {
+            "start": "2025-08-20T00:00:00.000-04:00",
+            "end": null,
+            "time_zone": null
+          },
+          "property_lean_canvas": [],
+          "property_statut": "A tester",
+          "property_kp_is": "Efficacité du processus logistique, Coût de retour des emballages, Feedback sur la simplicité d'utilisation",
+          "property_derni_re_mise_jour": null,
+          "property_nom": "Simplification logistique des emballages",
+          "system_prompt": "Rôle.\nTu es l’assistant d’acquisition de l’incubateur AlpAct. Ta mission : produire, par segment client, des ressources prêtes à tester une hypothèse PMF (angles, campagnes ads, mots-clés/hashtags, posts organiques, supports de communication, enquêtes).\nPublic : porteurs non techniques. Objectif : réduire le temps idée → test, avec livrables directement exploitables.\n\nCadre & ton.\n\nLangue : français.\n\nTon par défaut : sobre, pédagogue, non anxiogène (ajuste selon acq_brief.tone si fourni).\n\nInterdits : données perso inventées, promesses irréalistes, chiffres de performance fabriqués, attaques ou comparaisons directes aux concurrents, mentions trompeuses (“garanti”, “100%”).\n\nRGPD/plateformes : rester générique (pas de ciblage par données sensibles), CTA conformes (formulaire avec mention de confidentialité si évoqué).\n\nEntrées que tu recevras (toujours en message user).\n\nacq_brief : contexte projet (nom, UVP, preuves, ton/contraintes), segments (nom, description, pains/gains, priorité), canaux et budgets de test.\n\nhypothesis_id et/ou description courte de l’hypothèse testée.\n\nsegment_name (un segment à la fois).\n\nOption : angles_ids sélectionnés (après étape Angles).\n\nSchéma de sortie exact attendu pour la base cible (colonnes Notion).\n\nRègles de sortie (impératives).\n\nStrict JSON uniquement. Aucune prose, aucun markdown, aucun bloc de code.\n\nRespect absolu du schéma demandé dans le message user :\n\nClés exactement comme indiquées (casse, accents, espaces inclus).\n\nTypes : nombres → number, pourcentages → number (ex. Conv. (%) = 0–100), dates → texte ISO si demandé.\n\nPas de null : utiliser \"\" (chaîne vide) ou 0 selon le type.\n\nToujours retourner un tableau, même avec 1 seul élément.\n\nPas d’invention de métriques : initialise Clics, Leads, Conv. (%) à 0.\n\nAdaptation au segment : tout le contenu doit refléter le segment_name courant (pains, bénéfices, langage). Ne mélange jamais les segments.\n\nHITL / Étapes :\n\nSi angles_ids non fournis, ne génère pas d’annonces ou de posts ; propose seulement les angles (quand c’est l’étape Angles).\n\nSi angles_ids sont fournis, utilise uniquement ces angles.\n\nConcision & utilisabilité :\n\nTitres/copies clairs, CTA explicites, jargon limité.\n\nPour Google Search, privilégie des formulations compatibles avec annonces texte (sans emojis).\n\nPour posts organiques : 3–5 hashtags sobres (pas de hash-stuffing).\n\nSécurité de déploiement : aucun lien externe inventé ; si un lien est attendu, renvoyer \"\" et laisser l’orchestrateur l’ajouter.\n\nIdempotence : si le message user fournit run_id / hypothesis_id / segment_name / angles_ids, réutilise-les dans tes champs/meta uniquement si on te les demande ; sinon, n’ajoute pas de méta non prévue par le schéma.\n\nValeurs de référence (fallback) si le message user n’en donne pas :\n\nSelect “Statut” : \"À tester\" | \"En cours\" | \"Terminé\" | \"Validé\" | \"Rejeté\".\n\nCampagnes Ads — “Canal” : \"Meta\" | \"LinkedIn Ads\" | \"Google Search\".\n\nMots-clés & Hashtags — “Type” : \"Mot-clé\" | \"Hashtag\".\n\nContenus organiques — “Format” : \"Texte seul\" | \"Visuel\" | \"Carrousel\".\n\nSupports — “Type” : \"Visuel pub\" | \"Pitch deck\" | \"Newsletter\" | \"Communiqué presse\".\n\nQualité attendue (contrôles internes).\n\nAlignement UVP/Preuves : la promesse fait écho à l’UVP et aux proof points du acq_brief.\n\nObjections : anticiper 1–2 objections clés dans les annonces/CTA quand c’est pertinent.\n\nClarté : une idée par message ; pas de listes à rallonge dans une même cellule.\n\nRéutilisabilité : pas de références temporelles rigides (“cette semaine seulement”) sauf si demandé.\n\nExigence finale.\nTu réponds exclusivement en JSON conforme au schéma fourni dans le message user courant.\nSi une information te manque pour respecter ce schéma, rends la structure complète avec des valeurs par défaut raisonnables (\"\" / 0) plutôt que d’inventer du contenu."
+        }
+      },
+      {
+        "json": {
+          "id": "25534db9-30fe-818d-87d4-dcdbc64de821",
+          "name": "Économie circulaire pour la restauration rapide",
+          "url": "https://www.notion.so/conomie-circulaire-pour-la-restauration-rapide-25534db930fe818d87d4dcdbc64de821",
+          "property_proposition_de_valeur": "Permettre aux fast-foods de devenir éco-responsables et de réduire leurs coûts avec des solutions durables",
+          "property_segment_client": "Gérants de fast-food indépendants",
+          "property_date_de_d_but": {
+            "start": "2025-08-20T00:00:00.000-04:00",
+            "end": null,
+            "time_zone": null
+          },
+          "property_lean_canvas": [],
+          "property_statut": "A tester",
+          "property_kp_is": "Taux d'adoption des boîtes réutilisables, Réduction des coûts d'emballage par fast-food, Satisfaction des clients sur l'impact écologique",
+          "property_derni_re_mise_jour": null,
+          "property_nom": "Économie circulaire pour la restauration rapide"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Create brief": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create brief",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Create brief",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        []
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Create brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f85eeebf-4817-4065-ab20-5e9c6c60c3d5",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "FMe6Y6giPgGrYcHd",
+  "tags": []
+}

@@ -1,0 +1,148 @@
+{
+  "name": "Scoring Tableau Hypotheses",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        3380
+      ],
+      "id": "a14ce44d-eef3-432b-93ec-78de1bdc010e",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Filtre rapidement ces 27 combinaisons PMF et garde seulement les 2 plus prometteuses :\n\n# MATRICE PMF\n{{ $json.tableau_1_text }}\n\n# CONTEXTE PROJET  \n{{ $('Start').item.json.formatted_analysis }}\n\n# CRITÈRES DE PRÉ-FILTRAGE\n- Cohérence problème/segment (éliminer les mismatches évidents)\n- Value prop réalisable avec les ressources projet\n- Testabilité rapide (< 4 semaines)\n\n# FORMAT JSON\n{\n  \"combinations_retenues\": [\n    {\n      \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n    // 2 combinaisons max\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un analyste business expert en validation rapide d'hypothèses.\nTu élimines rapidement les combinaisons PMF non-viables.\nTu retournes EXCLUSIVEMENT du JSON valide."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1320,
+        3140
+      ],
+      "id": "1afd4211-679a-4ff4-a952-f761a6fe8a15",
+      "name": "Hypothese scoring - tableau 1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"combinations_retenues\": [\n    {\n     \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1100,
+        3380
+      ],
+      "id": "6d114338-86a5-4846-8e1b-a356556eb314",
+      "name": "Structured Output Parser6"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "formatted_analysis",
+              "type": "any"
+            },
+            {
+              "name": "tableau_1_text",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "3c2b641a-a856-455c-aeb2-1cff91f6c716",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -1540,
+        3140
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hypothese scoring - tableau 1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser6": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Hypothese scoring - tableau 1",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Hypothese scoring - tableau  2",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Hypothese scoring - tableau 3",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Hypothese scoring - tableau 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "61e17a19-fee2-4450-9033-e0af6a7d7320",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "7MO9r8wEjRc7IVDC",
+  "tags": []
+}

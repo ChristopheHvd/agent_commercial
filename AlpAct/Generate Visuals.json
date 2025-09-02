@@ -1,0 +1,886 @@
+{
+  "name": "Generate Visuals",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"structure_landing_page\": {\n    \"headline\": \"\",\n    \"subheadline\": \"\",\n    \"description\": \"\",\n    \"features\": [\n      {\n        \"title\": \"Économies garanties de 15%\",\n        \"description\": \"\"\n      },\n      {\n        \"title\": \"Logistique intégrée clé en main\",\n        \"description\": \"\"\n      },\n      {\n        \"title\": \"Gestion digitale par QR code\",\n        \"description\": \".\"\n      },\n      {\n        \"title\": \"Impact environnemental positif\",\n        \"description\": \"Réduction drastique des déchets plastiques tout en valorisant votre image responsable.\"\n      },\n      {\n        \"title\": \"Boîtes durables et hygiéniques\",\n        \"description\": \"Emballages lavables professionnellement, résistants et adaptés à tous types de plats.\"\n      }\n    ],\n    \"cta\": \"Tester GreenPack 30 jours\",\n    \"tagline\": \"L'emballage réutilisable qui fait du bien à vos finances\",\n    \"visualSuggestions\": [\n      \"\",\n      \"\",\n      \"\"\n    ]\n  },\n  \"brand_identity\": {\n    \"brandElements\": {\n      \"brandPersonality\": [\n        \"innovant\",\n        \"responsable\",\n        \"pragmatique\",\n        \"transparent\",\n        \"efficace\"\n      ],\n      \"brandVoice\": {\n        \"tone\": \"Professionnel et engagé, avec une approche directe et rassurante qui met l'accent sur les bénéfices concrets\",\n        \"style\": \"Communication claire et factuelle, utilisant un langage accessible aux professionnels de la restauration, évitant le jargon technique tout en restant précis sur les avantages économiques et environnementaux\"\n      },\n      \"coreValues\": [\n        \"durabilité environnementale\",\n        \"innovation technologique\",\n        \"transparence financière\",\n        \"efficacité opérationnelle\",\n        \"partenariat de confiance\"\n      ]\n    },\n    \"colorPalette\": {\n      \"primaryColor\": {\n        \"hexCode\": \"#2E7D4A\",\n        \"explanation\": \"Vert forêt moderne qui évoque la durabilité et l'engagement environnemental sans être trop agressif, inspirant confiance et sérieux aux professionnels\"\n      },\n      \"secondaryColor\": {\n        \"hexCode\": \"#1E3A8A\",\n        \"explanation\": \"Bleu professionnel qui renforce la crédibilité technologique et la fiabilité du système de consigne digitale\"\n      },\n      \"accentColor\": {\n        \"hexCode\": \"#F59E0B\",\n        \"explanation\": \"Orange énergique qui symbolise l'innovation et l'optimisme, utilisé pour mettre en valeur les économies réalisées et les call-to-action\"\n      },\n      \"neutralColors\": [\n        {\n          \"hexCode\": \"#F8FAFC\",\n          \"explanation\": \"Blanc cassé pour les arrière-plans, évoquant la propreté essentielle dans la restauration\"\n        },\n        {\n          \"hexCode\": \"#64748B\",\n          \"explanation\": \"Gris ardoise pour les textes secondaires et éléments d'interface, garantissant une excellente lisibilité\"\n        }\n      ]\n    },\n    \"typography\": {\n      \"headerFont\": {\n        \"serif\": {\n          \"fontName\": \"Playfair Display\",\n          \"explanation\": \"Serif moderne et élégant qui apporte une touche de sophistication pour les titres principaux, évoquant la qualité et le raffinement\"\n        },\n        \"sansSerif\": {\n          \"fontName\": \"Inter\",\n          \"explanation\": \"Typographie sans-serif très lisible et moderne, parfaite pour les titres digitaux et les interfaces, représentant l'innovation technologique\"\n        }\n      },\n      \"bodyFont\": {\n        \"serif\": {\n          \"fontName\": \"Source Serif Pro\",\n          \"explanation\": \"Police serif lisible et professionnelle pour les contenus longs, idéale pour les rapports financiers et documents techniques\"\n        },\n        \"sansSerif\": {\n          \"fontName\": \"Open Sans\",\n          \"explanation\": \"Typographie sans-serif très polyvalente et lisible sur tous supports, parfaite pour le web et les applications mobiles\"\n        }\n      },\n      \"accentFont\": {\n        \"fontName\": \"Poppins\",\n        \"explanation\": \"Police moderne aux formes arrondies, utilisée pour les éléments d'accentuation et les chiffres importants, apportant dynamisme et approchabilité\"\n      }\n    },\n    \"visualElements\": {\n      \"logoStyle\": \"Logo épuré combinant symbole circulaire évoquant le cycle de réutilisation et typographie moderne, utilisant les couleurs primaires avec des formes géométriques simples\",\n      \"iconographyStyle\": \"Icônes minimalistes avec des lignes épurées, privilégiant les formes circulaires et les flèches pour évoquer le cycle et la logistique, dans un style moderne et facilement reconnaissable\",\n      \"imageryStyle\": \"Photographies authentiques de restaurants en action, avec des couleurs naturelles et une lumière claire, complétées par des illustrations vectorielles simples pour expliquer les processus\",\n      \"patternsTextures\": \"Motifs géométriques subtils évoquant les connexions et réseaux, utilisant des lignes pointillées et des formes circulaires interconnectées, appliqués avec parcimonie pour ne pas surcharger\"\n    },\n    \"summary\": \"L'identité visuelle de GreenPack reflète parfaitement sa mission de révolutionner l'emballage dans la restauration rapide. La palette de couleurs associe le vert environnemental au bleu technologique, renforcée par des touches d'orange pour l'innovation, créant une image à la fois écologique et professionnelle. La typographie privilégie la lisibilité et la modernité, avec Inter pour les interfaces digitales et Open Sans pour le contenu, garantissant une communication claire avec les restaurateurs. Les éléments visuels épurés et les motifs circulaires incarnent les valeurs de durabilité et d'efficacité, tandis que le ton professionnel mais accessible rassure les entrepreneurs sur la viabilité économique de la solution. Cette identité de marque cohérente positionne GreenPack comme un partenaire technologique fiable pour la transition écologique de la restauration, capable de transformer un enjeu environnemental en opportunité business.\"\n  },\n  \"contexte_projet\": {\n    \"vision_projet\": {\n      \"mission\": \"Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés pour la restauration rapide.\",\n      \"probleme_central\": \"Les fast-foods supportent des coûts élevés et une pollution importante liés aux emballages jetables, sans solution simple et opérationnelle de réutilisation.\",\n      \"solution_proposee\": \"Boîtes consignées, lavables et réutilisables couplées à une consigne digitale (QR code) et une logistique intégrée de collecte et lavage.\"\n    },\n    \"marche_cible\": {\n      \"segment_principal\": \"Fast-foods indépendants engagés (early adopters) 35-50 ans, orientés bio/locavore, décision rapide si ROI.\",\n      \"taille_marche\": \"Non estimée, nécessite une estimation du nombre de fast-foods dans les zones géographiques prioritaires.\",\n      \"concurrents_principaux\": [\n        \"Fournisseurs d'emballages jetables classiques\",\n        \"Fournisseurs d'emballages biodégradables\",\n        \"Solutions locales/alternatives de consigne réutilisable\"\n      ],\n      \"canaux_acquisition\": [\n        \"LinkedIn\",\n        \"Emailing direct aux gérants\",\n        \"Salons RSE\"\n      ]\n    },\n    \"produit\": {\n      \"value_proposition\": \"Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.\",\n      \"fonctionnalites_cles\": [\n        \"Boîtes consignées, lavables et réutilisables\",\n        \"Consigne digitale via QR code pour suivi et gestion des retours\",\n        \"Logistique intégrée de collecte et lavage\"\n      ],\n      \"avantage_concurrentiel\": \"Combinaison consigne digitale + logistique intégrée visant à réduire la friction opérationnelle pour les restaurateurs.\"\n    },\n    \"contexte_business\": {\n      \"nom_du_projet\": \"GreenPack\",\n      \"stade_projet\": \"mvp\",\n      \"objectifs_prioritaires\": [\n        \"Signaler un intérêt marché et un taux d'acceptation client pour la consigne.\",\n        \"Valider la réduction des coûts d'emballage d'au moins 15% lors d'un pilote de 30 jours.\"\n      ],\n      \"contraintes_identifiees\": \"Budget test limité (1000 €) et durée courte (1 mois); barrières à l'adoption incluent coût initial et complexité perçue de la logistique.\"\n    },\n    \"hypothese_courante\": {\n      \"id\": \"hypothèse_test_pilote_1\",\n      \"segment\": \"Fast-foods indépendants engagés (early adopters) 35-50 ans.\",\n      \"probleme\": \"Coût opérationnel élevé lié aux emballages jetables impactant la marge par commande.\",\n      \"value_prop\": \"Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.\",\n      \"resume\": \"Pilote de 30 jours chez fast-foods engagés pour démontrer ≥15% de réduction du coût d’emballage/commande.\",\n      \"raison_selection\": \"Meilleure cohérence problème/cible, preuve chiffrée rapide, canaux d’acquisition accessibles.\"\n    },\n    \"gaps_questions\": {\n      \"infos_manquantes\": [\n        \"Estimation de la taille de marché.\",\n        \"Unit economics détaillés : coût unitaire des boîtes, coût de lavage/collecte.\",\n        \"Plan opérationnel et capacité logistique.\",\n        \"Conditions commerciales et incitations pour signer des pilotes.\"\n      ],\n      \"incoherences\": [\n        \"Seuil de succès défini à 5 restaurants pilotes en 1 mois, un seul restaurant pilote prévu.\",\n        \"Budget test de 1000 € semble insuffisant.\",\n        \"Réduction de 70% sans méthode de calcul indiquée.\"\n      ],\n      \"zones_flou\": [\n        \"Modalités de la consigne digitale et gestion des litiges.\",\n        \"Critères pour qualifier un 'restaurant intéressé' vs 'pilote signé'.\"\n      ]\n    }\n  }\n}"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        260,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1140,
+        340
+      ],
+      "id": "43383c08-8a7f-4980-a910-515e68b59644",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "structure_landing_page.visualSuggestions",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        520,
+        340
+      ],
+      "id": "0d5ebaf1-d797-4164-9ea1-4542de09bbe8",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "={{ $json.output.image_prompt }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2400,
+        360
+      ],
+      "id": "1a343634-87af-4399-b1dc-59af4089b50d",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Context of the project:\n{{ $json.contexte_projet.toJsonString() }}\n\nBrand identity:\n{{ $json.brand_identity.toJsonString() }}\n\nVisual suggestion:\n{{ $json['structure_landing_page.visualSuggestions'] }}\n\nTask:\nReturn only a valid JSON object with three fields:\n- \"image_prompt\": a complete, detailed description for GPT-1 image generation,\n- \"alt_text\": a concise description for HTML accessibility and SEO.\n- \"filename\": a human-friendly word to identify the produced file",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI assistant that generates detailed visual descriptions for startup marketing materials. \nYour role is to produce structured JSON outputs containing:\n1. \"image_prompt\": a rich, detailed description optimized for an AI image generation model (GPT-1), integrating:\n   - the startup project context (mission, target market, value proposition),\n   - the brand identity (colors, typography style, graphic mood),\n   - the specific visual suggestion.\n   The description should be long and descriptive (minimum 80–100 words) to ensure high-quality image generation.\n   Do not include any text or captions inside the visual unless explicitly requested.\n2. \"alt_text\": a short, human-friendly description of the visual (1–2 sentences, max 30 words) suitable for a landing page’s HTML <img alt=\"...\"> attribute.\n3. \"filename\" : a human-friendly word to identify the produced file.\n\nOutput format:\n{\n  \"image_prompt\": \"...\",\n  \"alt_text\": \"...\",\n\"filename\": \"\"\n}\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1880,
+        360
+      ],
+      "id": "f16fc4ea-a390-4732-bec0-d78162dab8fa",
+      "name": "Generate a custom prompt for this specific image"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"image_prompt\": \"...\",\n  \"alt_text\": \"...\",\n  \"filename\":\"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2040,
+        660
+      ],
+      "id": "5dc02b85-1880-463f-b660-358af653c615",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer le fichier binaire\nconst binaryData = $input.first().binary;\n\n// Modifier le nom du fichier\nbinaryData.data.fileName = $('Generate a custom prompt for this specific image').first().json.output.filename + \".png\";\n\nreturn $input.first() ;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2700,
+        360
+      ],
+      "id": "0d5d11bc-9487-44ff-a513-2e5f0d915591",
+      "name": "Rename File"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1880,
+        660
+      ],
+      "id": "3b8dae66-48c5-4f3b-a815-05a167fa0256",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.binary;\ntry {\n  const parsedData = JSON.parse(jsonString);\n  return [{ json: { data: parsedData } }];\n} catch (error) {\n  return [{ json: { error: 'Invalid JSON', original: jsonString } }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3160,
+        360
+      ],
+      "id": "21d83595-b86f-48f2-977f-7c616cfa9c93",
+      "name": "Get Image Public Url"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pcdhag9fxvg2m6k",
+        "table": "mg4o6dvs07mwztj",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Add to database').item.json.Id }}"
+            },
+            {
+              "fieldName": "public_url",
+              "fieldValue": "=https://nocodb.cloudron.alpes-ia.fr/{{ $json.data[0].path }}"
+            },
+            {
+              "fieldName": "filename",
+              "fieldValue": "={{ $json.data[0].title }}"
+            },
+            {
+              "fieldName": "size",
+              "fieldValue": "={{ $json.data[0].width }}x{{ $json.data[0].height }}px"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        3360,
+        360
+      ],
+      "id": "df756c08-63f4-4155-a37f-7e6e7c3b15f9",
+      "name": "Update public_url of image",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pcdhag9fxvg2m6k",
+        "table": "mg4o6dvs07mwztj",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "=alt_text",
+              "fieldValue": "={{ $('Generate a custom prompt for this specific image').item.json.output.alt_text }}"
+            },
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('When Executed by Another Workflow').item.json.contexte_projet.contexte_business.nom_du_projet }}"
+            },
+            {
+              "fieldName": "binary",
+              "binaryData": true,
+              "binaryProperty": "data"
+            },
+            {
+              "fieldName": "prompt",
+              "fieldValue": "={{ $('Generate a custom prompt for this specific image').item.json.output.image_prompt }}"
+            },
+            {
+              "fieldName": "workflow_execution_id",
+              "fieldValue": "={{ $execution.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2960,
+        360
+      ],
+      "id": "79f62f3d-eb45-4aa6-9cd2-e859e17750d1",
+      "name": "Add to database",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "regenerate_image",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        360,
+        1100
+      ],
+      "id": "da8ddf2b-ebed-42f3-87a9-e6a467d37e04",
+      "name": "Regenerate image",
+      "webhookId": "3f2f8cbb-9644-4767-b663-3af1c809c15e"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "={{ $json.output.image_prompt }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1040,
+        1100
+      ],
+      "id": "0464ad96-28bc-44f6-96b1-dee4a1796153",
+      "name": "Generate an image1",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer le fichier binaire\nconst binaryData = $input.first().binary;\n\n// Modifier le nom du fichier\nbinaryData.data.fileName = $('Generate a custom prompt for this specific image').first().json.output.filename + \".png\";\n\nreturn $input.first() ;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        1100
+      ],
+      "id": "39d1ab6b-a80e-4e97-ae7c-82fc84d1c2ee",
+      "name": "Rename File1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pcdhag9fxvg2m6k",
+        "table": "mg4o6dvs07mwztj",
+        "options": {
+          "where": "=(project_name,eq,{{ $json.project_name }})~and(filename,eq,{{ $json.filename }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        760,
+        1100
+      ],
+      "id": "2cc6833f-55cc-430f-b25d-f7252a758f54",
+      "name": "Get image prompt",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1520,
+        1100
+      ],
+      "id": "c02f0a59-2a2e-4170-97e2-ff8013b41c65",
+      "name": "Update binary file",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1740,
+        1100
+      ],
+      "id": "3ccdf514-b511-488c-beee-775449543a53",
+      "name": "Wait",
+      "webhookId": "b9bd71ab-4985-48c7-8838-4ef8ce2d8d44"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1960,
+        1100
+      ],
+      "id": "eedda023-3510-4846-90ad-269ffad38f94",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## Sub-workflow",
+        "height": 520,
+        "width": 1380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1680,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "4ba6cca0-ad56-4000-a286-4431f76e2186",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3600,
+        360
+      ],
+      "id": "1583be48-7343-47cf-b324-9862efa78cd6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70ac9c70-6c3f-4438-84b6-e38378c1fb58",
+              "name": "filename",
+              "value": "={{ $json.filename }}",
+              "type": "string"
+            },
+            {
+              "id": "5d1d178f-1b8f-4dbc-b57f-deb04ba7c498",
+              "name": "alt_text",
+              "value": "={{ $json.alt_text }}",
+              "type": "string"
+            },
+            {
+              "id": "493bd6d4-17ff-46a6-9f9a-6208e4022462",
+              "name": "public_url",
+              "value": "={{ $json.public_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        -100
+      ],
+      "id": "0d1ee739-3d1b-4006-85fd-5a90f6d3f6b6",
+      "name": "Return images array"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pcdhag9fxvg2m6k",
+        "table": "mg4o6dvs07mwztj",
+        "options": {
+          "where": "=(workflow_execution_id,eq,{{ $execution.id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1860,
+        -100
+      ],
+      "id": "d94027e9-6bf9-4d88-a9a5-69adefdf56fa",
+      "name": "Get all created images",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "kgEZpYSWHG9gcoW6",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "structure_landing_page": {
+            "headline": "Réduisez vos coûts d'emballage de 15%",
+            "subheadline": "Solution complète d'emballages consignés pour fast-foods responsables avec logistique intégrée",
+            "description": "GreenPack révolutionne les emballages de restauration rapide avec des boîtes consignées réutilisables et un système digital intelligent. Réduisez vos coûts tout en préservant l'environnement, sans contrainte logistique.",
+            "features": [
+              {
+                "title": "Économies garanties de 15%",
+                "description": "Réduction prouvée des coûts d'emballage par commande avec suivi financier en temps réel."
+              },
+              {
+                "title": "Logistique intégrée clé en main",
+                "description": "Collecte, lavage et redistribution automatisés sans effort de votre part."
+              },
+              {
+                "title": "Gestion digitale par QR code",
+                "description": "Suivi automatique des consignes et retours via une technologie simple et fiable."
+              },
+              {
+                "title": "Impact environnemental positif",
+                "description": "Réduction drastique des déchets plastiques tout en valorisant votre image responsable."
+              },
+              {
+                "title": "Boîtes durables et hygiéniques",
+                "description": "Emballages lavables professionnellement, résistants et adaptés à tous types de plats."
+              }
+            ],
+            "cta": "Tester GreenPack 30 jours",
+            "tagline": "L'emballage réutilisable qui fait du bien à vos finances",
+            "visualSuggestions": [
+              "Image comparative montrant des boîtes GreenPack élégantes à côté d'emballages jetables avec indicateur de coûts",
+              "Infographie illustrant le cycle de vie des boîtes : utilisation → collecte → lavage → redistribution",
+              "Photo d'un restaurateur souriant tenant une boîte GreenPack avec un graphique d'économies en arrière-plan"
+            ]
+          },
+          "brand_identity": {
+            "brandElements": {
+              "brandPersonality": [
+                "innovant",
+                "responsable",
+                "pragmatique",
+                "transparent",
+                "efficace"
+              ],
+              "brandVoice": {
+                "tone": "Professionnel et engagé, avec une approche directe et rassurante qui met l'accent sur les bénéfices concrets",
+                "style": "Communication claire et factuelle, utilisant un langage accessible aux professionnels de la restauration, évitant le jargon technique tout en restant précis sur les avantages économiques et environnementaux"
+              },
+              "coreValues": [
+                "durabilité environnementale",
+                "innovation technologique",
+                "transparence financière",
+                "efficacité opérationnelle",
+                "partenariat de confiance"
+              ]
+            },
+            "colorPalette": {
+              "primaryColor": {
+                "hexCode": "#2E7D4A",
+                "explanation": "Vert forêt moderne qui évoque la durabilité et l'engagement environnemental sans être trop agressif, inspirant confiance et sérieux aux professionnels"
+              },
+              "secondaryColor": {
+                "hexCode": "#1E3A8A",
+                "explanation": "Bleu professionnel qui renforce la crédibilité technologique et la fiabilité du système de consigne digitale"
+              },
+              "accentColor": {
+                "hexCode": "#F59E0B",
+                "explanation": "Orange énergique qui symbolise l'innovation et l'optimisme, utilisé pour mettre en valeur les économies réalisées et les call-to-action"
+              },
+              "neutralColors": [
+                {
+                  "hexCode": "#F8FAFC",
+                  "explanation": "Blanc cassé pour les arrière-plans, évoquant la propreté essentielle dans la restauration"
+                },
+                {
+                  "hexCode": "#64748B",
+                  "explanation": "Gris ardoise pour les textes secondaires et éléments d'interface, garantissant une excellente lisibilité"
+                }
+              ]
+            },
+            "typography": {
+              "headerFont": {
+                "serif": {
+                  "fontName": "Playfair Display",
+                  "explanation": "Serif moderne et élégant qui apporte une touche de sophistication pour les titres principaux, évoquant la qualité et le raffinement"
+                },
+                "sansSerif": {
+                  "fontName": "Inter",
+                  "explanation": "Typographie sans-serif très lisible et moderne, parfaite pour les titres digitaux et les interfaces, représentant l'innovation technologique"
+                }
+              },
+              "bodyFont": {
+                "serif": {
+                  "fontName": "Source Serif Pro",
+                  "explanation": "Police serif lisible et professionnelle pour les contenus longs, idéale pour les rapports financiers et documents techniques"
+                },
+                "sansSerif": {
+                  "fontName": "Open Sans",
+                  "explanation": "Typographie sans-serif très polyvalente et lisible sur tous supports, parfaite pour le web et les applications mobiles"
+                }
+              },
+              "accentFont": {
+                "fontName": "Poppins",
+                "explanation": "Police moderne aux formes arrondies, utilisée pour les éléments d'accentuation et les chiffres importants, apportant dynamisme et approchabilité"
+              }
+            },
+            "visualElements": {
+              "logoStyle": "Logo épuré combinant symbole circulaire évoquant le cycle de réutilisation et typographie moderne, utilisant les couleurs primaires avec des formes géométriques simples",
+              "iconographyStyle": "Icônes minimalistes avec des lignes épurées, privilégiant les formes circulaires et les flèches pour évoquer le cycle et la logistique, dans un style moderne et facilement reconnaissable",
+              "imageryStyle": "Photographies authentiques de restaurants en action, avec des couleurs naturelles et une lumière claire, complétées par des illustrations vectorielles simples pour expliquer les processus",
+              "patternsTextures": "Motifs géométriques subtils évoquant les connexions et réseaux, utilisant des lignes pointillées et des formes circulaires interconnectées, appliqués avec parcimonie pour ne pas surcharger"
+            },
+            "summary": "L'identité visuelle de GreenPack reflète parfaitement sa mission de révolutionner l'emballage dans la restauration rapide. La palette de couleurs associe le vert environnemental au bleu technologique, renforcée par des touches d'orange pour l'innovation, créant une image à la fois écologique et professionnelle. La typographie privilégie la lisibilité et la modernité, avec Inter pour les interfaces digitales et Open Sans pour le contenu, garantissant une communication claire avec les restaurateurs. Les éléments visuels épurés et les motifs circulaires incarnent les valeurs de durabilité et d'efficacité, tandis que le ton professionnel mais accessible rassure les entrepreneurs sur la viabilité économique de la solution. Cette identité de marque cohérente positionne GreenPack comme un partenaire technologique fiable pour la transition écologique de la restauration, capable de transformer un enjeu environnemental en opportunité business."
+          },
+          "contexte_projet": {
+            "vision_projet": {
+              "mission": "Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés pour la restauration rapide.",
+              "probleme_central": "Les fast-foods supportent des coûts élevés et une pollution importante liés aux emballages jetables, sans solution simple et opérationnelle de réutilisation.",
+              "solution_proposee": "Boîtes consignées, lavables et réutilisables couplées à une consigne digitale (QR code) et une logistique intégrée de collecte et lavage."
+            },
+            "marche_cible": {
+              "segment_principal": "Fast-foods indépendants engagés (early adopters) 35-50 ans, orientés bio/locavore, décision rapide si ROI.",
+              "taille_marche": "Non estimée, nécessite une estimation du nombre de fast-foods dans les zones géographiques prioritaires.",
+              "concurrents_principaux": [
+                "Fournisseurs d'emballages jetables classiques",
+                "Fournisseurs d'emballages biodégradables",
+                "Solutions locales/alternatives de consigne réutilisable"
+              ],
+              "canaux_acquisition": [
+                "LinkedIn",
+                "Emailing direct aux gérants",
+                "Salons RSE"
+              ]
+            },
+            "produit": {
+              "value_proposition": "Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.",
+              "fonctionnalites_cles": [
+                "Boîtes consignées, lavables et réutilisables",
+                "Consigne digitale via QR code pour suivi et gestion des retours",
+                "Logistique intégrée de collecte et lavage"
+              ],
+              "avantage_concurrentiel": "Combinaison consigne digitale + logistique intégrée visant à réduire la friction opérationnelle pour les restaurateurs."
+            },
+            "contexte_business": {
+              "nom_du_projet": "GreenPack",
+              "stade_projet": "mvp",
+              "objectifs_prioritaires": [
+                "Signaler un intérêt marché et un taux d'acceptation client pour la consigne.",
+                "Valider la réduction des coûts d'emballage d'au moins 15% lors d'un pilote de 30 jours."
+              ],
+              "contraintes_identifiees": "Budget test limité (1000 €) et durée courte (1 mois); barrières à l'adoption incluent coût initial et complexité perçue de la logistique."
+            },
+            "hypothese_courante": {
+              "id": "hypothèse_test_pilote_1",
+              "segment": "Fast-foods indépendants engagés (early adopters) 35-50 ans.",
+              "probleme": "Coût opérationnel élevé lié aux emballages jetables impactant la marge par commande.",
+              "value_prop": "Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.",
+              "resume": "Pilote de 30 jours chez fast-foods engagés pour démontrer ≥15% de réduction du coût d’emballage/commande.",
+              "raison_selection": "Meilleure cohérence problème/cible, preuve chiffrée rapide, canaux d’acquisition accessibles."
+            },
+            "gaps_questions": {
+              "infos_manquantes": [
+                "Estimation de la taille de marché.",
+                "Unit economics détaillés : coût unitaire des boîtes, coût de lavage/collecte.",
+                "Plan opérationnel et capacité logistique.",
+                "Conditions commerciales et incitations pour signer des pilotes."
+              ],
+              "incoherences": [
+                "Seuil de succès défini à 5 restaurants pilotes en 1 mois, un seul restaurant pilote prévu.",
+                "Budget test de 1000 € semble insuffisant.",
+                "Réduction de 70% sans méthode de calcul indiquée."
+              ],
+              "zones_flou": [
+                "Modalités de la consigne digitale et gestion des litiges.",
+                "Critères pour qualifier un 'restaurant intéressé' vs 'pilote signé'."
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Get all created images",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate a custom prompt for this specific image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Rename File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate a custom prompt for this specific image": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate a custom prompt for this specific image",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate a custom prompt for this specific image",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename File": {
+      "main": [
+        [
+          {
+            "node": "Add to database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Public Url": {
+      "main": [
+        [
+          {
+            "node": "Update public_url of image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to database": {
+      "main": [
+        [
+          {
+            "node": "Get Image Public Url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update public_url of image": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image1": {
+      "main": [
+        [
+          {
+            "node": "Rename File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Regenerate image": {
+      "main": [
+        [
+          {
+            "node": "Get image prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get image prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate an image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename File1": {
+      "main": [
+        [
+          {
+            "node": "Update binary file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update binary file": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all created images": {
+      "main": [
+        [
+          {
+            "node": "Return images array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b9400c3-635e-4379-adf6-7699bac047a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "Jg8ZS5qqpmLpXCqk",
+  "tags": []
+}

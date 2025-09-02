@@ -1,0 +1,319 @@
+{
+  "name": "Trigger After Fiche Projet Submit",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "=create-hypotheses/:record_id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -260
+      ],
+      "id": "726b3ddb-970a-48f0-9c03-c17ce77f5509",
+      "name": "Called from validation formulaire",
+      "webhookId": "405decd6-c7c0-4c2e-b512-594a26a09dd2"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $json.ID_Notion }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"icon\": {\n    \"type\": \"external\",\n    \"external\": {\n      \"url\": \"https://www.notion.so/icons/sync_red.svg?mode=light&size=256\"\n    }\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        -260
+      ],
+      "id": "4d58f47a-f27e-4464-a08b-6ed931be49db",
+      "name": "Display Sync Icon on Page1",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        -60
+      ],
+      "id": "2e71acc6-fc4f-4cb5-afa7-a63d9a118092",
+      "name": "Create page Hypothèse PMF",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Init du projet sur Notion",
+        "height": 380,
+        "width": 820
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        -380
+      ],
+      "typeVersion": 1,
+      "id": "4299944c-efcf-4261-a7ab-7d73820bc351",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96ab53ff-999d-42b5-8a0e-59ba298b79c4",
+              "name": "notion_url",
+              "value": "=https://www.notion.so/{{ $('Get Project Infos').item.json.ID_Notion }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        -160
+      ],
+      "id": "c4dc1858-7892-4459-a3a7-9a252b63e6a5",
+      "name": "Set Notion URL"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "hypotheses créées",
+        "options": {
+          "responseCode": 303,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Location",
+                "value": "={{ $json.notion_url }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1240,
+        -160
+      ],
+      "id": "b3fe97cb-2acd-4b01-bc7d-6a871a3334eb",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DPcwNm4VwzwSFpwT",
+          "mode": "list",
+          "cachedResultName": "Init project + Hypotheses PMF"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "project_name": "={{ $('Get Project Infos').item.json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        -160
+      ],
+      "id": "c8e3dd73-d074-4c54-9e2e-018cdd5e9829",
+      "name": "Execute Init projet Workflow"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "muqbk732nl9jb7c",
+        "id": "={{ $json.params.record_id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        140,
+        -260
+      ],
+      "id": "d85c0b1a-925a-43c8-8241-b0fb33e6a429",
+      "name": "Get Project Infos",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Get Project Infos": [
+      {
+        "json": {
+          "Id": 12,
+          "CreatedAt": "2025-09-02 10:57:45+00:00",
+          "UpdatedAt": null,
+          "project_name": "fzefz",
+          "founders_contact": null,
+          "mission": null,
+          "vision": null,
+          "values": null,
+          "hypothesis": null,
+          "test_objective": null,
+          "first_use_case": null,
+          "pain_point": null,
+          "solution": null,
+          "measurable_benefit": null,
+          "differentiation": null,
+          "market_type": null,
+          "persona": null,
+          "current_alternatives": null,
+          "adoption_barriers": null,
+          "early_adopters": null,
+          "existing_channels": null,
+          "priority_channels": null,
+          "test_budget": null,
+          "test_duration": null,
+          "kpi": null,
+          "success_threshold": null,
+          "ID_Notion": "261ca86a94e58092b49ec6ba6f48e0b1",
+          "Créer les hypothèses PMF": {
+            "type": "webhook",
+            "label": "Créer les hypothèses PMF",
+            "fk_webhook_id": "hkn0u3olvkj6i7bg"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Display Sync Icon on Page1": {
+      "main": [
+        [
+          {
+            "node": "Execute Init projet Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Called from validation formulaire": {
+      "main": [
+        [
+          {
+            "node": "Get Project Infos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create page Hypothèse PMF": {
+      "main": [
+        [
+          {
+            "node": "Execute Init projet Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Notion URL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Init projet Workflow": {
+      "main": [
+        [
+          {
+            "node": "Set Notion URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project Infos": {
+      "main": [
+        [
+          {
+            "node": "Display Sync Icon on Page1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3df6e83f-3675-4026-b633-825a565ac186",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "Pf3jij0oa8TFaVt9",
+  "tags": []
+}

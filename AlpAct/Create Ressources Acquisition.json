@@ -1,0 +1,840 @@
+{
+  "name": "Create Ressources Acquisition",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"hypothese\": {\n      \"vision_projet\": {\n        \"mission\": \"Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés pour la restauration rapide.\",\n        \"probleme_central\": \"Les fast-foods supportent des coûts élevés et une pollution importante liés aux emballages jetables, sans solution simple et opérationnelle de réutilisation.\",\n        \"solution_proposee\": \"Boîtes consignées, lavables et réutilisables couplées à une consigne digitale (QR code) et une logistique intégrée de collecte et lavage.\"\n      },\n      \"marche_cible\": {\n        \"segment_principal\": \"Fast-foods indépendants engagés (early adopters) 35-50 ans, orientés bio/locavore, décision rapide si ROI.\",\n        \"taille_marche\": \"Non estimée, nécessite une estimation du nombre de fast-foods dans les zones géographiques prioritaires.\",\n        \"concurrents_principaux\": [\n          \"Fournisseurs d'emballages jetables classiques\",\n          \"Fournisseurs d'emballages biodégradables\",\n          \"Solutions locales/alternatives de consigne réutilisable\"\n        ],\n        \"canaux_acquisition\": [\n          \"LinkedIn\",\n          \"Emailing direct aux gérants\",\n          \"Salons RSE\"\n        ]\n      },\n      \"produit\": {\n        \"value_proposition\": \"Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.\",\n        \"fonctionnalites_cles\": [\n          \"Boîtes consignées, lavables et réutilisables\",\n          \"Consigne digitale via QR code pour suivi et gestion des retours\",\n          \"Logistique intégrée de collecte et lavage\"\n        ],\n        \"avantage_concurrentiel\": \"Combinaison consigne digitale + logistique intégrée visant à réduire la friction opérationnelle pour les restaurateurs.\"\n      },\n      \"contexte_business\": {\n        \"nom_du_projet\":\"\",\n        \"stade_projet\": \"mvp\",\n        \"objectifs_prioritaires\": [\n          \"Signaler un intérêt marché et un taux d'acceptation client pour la consigne.\",\n          \"Valider la réduction des coûts d'emballage d'au moins 15% lors d'un pilote de 30 jours.\"\n        ],\n        \"contraintes_identifiees\": \"Budget test limité (1000 €) et durée courte (1 mois); barrières à l'adoption incluent coût initial et complexité perçue de la logistique.\"\n      },\n      \"hypothese_courante\": {\n        \"id\": \"hypothèse_test_pilote_1\",\n        \"segment\": \"Fast-foods indépendants engagés (early adopters) 35-50 ans.\",\n        \"probleme\": \"Coût opérationnel élevé lié aux emballages jetables impactant la marge par commande.\",\n        \"value_prop\": \"Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.\",\n        \"resume\": \"Pilote de 30 jours chez fast-foods engagés pour démontrer ≥15% de réduction du coût d’emballage/commande.\",\n        \"raison_selection\": \"Meilleure cohérence problème/cible, preuve chiffrée rapide, canaux d’acquisition accessibles.\"\n      },\n      \"gaps_questions\": {\n        \"infos_manquantes\": [\n          \"Estimation de la taille de marché.\",\n          \"Unit economics détaillés : coût unitaire des boîtes, coût de lavage/collecte.\",\n          \"Plan opérationnel et capacité logistique.\",\n          \"Conditions commerciales et incitations pour signer des pilotes.\"\n        ],\n        \"incoherences\": [\n          \"Seuil de succès défini à 5 restaurants pilotes en 1 mois, un seul restaurant pilote prévu.\",\n          \"Budget test de 1000 € semble insuffisant.\",\n          \"Réduction de 70% sans méthode de calcul indiquée.\"\n        ],\n        \"zones_flou\": [\n          \"Modalités de la consigne digitale et gestion des litiges.\",\n          \"Critères pour qualifier un 'restaurant intéressé' vs 'pilote signé'.\"\n        ]\n      }\n    },\n  \"id_Notion\":\"\"\n}"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -80,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Campagne Ads\nSegment, Canal, Angle marketing, annonce testée, Script/Copie, Ciblage, Budget prévue, nb de clic, Leads, Conversions(%), Statut\n\n- Fourchettes CPC/CVR par défaut si non fournies : \n  • Meta CPC: 0.8–1.5 €  \n  • Google CPC: 1.5–3.0 €  \n  • LinkedIn CPC: 3–6 €  ",
+        "height": 560,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "ad5a2b07-8768-4332-9763-47a9f478eb0c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Supports Communication\nSegment, type, Nom/Titre, Description, lien fichier",
+        "height": 560,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "5e6df684-d854-468c-8ed0-42710dab4739",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Mots-clés / Hashtag\nSegment, Plateforme, Mots-clés/Hashtag, type, priorité, usage prévu",
+        "height": 760,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        980
+      ],
+      "typeVersion": 1,
+      "id": "73caadc5-d5b2-4116-9b98-33383c4cf893",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Contenus Organique\nSegment, Canal, Post proposé, Format, Hashtags associés, Statut",
+        "height": 520,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        1760
+      ],
+      "typeVersion": 1,
+      "id": "22470aaf-d8e3-4f52-bc28-7469c63c0db3",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Voici le contexte complet du projet : \n {{ $json.hypothese.toJsonString() }}\n\nDonne moi la réponse en respectant le format JSON ci-dessous : \n[\n  {\n    \"Segment\": \"string\",\n    \"Canal\": \"Meta | Google Search | LinkedIn Ads\",\n    \"Angle marketing\": \"string\",\n    \"annonce testée\": \"string\",\n    \"Script/Copie\": {\n      \"headline\": \"string\",\n      \"body\": \"string\",\n      \"cta\": \"string\",\n      \"visual_brief\": \"string\"\n    },\n    \"Ciblage\": {\n      \"geo\": [\"France\"],\n      \"interests\": [\"RSE\", \"restauration rapide\"],\n      \"keywords_exact\": [\"emballages consignés\"],\n      \"job_titles\": [\"Gérant de restaurant\"],\n      \"company_size\": [\"1-10\", \"11-50\"],\n      \"notes\": \"string\"\n    },\n    \"Budget prévue\": 400,\n    \"nb de clic\": 250,\n    \"Leads\": 10,\n    \"Conversions(%)\": 4.0,\n    \"Statut\": \"À valider\",\n    \"meta\": {\n      \"angle_id\": \"A1\",\n      \"assumptions\": {\n        \"cpc_used\": 1.6,\n        \"cvr_used\": 0.04,\n        \"duration_days\": 30\n      },\n      \"notes\": \"aucune promesse non vérifiée\"\n    }\n  }\n]\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un media strategist senior. Ta mission : à partir d’un contexte projet + hypothèse PMF, générer des annonces testables pour une base Notion “Campagne Ads”.\n\nContraintes de génération :\n- Langue : FR, ton pro, sobre, non anxiogène, orienté ROI et preuve.\n- Ciblage : défini par le user dans son contexte\n- Anti-greenwashing : aucune promesse invérifiable ; appuie-toi sur preuves/pilote/ROI attendu.\n- Respecte les limites du budget et la durée de test.\n- Un *angle marketing* doit être une idée claire, courte, mémorisable (≤ 10 mots), reliée à une **preuve** (ex : pilote 30 j, métriques suivies, process hygiène).\n- Chaque annonce doit préciser un **CTA** adapté au canal.\n- Le **Ciblage** doit être structuré par canal (intérêts/personae pour Meta, keywords pour Google Search, critères pro pour LinkedIn).\n- Fourchettes CPC/CVR par défaut si non fournies : \n  • Meta CPC: 0.8–1.5 €  \n  • Google CPC: 1.5–3.0 €  \n  • LinkedIn CPC: 3–6 €  \n  • Taux de conversion visite→lead (formulaire ou prise de contact): 2–5 %\n- Le budget prévu est un entier, pas nécessaire d'être trop précis sur le chiffre (167€ au lieu de 167,67€).\n- Calcule *nb de clic*, *Leads*, *Conversions(%)* à partir du **Budget prévue**, des hypothèses CPC/CVR retenues et indique les hypothèses choisies dans `meta.assumptions`. \n  Formules :\n  • clics = budget / CPC  \n  • leads = clics × CVR  \n  • conversions(%) = (leads / clics) × 100\nArrondie les valeurs à l'entier supérieur\n- Statut = \"À valider\" (HITL).\n- Sortie stricte : **UNIQUE bloc JSON** (array), aucune phrase autour.\n\nColonnes requises par ligne :\n- \"Segment\" (string)\n- \"Canal\" (enum: \"Meta\" | \"Google Search\" | \"LinkedIn Ads\")\n- \"Angle marketing\" (string court)\n- \"annonce testée\" (string court : nom/variante, ex \"A1-Meta-1\")\n- \"Script/Copie\" (texte annonce : inclure Headline/Titre + Body + CTA + proposition de preuve)\n- \"Ciblage\" (objet JSON par canal : voir spécifications ci-dessous)\n- \"Budget prévue\" (nombre entier en €)\n- \"nb de clic\" (entier)\n- \"Leads\" (entier)\n- \"Conversions(%)\" (nombre arrondi à 1 décimale)\n- \"Statut\" (string)\n\nFormat \"Ciblage\" par canal :\n- Meta: { \"geo\": [...], \"interests\": [...], \"behaviors\": [...?], \"age\": [min,max], \"notes\": \"...\" }\n- Google Search: { \"geo\": [...], \"keywords_exact\": [...], \"keywords_phrase\": [...], \"negatives\": [...], \"notes\": \"...\" }\n- LinkedIn Ads: { \"geo\": [...], \"job_titles\": [...], \"company_size\": [...], \"seniority\": [...], \"industries\": [...], \"notes\": \"...\" }\n\nIMPORTANT :\n- Génère 2–3 **angles** maximum (qualité > quantité). \n- Par **angle × canal**, propose 1 à 2 **annonces testées** (variantes).\n- Répartis le budget selon les paramètres fournis ; sinon applique un split par défaut équilibré.\n- N’invente pas de chiffres d’impact ; si un chiffre est hypothétique, précise-le comme tel.\n- Toujours intégrer un \"visual cue\" ou \"visual brief\" dans la copie quand pertinent (ex : photo d’équipe en cuisine, traçabilité QR, bac de collecte propre).\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        600,
+        40
+      ],
+      "id": "9759794d-dd0c-4e16-a152-d6426e809bba",
+      "name": "Campagne Ads"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        700
+      ],
+      "id": "0f952ce8-1480-41e4-b9ae-7a884585b8f5",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Segment\": \"string\",\n    \"Canal\": \"Meta | Google Search | LinkedIn Ads\",\n    \"Angle marketing\": \"string\",\n    \"annonce testée\": \"string\",\n    \"Script/Copie\": {\n      \"headline\": \"string\",\n      \"body\": \"string\",\n      \"cta\": \"string\",\n      \"visual_brief\": \"string\"\n    },\n    \"Ciblage\": {\n      \"geo\": [\"France\"],\n      \"interests\": [\"RSE\", \"restauration rapide\"],\n      \"keywords_exact\": [\"emballages consignés\"],\n      \"job_titles\": [\"Gérant de restaurant\"],\n      \"company_size\": [\"1-10\", \"11-50\"],\n      \"notes\": \"string\"\n    },\n    \"Budget prévue\": 400,\n    \"nb de clic\": 250,\n    \"Leads\": 10,\n    \"Conversions(%)\": 4.0,\n    \"Statut\": \"À valider\",\n    \"meta\": {\n      \"angle_id\": \"A1\",\n      \"assumptions\": {\n        \"cpc_used\": 1.6,\n        \"cvr_used\": 0.04,\n        \"duration_days\": 30\n      },\n      \"notes\": \"aucune promesse non vérifiée\"\n    }\n  }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        760,
+        200
+      ],
+      "id": "c837f4c5-5cf7-4f34-b675-6796f47af309",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\n  \"task\": \"Générer une liste de supports de communication adaptés à l’hypothèse PMF en cours de test.\",\n  \"project_ctx\": {{ $json.hypothese.toJsonString() }},\n  \"requirements\": {\n    \"nb_supports\": 3,\n    \"output_format\": [\n      {\n        \"Segment\": \"string\",\n        \"Type\": \"string\",\n        \"Nom/Titre\": \"string\",\n        \"Description\": \"string\",\n        \"Lien fichier\": \"à générer via sous-workflow visuel\"\n      }\n    ]\n  }\n}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un expert en communication visuelle pour startups en phase de test marché. \nTa mission : générer des supports de communication pertinents à partir d’un contexte projet + une hypothèse PMF en cours de test.\n\nContraintes :\n- Langue : FR, ton professionnel, clair et crédible.\n- Supports = tous formats utiles pour acquisition et visibilité (print, digital, événementiel, social media, presse). \n- Ne te limite pas à une liste prédéfinie, mais propose uniquement des supports pertinents par rapport à la cible et au canal d’acquisition.\n- Chaque support doit être :\n  • Nom/Titre court, mémorisable.\n  • Description explicite, orientée usage (quoi, pourquoi, où utiliser).\n  • Lien fichier = toujours \"à générer via sous-workflow visuel\".\n- Ne jamais inventer de métriques ou promesses non vérifiées.\n- Chaque ligne correspond à une entrée Notion avec les champs : Segment, Type, Nom/Titre, Description, Lien fichier.\n- Sortie stricte : un tableau JSON d’objets.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        600,
+        580
+      ],
+      "id": "80021af9-2e03-469c-8a99-b00a993588f0",
+      "name": "Support communication"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n      {\n        \"Segment\": \"string\",\n        \"Type\": \"string\",\n        \"Nom/Titre\": \"string\",\n        \"Description\": \"string\",\n        \"Lien fichier\": \"à générer via sous-workflow visuel\"\n      }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        800
+      ],
+      "id": "a2e6df84-c77c-4715-8424-a891ae36e820",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "25a34db9-30fe-804f-a17e-ea701ff26c18",
+          "mode": "list",
+          "cachedResultName": "Campagnes_Ads",
+          "cachedResultUrl": "https://www.notion.so/25a34db930fe804fa17eea701ff26c18"
+        },
+        "title": "={{ $json.Segment }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Angle marketing|rich_text",
+              "textContent": "={{ $json[\"Angle marketing\"] }}"
+            },
+            {
+              "key": "Canal|rich_text",
+              "textContent": "={{ $json.Canal }}"
+            },
+            {
+              "key": "Annonce testée|rich_text",
+              "textContent": "={{ $json['Script/Copie'].headline }}"
+            },
+            {
+              "key": "Script / Copie|rich_text",
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "=Titre : {{ $json['Script/Copie'].headline }}\nCorps : {{ $json['Script/Copie'].body }}\nCTA : {{ $json['Script/Copie'].cta }}\nIllustration : {{ $json['Script/Copie'].visual_brief }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            },
+            {
+              "key": "Ciblage|rich_text",
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "=Geo : {{ $json.Ciblage.geo.join(', ') }}\nIntérêts : {{ $json.Ciblage.interests.join(', ') }}\nKeywords : {{ $json.Ciblage.keywords_exact.join(', ') }}\nJob titles : {{ $json.Ciblage.job_titles.join(', ') }}\nTaille d'entreprise : {{ $json.Ciblage.company_size.join(', ') }}\n",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "={{ $json.Ciblage.notes }}"
+            },
+            {
+              "key": "Budget prévu (€)|number",
+              "numberValue": "={{ $json[\"Budget prévue\"] }}"
+            },
+            {
+              "key": "Clics|number",
+              "numberValue": "={{ $json[\"nb de clic\"] }}"
+            },
+            {
+              "key": "Leads|number",
+              "numberValue": "={{ $json.Leads }}"
+            },
+            {
+              "key": "Conv. (%)|number",
+              "numberValue": "={{ $json[\"Conversions(%)\"] }}"
+            },
+            {
+              "key": "Statut|select",
+              "selectValue": "À tester"
+            },
+            {
+              "key": "Hypothèses PMF|relation",
+              "relationValue": [
+                "={{ $('When Executed by Another Workflow').item.json.id_Notion }}"
+              ]
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1180,
+        40
+      ],
+      "id": "bab8ff31-0006-4253-b728-d05280c8cc04",
+      "name": "Ajout dans Campagne_Ads",
+      "credentials": {
+        "notionApi": {
+          "id": "HVm7YJNaqWnI20Vc",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        40
+      ],
+      "id": "4604b1c0-a2db-48b6-9e07-1030275940e7",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        580
+      ],
+      "id": "ff0d532b-0b42-4f1d-9820-9316721b1dba",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "25a34db9-30fe-8017-9a04-ec34c7a5a7b9",
+          "mode": "list",
+          "cachedResultName": "Supports_Communication",
+          "cachedResultUrl": "https://www.notion.so/25a34db930fe80179a04ec34c7a5a7b9"
+        },
+        "title": "={{ $json.Segment }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Type|rich_text",
+              "textContent": "={{ $json.Type }}"
+            },
+            {
+              "key": "Nom / Titre|rich_text",
+              "textContent": "={{ $json[\"Nom/Titre\"] }}"
+            },
+            {
+              "key": "Statut|select",
+              "selectValue": "Brouillon"
+            },
+            {
+              "key": "Description|rich_text",
+              "textContent": "={{ $json.Description }}"
+            },
+            {
+              "key": "Hypothèses PMF|relation",
+              "relationValue": [
+                "={{ $('When Executed by Another Workflow').item.json.id_Notion }}"
+              ]
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        580
+      ],
+      "id": "f9956d94-5228-4857-9282-dfddeadeebc3",
+      "name": "Ajout dans Support_Communication",
+      "credentials": {
+        "notionApi": {
+          "id": "HVm7YJNaqWnI20Vc",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n      {\n        \"Segment\": \"string\",\n        \"Plateforme\": \"string\",\n        \"Mots-clés/Hashtag\": \"string\",\n        \"Type\": \"string\",\n        \"Priorité\": \"Haute | Moyenne | Basse\",\n        \"Usage prévu\": \"string\"\n      }\n    ]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        660,
+        1400
+      ],
+      "id": "0616de32-fdf3-459f-b82d-5998f5880c77",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        900,
+        1180
+      ],
+      "id": "e4f0b4b9-6e5a-494a-8c4a-03e98d38046f",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\n  \"task\": \"Générer une liste de mots-clés et hashtags pertinents pour l’hypothèse PMF en cours.\",\n  \"project_ctx\": {{ $json.hypothese.toJsonString() }}\n  },\n  \"requirements\": {\n    \"nb_keywords_per_platform\": 6,\n    \"output_format\": [\n      {\n        \"Segment\": \"string\",\n        \"Plateforme\": \"string\",\n        \"Mots-clés/Hashtag\": \"string\",\n        \"Type\": \"string\",\n        \"Priorité\": \"Haute | Moyenne | Basse\",\n        \"Usage prévu\": \"string\"\n      }\n    ]\n  }\n}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un spécialiste en SEO et Paid Ads. \nTa mission : générer une liste structurée de mots-clés (Google/SEO) et de hashtags (LinkedIn/Instagram/X) pertinents pour tester une hypothèse PMF.\n\nContraintes :\n- Langue : FR.\n- Segments = correspond aux clients cibles du projet.\n- Plateforme = \"Google\", \"LinkedIn\", \"Instagram\", \"X\" ou autre pertinent.\n- Pour chaque mot-clé/hashtag, indique :\n  • Type : catégorise (Branding, Produit, Concurrentiel, Local, Intention achat, Thématique RSE…).\n  • Priorité : Haute / Moyenne / Basse (selon potentiel ou pertinence immédiate).\n  • Usage prévu : ex \"Google Ads - recherche intentionnelle\", \"SEO - trafic organique\", \"Hashtag LinkedIn - visibilité professionnelle\", etc.\n- Ne jamais inventer de chiffres de volume de recherche, mais prioriser qualitativement.\n- Sortie stricte : tableau JSON d’objets.\n- Colonnes obligatoires : Segment, Plateforme, Mots-clés/Hashtag, Type, Priorité, Usage prévu.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        540,
+        1180
+      ],
+      "id": "f3d243b7-5df5-419a-9a47-e958158f2828",
+      "name": "Mots-clés / Hashtags"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "25a34db9-30fe-80cf-b54a-cdaebdb60fd0",
+          "mode": "list",
+          "cachedResultName": "Mots_cles_Hashtags",
+          "cachedResultUrl": "https://www.notion.so/25a34db930fe80cfb54acdaebdb60fd0"
+        },
+        "title": "={{ $json.Segment }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Plateforme|rich_text",
+              "textContent": "={{ $json.Plateforme }}"
+            },
+            {
+              "key": "Priorité|multi_select",
+              "multiSelectValue": "={{ $json['Priorité'] }}"
+            },
+            {
+              "key": "Mot-clé / Hashtag|rich_text",
+              "textContent": "={{ $json['Mots-clés/Hashtag'] }}"
+            },
+            {
+              "key": "Usage prévu|rich_text",
+              "textContent": "={{ $json['Usage prévu'] }}"
+            },
+            {
+              "key": "Hypothèses PMF|relation",
+              "relationValue": [
+                "={{ $('When Executed by Another Workflow').item.json.id_Notion }}"
+              ]
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1140,
+        1180
+      ],
+      "id": "90e30d3c-eeab-487b-9ddf-95dade350f5e",
+      "name": "Ajout dans Mots-cles/Hashtags",
+      "credentials": {
+        "notionApi": {
+          "id": "HVm7YJNaqWnI20Vc",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n      {\n        \"Segment\": \"string\",\n        \"Canal\": \"string\",\n        \"Post proposé\": \"string\",\n        \"Format\": \"string\",\n        \"Hashtags associés\": [\"string\"],\n        \"Statut\": \"À valider\"\n      }\n    ]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        2100
+      ],
+      "id": "fbe58ce8-cb3f-45db-8446-5c3f3678c400",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1880
+      ],
+      "id": "ca677d9c-b3e7-49f2-b3a7-a7d80818a3db",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\n  \"task\": \"Générer une liste de posts organiques pertinents pour tester l’hypothèse PMF.\",\n  \"project_ctx\": {{ $json.hypothese.toJsonString() }},\n  \"requirements\": {\n    \"nb_posts_per_channel\": 2,\n    \"output_format\": [\n      {\n        \"Segment\": \"string\",\n        \"Canal\": \"string\",\n        \"Post proposé\": \"string\",\n        \"Format\": \"string\",\n        \"Hashtags associés\": [\"string\"],\n        \"Statut\": \"À valider\"\n      }\n    ]\n  }\n}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un content strategist spécialisé en B2B et B2C. \nTa mission : générer des posts organiques adaptés à un projet de startup en test de Product-Market-Fit.\n\nContraintes :\n- Langue : FR.\n- Public cible : voir dans le contexte projet\n- Pour chaque post :\n  • \"Segment\" = cible client visée.\n  • \"Canal\" = LinkedIn, Instagram, X, ou autre pertinent selon les canaux d’acquisition du projet.\n  • \"Post proposé\" = texte intégral du post (≤ 120 mots pour LinkedIn/X, ≤ 80 mots pour Instagram).\n  • \"Format\" = type de contenu (Texte seul, Carrousel, Infographie, Témoignage vidéo, Story…).\n  • \"Hashtags associés\" = liste de hashtags pertinents pour ce canal.\n  • \"Statut\" = toujours “À valider”.\n- Tonalité : professionnelle, claire, engageante, mais jamais anxiogène ni greenwashing.\n- Les posts doivent être directement exploitables comme brouillons dans Notion.\n- Sortie stricte : tableau JSON d’objets.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        520,
+        1880
+      ],
+      "id": "f9592931-6375-437b-a0f9-038c0f630bb5",
+      "name": "Mots-clés / Hashtags1"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "25a34db9-30fe-800f-b77c-f130d0b65cf8",
+          "mode": "list",
+          "cachedResultName": "Contenus_Organiques",
+          "cachedResultUrl": "https://www.notion.so/25a34db930fe800fb77cf130d0b65cf8"
+        },
+        "title": "={{ $json.Segment }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Canal|rich_text",
+              "textContent": "={{ $json.Canal }}"
+            },
+            {
+              "key": "Post proposé|rich_text",
+              "textContent": "={{ $json['Post proposé'] }}"
+            },
+            {
+              "key": "Format|rich_text",
+              "textContent": "={{ $json.Format }}"
+            },
+            {
+              "key": "Hashtags associés|rich_text",
+              "textContent": "={{ $json['Hashtags associés'].join(', ') }}"
+            },
+            {
+              "key": "Statut|select",
+              "selectValue": "À tester"
+            },
+            {
+              "key": "Hypothèses PMF|relation",
+              "relationValue": [
+                "={{ $('When Executed by Another Workflow').item.json.id_Notion }}"
+              ]
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        1880
+      ],
+      "id": "e2a50903-95a5-4ecf-87ce-0ed2ad983621",
+      "name": "Ajout dans Mots-cles/Hashtags1",
+      "credentials": {
+        "notionApi": {
+          "id": "HVm7YJNaqWnI20Vc",
+          "name": "Notion account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "hypothese": {
+            "vision_projet": {
+              "mission": "Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés pour la restauration rapide.",
+              "probleme_central": "Les fast-foods supportent des coûts élevés et une pollution importante liés aux emballages jetables, sans solution simple et opérationnelle de réutilisation.",
+              "solution_proposee": "Boîtes consignées, lavables et réutilisables couplées à une consigne digitale (QR code) et une logistique intégrée de collecte et lavage."
+            },
+            "marche_cible": {
+              "segment_principal": "Fast-foods indépendants engagés (early adopters) 35-50 ans, orientés bio/locavore, décision rapide si ROI.",
+              "taille_marche": "Non estimée, nécessite une estimation du nombre de fast-foods dans les zones géographiques prioritaires.",
+              "concurrents_principaux": [
+                "Fournisseurs d'emballages jetables classiques",
+                "Fournisseurs d'emballages biodégradables",
+                "Solutions locales/alternatives de consigne réutilisable"
+              ],
+              "canaux_acquisition": [
+                "LinkedIn",
+                "Emailing direct aux gérants",
+                "Salons RSE"
+              ]
+            },
+            "produit": {
+              "value_proposition": "Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.",
+              "fonctionnalites_cles": [
+                "Boîtes consignées, lavables et réutilisables",
+                "Consigne digitale via QR code pour suivi et gestion des retours",
+                "Logistique intégrée de collecte et lavage"
+              ],
+              "avantage_concurrentiel": "Combinaison consigne digitale + logistique intégrée visant à réduire la friction opérationnelle pour les restaurateurs."
+            },
+            "contexte_business": {
+              "nom_du_projet": "",
+              "stade_projet": "mvp",
+              "objectifs_prioritaires": [
+                "Signaler un intérêt marché et un taux d'acceptation client pour la consigne.",
+                "Valider la réduction des coûts d'emballage d'au moins 15% lors d'un pilote de 30 jours."
+              ],
+              "contraintes_identifiees": "Budget test limité (1000 €) et durée courte (1 mois); barrières à l'adoption incluent coût initial et complexité perçue de la logistique."
+            },
+            "hypothese_courante": {
+              "id": "hypothèse_test_pilote_1",
+              "segment": "Fast-foods indépendants engagés (early adopters) 35-50 ans.",
+              "probleme": "Coût opérationnel élevé lié aux emballages jetables impactant la marge par commande.",
+              "value_prop": "Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.",
+              "resume": "Pilote de 30 jours chez fast-foods engagés pour démontrer ≥15% de réduction du coût d’emballage/commande.",
+              "raison_selection": "Meilleure cohérence problème/cible, preuve chiffrée rapide, canaux d’acquisition accessibles."
+            },
+            "gaps_questions": {
+              "infos_manquantes": [
+                "Estimation de la taille de marché.",
+                "Unit economics détaillés : coût unitaire des boîtes, coût de lavage/collecte.",
+                "Plan opérationnel et capacité logistique.",
+                "Conditions commerciales et incitations pour signer des pilotes."
+              ],
+              "incoherences": [
+                "Seuil de succès défini à 5 restaurants pilotes en 1 mois, un seul restaurant pilote prévu.",
+                "Budget test de 1000 € semble insuffisant.",
+                "Réduction de 70% sans méthode de calcul indiquée."
+              ],
+              "zones_flou": [
+                "Modalités de la consigne digitale et gestion des litiges.",
+                "Critères pour qualifier un 'restaurant intéressé' vs 'pilote signé'."
+              ]
+            }
+          },
+          "id_Notion": "25c34db9-30fe-812e-b91b-e264cb8c51ba"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Support communication",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Campagne Ads",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mots-clés / Hashtags",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mots-clés / Hashtags1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Campagne Ads",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Support communication",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Mots-clés / Hashtags",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Mots-clés / Hashtags1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Campagne Ads": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Campagne Ads",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Support communication": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Support communication",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Ajout dans Campagne_Ads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Ajout dans Support_Communication",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Mots-clés / Hashtags",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Ajout dans Mots-cles/Hashtags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mots-clés / Hashtags": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Mots-clés / Hashtags1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Ajout dans Mots-cles/Hashtags1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mots-clés / Hashtags1": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "781edb44-d585-4a39-9e8f-b103c8591c4f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "qHgckyxSSjagk9iq",
+  "tags": []
+}

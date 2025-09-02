@@ -1,0 +1,863 @@
+{
+  "name": "Create Landing Page",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"hypothese\": {\n      \"vision_projet\": {\n        \"mission\": \"Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés pour la restauration rapide.\",\n        \"probleme_central\": \"Les fast-foods supportent des coûts élevés et une pollution importante liés aux emballages jetables, sans solution simple et opérationnelle de réutilisation.\",\n        \"solution_proposee\": \"Boîtes consignées, lavables et réutilisables couplées à une consigne digitale (QR code) et une logistique intégrée de collecte et lavage.\"\n      },\n      \"marche_cible\": {\n        \"segment_principal\": \"Fast-foods indépendants engagés (early adopters) 35-50 ans, orientés bio/locavore, décision rapide si ROI.\",\n        \"taille_marche\": \"Non estimée, nécessite une estimation du nombre de fast-foods dans les zones géographiques prioritaires.\",\n        \"concurrents_principaux\": [\n          \"Fournisseurs d'emballages jetables classiques\",\n          \"Fournisseurs d'emballages biodégradables\",\n          \"Solutions locales/alternatives de consigne réutilisable\"\n        ],\n        \"canaux_acquisition\": [\n          \"LinkedIn\",\n          \"Emailing direct aux gérants\",\n          \"Salons RSE\"\n        ]\n      },\n      \"produit\": {\n        \"value_proposition\": \"Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.\",\n        \"fonctionnalites_cles\": [\n          \"Boîtes consignées, lavables et réutilisables\",\n          \"Consigne digitale via QR code pour suivi et gestion des retours\",\n          \"Logistique intégrée de collecte et lavage\"\n        ],\n        \"avantage_concurrentiel\": \"Combinaison consigne digitale + logistique intégrée visant à réduire la friction opérationnelle pour les restaurateurs.\"\n      },\n      \"contexte_business\": {\n        \"nom_du_projet\":\"\",\n        \"stade_projet\": \"mvp\",\n        \"objectifs_prioritaires\": [\n          \"Signaler un intérêt marché et un taux d'acceptation client pour la consigne.\",\n          \"Valider la réduction des coûts d'emballage d'au moins 15% lors d'un pilote de 30 jours.\"\n        ],\n        \"contraintes_identifiees\": \"Budget test limité (1000 €) et durée courte (1 mois); barrières à l'adoption incluent coût initial et complexité perçue de la logistique.\"\n      },\n      \"hypothese_courante\": {\n        \"id\": \"hypothèse_test_pilote_1\",\n        \"segment\": \"Fast-foods indépendants engagés (early adopters) 35-50 ans.\",\n        \"probleme\": \"Coût opérationnel élevé lié aux emballages jetables impactant la marge par commande.\",\n        \"value_prop\": \"Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.\",\n        \"resume\": \"Pilote de 30 jours chez fast-foods engagés pour démontrer ≥15% de réduction du coût d’emballage/commande.\",\n        \"raison_selection\": \"Meilleure cohérence problème/cible, preuve chiffrée rapide, canaux d’acquisition accessibles.\"\n      },\n      \"gaps_questions\": {\n        \"infos_manquantes\": [\n          \"Estimation de la taille de marché.\",\n          \"Unit economics détaillés : coût unitaire des boîtes, coût de lavage/collecte.\",\n          \"Plan opérationnel et capacité logistique.\",\n          \"Conditions commerciales et incitations pour signer des pilotes.\"\n        ],\n        \"incoherences\": [\n          \"Seuil de succès défini à 5 restaurants pilotes en 1 mois, un seul restaurant pilote prévu.\",\n          \"Budget test de 1000 € semble insuffisant.\",\n          \"Réduction de 70% sans méthode de calcul indiquée.\"\n        ],\n        \"zones_flou\": [\n          \"Modalités de la consigne digitale et gestion des litiges.\",\n          \"Critères pour qualifier un 'restaurant intéressé' vs 'pilote signé'.\"\n        ]\n      }\n    },\n  \"id_Notion\":\"\"\n}"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {
+          "maxTokensToSample": 10000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1700,
+        240
+      ],
+      "id": "03a475e3-c56e-4e27-8cef-a60a7723949d",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "OH9xPfSvp4wDCseL",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the landing page structure and the brand identity you will be working with:\n\n<landing_page_structure>\n{{ $json.structure_landing_page.toJsonString() }}\n</landing_page_structure>\n<brand_identity>\n{{ $json.brand_identity.toJsonString() }}\n</brand_identity>\n\nTo illustrate the landing page, you also have access to the following images : \n{{ $('Generate visuals').item.json.images.toJsonString() }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert web developer tasked with creating a complete, responsive landing page based on the given structure and the given brand identity. Your goal is to generate HTML, CSS, and JavaScript code that can be directly copied and pasted into an index.html file.\n\nYour task is to convert this structure into functional, responsive code that works well on desktop, tablet, and mobile devices. Follow these steps to generate the code:\n\n1. Parse the landing page structure and identify all the elements (such as headline, subheadline, description, features, CTA, tagline, and visual suggestions).\n\n2. Create the HTML structure:\n   - Use semantic HTML5 tags where appropriate (e.g., <header>, <main>, <section>, <footer>).\n   - Include a <!DOCTYPE html> declaration and proper <html>, <head>, and <body> tags.\n   - Add meta tags for charset and viewport in the <head> section.\n   - Create a <title> tag with an appropriate title for the page.\n   - Structure the content according to the provided landing page elements.\n   - Use appropriate HTML tags for each element (e.g., <h1> for headline, <h2> for subheadline, <p> for description, <ul> for features).\n   - Add placeholder <div> elements for the visual suggestions.\n\n3. Add CSS styling:\n   - Create a <style> tag in the <head> section.\n   - Define styles to create an attractive and responsive layout.\n  - Define style using the given brand identity guidelines.\n   - Use flexbox or grid for layout management.\n   - Style the headline, subheadline, description, features, CTA button, and tagline.\n   - Add media queries for responsiveness, ensuring the design works well on mobile and tablet devices.\n   - Use a modern, clean color scheme and typography.\n\n4. Implement JavaScript functionality:\n   - Create a <script> tag at the end of the <body> section.\n   - Add basic interactivity, such as smooth scrolling to sections or a simple form validation for the CTA button.\n\n5. Combine the HTML, CSS, and JavaScript into a single file.\n\n6. Ensure all code is properly formatted and indented for readability.\n\nProvide the complete code output, starting directly with <!DOCTYPE html> and ending with the closing </html> tag. Do not include any additional tags around the code or any planning sections in the final output.\nDo not wrap the output in markdown code blocks or backticks. \nReturn only the raw HTML code without any formatting markers.\n\nRemember to create a visually appealing and responsive design that accurately represents the provided landing page structure and works well on all device sizes. The final code should be ready to be copied and pasted directly into an index.html file and pushed to a webserver."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2780,
+        440
+      ],
+      "id": "b83315fa-35d6-4edc-b537-eb67947282a7",
+      "name": "Generate landing code"
+    },
+    {
+      "parameters": {
+        "jsCode": "let response = $input.first().json.text;\n\n// Supprimer les blocs markdown (s'ils existent)\nresponse = response.replace(/```html/g, '');\nresponse = response.replace(/```$/g, '');\n\n// Supprimer les VRAIS line breaks (pas \\\\n)\nresponse = response.replace(/\\n/g, '');  // Pas \\\\n mais \\n !\nresponse = response.replace(/\\r/g, '');  // Pas \\\\r mais \\r !\n\n// Optionnel : supprimer les espaces multiples créés\nresponse = response.replace(/\\s+/g, ' ');\n\nreturn { cleanedResponse: response };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3140,
+        440
+      ],
+      "id": "e4acd0b1-a06b-4989-8ecf-94fdb2ab28fe",
+      "name": "Clean code answer"
+    },
+    {
+      "parameters": {
+        "protocol": "sftp",
+        "operation": "upload",
+        "path": "=/public/GREENPACK/index.html",
+        "binaryData": false,
+        "fileContent": "={{ $json.cleanedResponse }}"
+      },
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        440
+      ],
+      "id": "3b403cc7-60c5-48c4-bba3-d32ecc900cef",
+      "name": "Push file to server",
+      "credentials": {
+        "sftp": {
+          "id": "KGdgRuIUmVx5GWT5",
+          "name": "FTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n\nHere is the complete context for the startup project:\n\n<startup_context>\n{{ $json.hypothese.toJsonString() }}\n</startup_context>\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a branding expert tasked with creating a comprehensive brand identity and style guide for a startup project. Your goal is to develop a cohesive visual identity that can be used for the startup's landing page, marketing materials, and other visual assets.\n\nBased on this context, you will create a brand identity and style guide. Before providing the final output, conduct a thorough brand analysis. Wrap this analysis in <brand_analysis> tags, including the following steps:\n\n1. Summarize the key points from the project context\n2. Identify and describe the target audience\n3. List potential brand personality traits (aim for 6-8)\n4. Brainstorm ideas for core values (aim for 6-8)\n5. Consider color associations that might work well for this brand\n6. Think about typography styles that could represent the brand effectively\n7. Suggest visual element ideas that align with the brand's personality\n\nYour final output should be a JSON object containing the following elements:\n\n1. brandElements:\n   - brandPersonality (array of 3-5 adjectives)\n   - brandVoice (object with tone and style properties)\n   - coreValues (array of 3-5 key principles)\n\n2. colorPalette:\n   - primaryColor (object with hex code and explanation)\n   - secondaryColor (object with hex code and explanation)\n   - accentColor (object with hex code and explanation)\n   - neutralColors (array of objects, each with hex code and explanation)\n\n3. typography:\n   - headerFont (object with serif and sans-serif options, each including font name and explanation)\n   - bodyFont (object with serif and sans-serif options, each including font name and explanation)\n   - accentFont (optional, object with font name and explanation)\n\n4. visualElements:\n   - logoStyle (string describing the style)\n   - iconographyStyle (string describing the style)\n   - imageryStyle (string describing photography or illustration style)\n   - patternsTextures (string describing patterns or textures, if applicable)\n\n5. summary (string summarizing the brand guidelines and explaining how these elements work together to represent the startup's identity and appeal to its target audience)\n\nRemember to ensure that all elements of the brand identity and style guide are cohesive and align with the startup's goals, values, and target audience as described in the project context.\n\nAlways answer in french language.\n\nAfter completing your analysis, create a JSON object containing the brand identity and style guide elements. The JSON structure should be as follows:\n\n{\n  \"brandElements\": {\n    \"brandPersonality\": [\"adjective1\", \"adjective2\", \"adjective3\"],\n    \"brandVoice\": {\n      \"tone\": \"description\",\n      \"style\": \"description\"\n    },\n    \"coreValues\": [\"value1\", \"value2\", \"value3\"]\n  },\n  \"colorPalette\": {\n    \"primaryColor\": {\n      \"hexCode\": \"#000000\",\n      \"explanation\": \"reason for choice\"\n    },\n    \"secondaryColor\": {\n      \"hexCode\": \"#000000\",\n      \"explanation\": \"reason for choice\"\n    },\n    \"accentColor\": {\n      \"hexCode\": \"#000000\",\n      \"explanation\": \"reason for choice\"\n    },\n    \"neutralColors\": [\n      {\n        \"hexCode\": \"#000000\",\n        \"explanation\": \"reason for choice\"\n      },\n      {\n        \"hexCode\": \"#000000\",\n        \"explanation\": \"reason for choice\"\n      }\n    ]\n  },\n  \"typography\": {\n    \"headerFont\": {\n      \"serif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      },\n      \"sansSerif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      }\n    },\n    \"bodyFont\": {\n      \"serif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      },\n      \"sansSerif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      }\n    },\n    \"accentFont\": {\n      \"fontName\": \"Font Name\",\n      \"explanation\": \"reason for choice\"\n    }\n  },\n  \"visualElements\": {\n    \"logoStyle\": \"description of style\",\n    \"iconographyStyle\": \"description of style\",\n    \"imageryStyle\": \"description of photography or illustration style\",\n    \"patternsTextures\": \"description of patterns or textures, if applicable\"\n  },\n  \"summary\": \"A comprehensive summary of the brand guidelines, explaining how these elements work together to represent the startup's identity and appeal to its target audience.\"\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        700,
+        500
+      ],
+      "id": "fc220cca-f5c5-4d6b-b9d3-2338bcdde30c",
+      "name": "Generate Charte Graphique"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"headline\": \"string\",\n  \"subheadline\": \"string\",\n  \"description\": \"string\",\n  \"features\": [\n    {\n      \"title\": \"string\",\n      \"description\": \"string\"\n    }\n  ],\n  \"cta\": \"string\",\n  \"tagline\": \"string\",\n  \"visualSuggestions\": [\n    \"string\"\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        200
+      ],
+      "id": "1fce380f-1f21-46f4-9cfc-7cae401ebe14",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "\n{\n  \"brandElements\": {\n    \"brandPersonality\": [\"adjective1\", \"adjective2\", \"adjective3\"],\n    \"brandVoice\": {\n      \"tone\": \"description\",\n      \"style\": \"description\"\n    },\n    \"coreValues\": [\"value1\", \"value2\", \"value3\"]\n  },\n  \"colorPalette\": {\n    \"primaryColor\": {\n      \"hexCode\": \"#000000\",\n      \"explanation\": \"reason for choice\"\n    },\n    \"secondaryColor\": {\n      \"hexCode\": \"#000000\",\n      \"explanation\": \"reason for choice\"\n    },\n    \"accentColor\": {\n      \"hexCode\": \"#000000\",\n      \"explanation\": \"reason for choice\"\n    },\n    \"neutralColors\": [\n      {\n        \"hexCode\": \"#000000\",\n        \"explanation\": \"reason for choice\"\n      },\n      {\n        \"hexCode\": \"#000000\",\n        \"explanation\": \"reason for choice\"\n      }\n    ]\n  },\n  \"typography\": {\n    \"headerFont\": {\n      \"serif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      },\n      \"sansSerif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      }\n    },\n    \"bodyFont\": {\n      \"serif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      },\n      \"sansSerif\": {\n        \"fontName\": \"Font Name\",\n        \"explanation\": \"reason for choice\"\n      }\n    },\n    \"accentFont\": {\n      \"fontName\": \"Font Name\",\n      \"explanation\": \"reason for choice\"\n    }\n  },\n  \"visualElements\": {\n    \"logoStyle\": \"description of style\",\n    \"iconographyStyle\": \"description of style\",\n    \"imageryStyle\": \"description of photography or illustration style\",\n    \"patternsTextures\": \"description of patterns or textures, if applicable\"\n  },\n  \"summary\": \"A comprehensive summary of the brand guidelines, explaining how these elements work together to represent the startup's identity and appeal to its target audience.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        680
+      ],
+      "id": "51ad0560-d032-4445-a118-1cf6e413a713",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1560,
+        480
+      ],
+      "id": "e604ba7d-6429-44d6-9c05-e3fd118ee30d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n\nHere is the complete context for the startup project:\n\n<startup_context>\n{{ $json.hypothese.toJsonString() }}\n</startup_context>\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert marketing copywriter and web designer specializing in creating compelling landing pages for startups. Your task is to generate content for a simple, effective landing page based on the provided startup context. The landing page should not include a contact form at this stage.\n\nBefore generating the landing page content, carefully analyze the startup context. In <startup_analysis> tags:\n\n1. List out each key element of the startup's offering with a brief description:\n   - Product or service\n   - Target audience\n   - Unique value proposition\n   - Key features or benefits (list more than 5)\n   - Startup's mission or vision\n   - Specific branding elements mentioned\n\n2. For each element, consider how it appeals to the target audience's perspective.\n\n3. From the list of features/benefits, select the top 3-5 that would be most compelling to the target audience.\n\nAfter your analysis, generate content for a landing page that effectively communicates the startup's offering and value proposition. The landing page should include the following elements:\n\n1. A catchy headline that grabs attention and clearly states the main benefit (5-10 words)\n2. A subheadline that elaborates on the headline and provides additional context (10-20 words)\n3. A brief, compelling description of the product or service (2-3 sentences)\n4. 3-5 key features or benefits, each with a short description (1-2 sentences each)\n5. A clear call-to-action (CTA) that encourages visitors to take the next step (e.g., \"Learn More\", \"Get Started\", \"Sign Up for Early Access\")\n6. A tagline or mission statement that encapsulates the startup's vision (5-15 words)\n7. Suggested visual elements or imagery that would complement the content (describe 2-3 elements, don't generate actual images)\n\nWhen creating the content:\n- Use French language\n- Use clear, concise, and persuasive language\n- Focus on the benefits to the user rather than just listing features\n- Maintain a consistent tone that aligns with the startup's brand and target audience\n- Ensure all content is directly relevant to the product/service and target audience\n\nAfter generating the content, present your landing page content in JSON format. The JSON structure should be as follows:\n\n{\n  \"headline\": \"string\",\n  \"subheadline\": \"string\",\n  \"description\": \"string\",\n  \"features\": [\n    {\n      \"title\": \"string\",\n      \"description\": \"string\"\n    }\n  ],\n  \"cta\": \"string\",\n  \"tagline\": \"string\",\n  \"visualSuggestions\": [\n    \"string\"\n  ]\n}\n\nRemember to focus solely on the product or service described in the startup context. Do not add any elements or information that are not directly related to or supported by the provided context. The goal is to create a simple, focused, and effective landing page that accurately represents the startup's offering."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        480,
+        0
+      ],
+      "id": "3ebcb2d0-6823-4b86-b35e-e3e025757ba9",
+      "name": "Generate text content"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Jg8ZS5qqpmLpXCqk",
+          "mode": "list",
+          "cachedResultName": "Generate Visuals"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "structure_landing_page": "={{ $json.structure_landing_page }}",
+            "brand_identity": "={{ $json.brand_identity }}",
+            "contexte_projet": "={{ $('When Executed by Another Workflow').item.json.hypothese }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "structure_landing_page",
+              "displayName": "structure_landing_page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "brand_identity",
+              "displayName": "brand_identity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "contexte_projet",
+              "displayName": "contexte_projet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        80
+      ],
+      "id": "02909107-0b79-4594-973b-ad7ecf8a6684",
+      "name": "Generate visuals"
+    },
+    {
+      "parameters": {
+        "jsCode": "function separateProjectData(jsonData) {\n  const data = jsonData;\n  \n  // Objet contexte_projet\n  const contexte_projet = {\n    headline: data.headline,\n    subheadline: data.subheadline,\n    description: data.description,\n    features: data.features,\n    cta: data.cta,\n    tagline: data.tagline,\n    visualSuggestions: data.visualSuggestions\n  };\n  \n  // Objet brand_identity\n  const brand_identity = {\n    brandElements: data.brandElements,\n    colorPalette: data.colorPalette,\n    typography: data.typography,\n    visualElements: data.visualElements,\n    summary: data.summary\n  };\n  \n  return {\n    contexte_projet,\n    brand_identity\n  };\n}\n\n// Usage avec votre JSON\nconst inputData = $input.first().json.output\n\nconst { contexte_projet, brand_identity } = separateProjectData(inputData);\n\nreturn {\n  \"structure_landing_page\": contexte_projet,\n  \"brand_identity\" : brand_identity\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        480
+      ],
+      "id": "6f1cfbc4-8b3d-49b3-890f-e102df556c39",
+      "name": "Gather contexte_projet and brand_identity"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2420,
+        480
+      ],
+      "id": "d4afcfe0-da8f-4c1e-94b2-7537c96f5a22",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "25e34db9-30fe-806d-99a7-d3eeb4d6ad68",
+          "mode": "list",
+          "cachedResultName": "Visuels_db",
+          "cachedResultUrl": "https://www.notion.so/25e34db930fe806d99a7d3eeb4d6ad68"
+        },
+        "title": "={{ $json.images[0].filename }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "URL|url",
+              "urlValue": "={{ $json.images[0].public_url }}"
+            },
+            {
+              "key": "image|files",
+              "fileUrls": {
+                "fileUrl": [
+                  {
+                    "name": "={{ $json.images[0].filename }}",
+                    "url": "={{ $json.images[0].public_url }}"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "alt_text|rich_text",
+              "textContent": "={{ $json.images[0].alt_text }}"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Done"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        2140,
+        80
+      ],
+      "id": "980b0162-9995-4ad0-8383-1bf68e70ccc3",
+      "name": "Insert images in Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "HVm7YJNaqWnI20Vc",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create Landing Page Template\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        220,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "a5a3c430-484b-442a-b2a8-c74c4b385638",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Add charte to Notion template (workflow)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1100,
+        460
+      ],
+      "typeVersion": 1,
+      "id": "7d472e14-16fc-4bdc-bfe1-eff6fc6e7a58",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        920
+      ],
+      "id": "3bc644ea-1bd9-4db7-8e3a-ffd0c6ca11b9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "operation": "getAll",
+        "blockId": {
+          "__rl": true,
+          "value": "26034db930fe811280a1f64b337f620c",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -40,
+        920
+      ],
+      "id": "a0592747-e0ed-41ab-9d10-9ac7de34ddd5",
+      "name": "Get Charte Graphique Template",
+      "notesInFlow": true,
+      "credentials": {
+        "notionApi": {
+          "id": "HVm7YJNaqWnI20Vc",
+          "name": "Notion account"
+        }
+      },
+      "notes": "By ID"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nœud Code JavaScript\nconst templateBlocks = $input.first().json;\nconst cleanBlocks = [];\n\nfor (const block of templateBlocks) {\n  // Nettoyer les IDs Notion\n  const cleanBlock = { ...block };\n  delete cleanBlock.id;\n  delete cleanBlock.created_time;\n  delete cleanBlock.last_edited_time;\n  delete cleanBlock.created_by;\n  delete cleanBlock.last_edited_by;\n  delete cleanBlock.parent;\n  delete cleanBlock.archived;\n  \n  // Remplacer les placeholders\n  if (cleanBlock.type && cleanBlock[cleanBlock.type]?.rich_text) {\n    cleanBlock[cleanBlock.type].rich_text = cleanBlock[cleanBlock.type].rich_text.map(textObj => {\n      if (textObj.text?.content) {\n        textObj.text.content = textObj.text.content\n          .replace(/\\[NOM ENTREPRISE\\]/g, $('Set').first().json.company_name)\n          .replace(/\\[CODE_HEX\\]/g, $('Set').first().json.primary_color)\n          .replace(/\\[Description.*?\\]/g, $('Set').first().json.resume_executif);\n      }\n      return textObj;\n    });\n  }\n  \n  cleanBlocks.push(cleanBlock);\n}\n\nreturn [{ json: { blocks: cleanBlocks } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        920
+      ],
+      "id": "c465dc32-9d2b-4f9b-9b3d-66c0e11ffef8",
+      "name": "Parse & Clean Template"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"company_name\": \"{{ $json.company }}\",\n  \"resume_executif\": \"{{ $json.brand_summary }}\",\n  \"primary_color_name\": \"{{ $json.color_primary_name }}\",\n  \"primary_color_hex\": \"{{ $json.color_primary_hex }}\",\n  \"primary_color_desc\": \"{{ $json.color_primary_description }}\",\n  \"font_serif\": \"{{ $json.font_serif || 'Playfair Display' }}\",\n  \"font_sans_serif\": \"{{ $json.font_sans_serif || 'Inter' }}\",\n  \"font_description\": \"{{ $json.font_desc }}\",\n  \"background_usage\": \"{{ $json.bg_usage }}\",\n  \"text_usage\": \"{{ $json.text_usage }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -40,
+        1060
+      ],
+      "id": "91bc2c3f-3792-48fa-b510-3a75d8927d8a",
+      "name": "Set Charte Graphique variables"
+    },
+    {
+      "parameters": {
+        "content": "## Create Landing Page Template\n[Trigger: Manual/Webhook]\n    ↓\n[Set: Variables dynamiques] \n    ↓\n[Notion: Get Template Blocks]\n    ↓\n[Code: Parse & Replace Placeholders]\n    ↓\n[Notion: Create New Page]\n    ↓\n[Success Response]",
+        "height": 660,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -420,
+        620
+      ],
+      "typeVersion": 1,
+      "id": "d57655ed-7d87-455d-8521-657483ee4bad",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "hypothese": {
+            "vision_projet": {
+              "mission": "Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés pour la restauration rapide.",
+              "probleme_central": "Les fast-foods supportent des coûts élevés et une pollution importante liés aux emballages jetables, sans solution simple et opérationnelle de réutilisation.",
+              "solution_proposee": "Boîtes consignées, lavables et réutilisables couplées à une consigne digitale (QR code) et une logistique intégrée de collecte et lavage."
+            },
+            "marche_cible": {
+              "segment_principal": "Fast-foods indépendants engagés (early adopters) 35-50 ans, orientés bio/locavore, décision rapide si ROI.",
+              "taille_marche": "Non estimée, nécessite une estimation du nombre de fast-foods dans les zones géographiques prioritaires.",
+              "concurrents_principaux": [
+                "Fournisseurs d'emballages jetables classiques",
+                "Fournisseurs d'emballages biodégradables",
+                "Solutions locales/alternatives de consigne réutilisable"
+              ],
+              "canaux_acquisition": [
+                "LinkedIn",
+                "Emailing direct aux gérants",
+                "Salons RSE"
+              ]
+            },
+            "produit": {
+              "value_proposition": "Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.",
+              "fonctionnalites_cles": [
+                "Boîtes consignées, lavables et réutilisables",
+                "Consigne digitale via QR code pour suivi et gestion des retours",
+                "Logistique intégrée de collecte et lavage"
+              ],
+              "avantage_concurrentiel": "Combinaison consigne digitale + logistique intégrée visant à réduire la friction opérationnelle pour les restaurateurs."
+            },
+            "contexte_business": {
+              "nom_du_projet": "GreenPack",
+              "stade_projet": "mvp",
+              "objectifs_prioritaires": [
+                "Signaler un intérêt marché et un taux d'acceptation client pour la consigne.",
+                "Valider la réduction des coûts d'emballage d'au moins 15% lors d'un pilote de 30 jours."
+              ],
+              "contraintes_identifiees": "Budget test limité (1000 €) et durée courte (1 mois); barrières à l'adoption incluent coût initial et complexité perçue de la logistique."
+            },
+            "hypothese_courante": {
+              "id": "hypothèse_test_pilote_1",
+              "segment": "Fast-foods indépendants engagés (early adopters) 35-50 ans.",
+              "probleme": "Coût opérationnel élevé lié aux emballages jetables impactant la marge par commande.",
+              "value_prop": "Réduction nette des coûts d'emballage via boîtes consignées + suivi financier.",
+              "resume": "Pilote de 30 jours chez fast-foods engagés pour démontrer ≥15% de réduction du coût d’emballage/commande.",
+              "raison_selection": "Meilleure cohérence problème/cible, preuve chiffrée rapide, canaux d’acquisition accessibles."
+            },
+            "gaps_questions": {
+              "infos_manquantes": [
+                "Estimation de la taille de marché.",
+                "Unit economics détaillés : coût unitaire des boîtes, coût de lavage/collecte.",
+                "Plan opérationnel et capacité logistique.",
+                "Conditions commerciales et incitations pour signer des pilotes."
+              ],
+              "incoherences": [
+                "Seuil de succès défini à 5 restaurants pilotes en 1 mois, un seul restaurant pilote prévu.",
+                "Budget test de 1000 € semble insuffisant.",
+                "Réduction de 70% sans méthode de calcul indiquée."
+              ],
+              "zones_flou": [
+                "Modalités de la consigne digitale et gestion des litiges.",
+                "Critères pour qualifier un 'restaurant intéressé' vs 'pilote signé'."
+              ]
+            }
+          },
+          "id_Notion": "25c34db9-30fe-812e-b91b-e264cb8c51ba"
+        }
+      }
+    ],
+    "Generate Charte Graphique": [
+      {
+        "json": {
+          "output": {
+            "brandElements": {
+              "brandPersonality": [
+                "innovant",
+                "responsable",
+                "pragmatique",
+                "transparent",
+                "efficace"
+              ],
+              "brandVoice": {
+                "tone": "Professionnel et engagé, avec une approche directe et rassurante qui met l'accent sur les bénéfices concrets",
+                "style": "Communication claire et factuelle, utilisant un langage accessible aux professionnels de la restauration, évitant le jargon technique tout en restant précis sur les avantages économiques et environnementaux"
+              },
+              "coreValues": [
+                "durabilité environnementale",
+                "innovation technologique",
+                "transparence financière",
+                "efficacité opérationnelle",
+                "partenariat de confiance"
+              ]
+            },
+            "colorPalette": {
+              "primaryColor": {
+                "hexCode": "#2E7D4A",
+                "explanation": "Vert forêt moderne qui évoque la durabilité et l'engagement environnemental sans être trop agressif, inspirant confiance et sérieux aux professionnels"
+              },
+              "secondaryColor": {
+                "hexCode": "#1E3A8A",
+                "explanation": "Bleu professionnel qui renforce la crédibilité technologique et la fiabilité du système de consigne digitale"
+              },
+              "accentColor": {
+                "hexCode": "#F59E0B",
+                "explanation": "Orange énergique qui symbolise l'innovation et l'optimisme, utilisé pour mettre en valeur les économies réalisées et les call-to-action"
+              },
+              "neutralColors": [
+                {
+                  "hexCode": "#F8FAFC",
+                  "explanation": "Blanc cassé pour les arrière-plans, évoquant la propreté essentielle dans la restauration"
+                },
+                {
+                  "hexCode": "#64748B",
+                  "explanation": "Gris ardoise pour les textes secondaires et éléments d'interface, garantissant une excellente lisibilité"
+                }
+              ]
+            },
+            "typography": {
+              "headerFont": {
+                "serif": {
+                  "fontName": "Playfair Display",
+                  "explanation": "Serif moderne et élégant qui apporte une touche de sophistication pour les titres principaux, évoquant la qualité et le raffinement"
+                },
+                "sansSerif": {
+                  "fontName": "Inter",
+                  "explanation": "Typographie sans-serif très lisible et moderne, parfaite pour les titres digitaux et les interfaces, représentant l'innovation technologique"
+                }
+              },
+              "bodyFont": {
+                "serif": {
+                  "fontName": "Source Serif Pro",
+                  "explanation": "Police serif lisible et professionnelle pour les contenus longs, idéale pour les rapports financiers et documents techniques"
+                },
+                "sansSerif": {
+                  "fontName": "Open Sans",
+                  "explanation": "Typographie sans-serif très polyvalente et lisible sur tous supports, parfaite pour le web et les applications mobiles"
+                }
+              },
+              "accentFont": {
+                "fontName": "Poppins",
+                "explanation": "Police moderne aux formes arrondies, utilisée pour les éléments d'accentuation et les chiffres importants, apportant dynamisme et approchabilité"
+              }
+            },
+            "visualElements": {
+              "logoStyle": "Logo épuré combinant symbole circulaire évoquant le cycle de réutilisation et typographie moderne, utilisant les couleurs primaires avec des formes géométriques simples",
+              "iconographyStyle": "Icônes minimalistes avec des lignes épurées, privilégiant les formes circulaires et les flèches pour évoquer le cycle et la logistique, dans un style moderne et facilement reconnaissable",
+              "imageryStyle": "Photographies authentiques de restaurants en action, avec des couleurs naturelles et une lumière claire, complétées par des illustrations vectorielles simples pour expliquer les processus",
+              "patternsTextures": "Motifs géométriques subtils évoquant les connexions et réseaux, utilisant des lignes pointillées et des formes circulaires interconnectées, appliqués avec parcimonie pour ne pas surcharger"
+            },
+            "summary": "L'identité visuelle de GreenPack reflète parfaitement sa mission de révolutionner l'emballage dans la restauration rapide. La palette de couleurs associe le vert environnemental au bleu technologique, renforcée par des touches d'orange pour l'innovation, créant une image à la fois écologique et professionnelle. La typographie privilégie la lisibilité et la modernité, avec Inter pour les interfaces digitales et Open Sans pour le contenu, garantissant une communication claire avec les restaurateurs. Les éléments visuels épurés et les motifs circulaires incarnent les valeurs de durabilité et d'efficacité, tandis que le ton professionnel mais accessible rassure les entrepreneurs sur la viabilité économique de la solution. Cette identité de marque cohérente positionne GreenPack comme un partenaire technologique fiable pour la transition écologique de la restauration, capable de transformer un enjeu environnemental en opportunité business."
+          }
+        }
+      }
+    ],
+    "Generate text content": [
+      {
+        "json": {
+          "output": {
+            "headline": "Réduisez vos coûts d'emballage de 15%",
+            "subheadline": "Solution complète d'emballages consignés pour fast-foods responsables avec logistique intégrée",
+            "description": "GreenPack révolutionne les emballages de restauration rapide avec des boîtes consignées réutilisables et un système digital intelligent. Réduisez vos coûts tout en préservant l'environnement, sans contrainte logistique.",
+            "features": [
+              {
+                "title": "Économies garanties de 15%",
+                "description": "Réduction prouvée des coûts d'emballage par commande avec suivi financier en temps réel."
+              },
+              {
+                "title": "Logistique intégrée clé en main",
+                "description": "Collecte, lavage et redistribution automatisés sans effort de votre part."
+              },
+              {
+                "title": "Gestion digitale par QR code",
+                "description": "Suivi automatique des consignes et retours via une technologie simple et fiable."
+              },
+              {
+                "title": "Impact environnemental positif",
+                "description": "Réduction drastique des déchets plastiques tout en valorisant votre image responsable."
+              },
+              {
+                "title": "Boîtes durables et hygiéniques",
+                "description": "Emballages lavables professionnellement, résistants et adaptés à tous types de plats."
+              }
+            ],
+            "cta": "Tester GreenPack 30 jours",
+            "tagline": "L'emballage réutilisable qui fait du bien à vos finances",
+            "visualSuggestions": [
+              "Image comparative montrant des boîtes GreenPack élégantes à côté d'emballages jetables avec indicateur de coûts",
+              "Infographie illustrant le cycle de vie des boîtes : utilisation → collecte → lavage → redistribution",
+              "Photo d'un restaurateur souriant tenant une boîte GreenPack avec un graphique d'économies en arrière-plan"
+            ]
+          }
+        }
+      }
+    ],
+    "Generate visuals": [
+      {
+        "json": {
+          "images": [
+            {
+              "filename": "greenpack_comparatif.png",
+              "public_url": "https://nocodb.cloudron.alpes-ia.fr/download/2025/08/29/3b80a5a4edc44e4c8874f822b7df09949e242d83/greenpack_comparatif_MuylG.png",
+              "alt_text": "Comparaison visuelle GreenPack : boîtes réutilisables élégantes vs emballages jetables, avec icônes montrant réduction des coûts."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Generate text content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Charte Graphique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate text content",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate landing code",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Charte Graphique",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate landing code": {
+      "main": [
+        [
+          {
+            "node": "Clean code answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean code answer": {
+      "main": [
+        [
+          {
+            "node": "Push file to server",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate text content",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Charte Graphique",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Gather contexte_projet and brand_identity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Charte Graphique": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Generate text content": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gather contexte_projet and brand_identity": {
+      "main": [
+        [
+          {
+            "node": "Generate visuals",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Generate landing code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate visuals": {
+      "main": [
+        [
+          {
+            "node": "Insert images in Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert images in Notion": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Charte Graphique Template",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Charte Graphique variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Charte Graphique Template": {
+      "main": [
+        [
+          {
+            "node": "Parse & Clean Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cadc954c-a13d-4792-80be-c950ea6db8da",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "C2c1go1oOHzHxVqN",
+  "tags": []
+}

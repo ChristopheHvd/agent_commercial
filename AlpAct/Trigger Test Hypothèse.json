@@ -1,0 +1,32 @@
+{
+  "name": "Trigger Test Hypothèse",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "test-hypothèse",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        -100
+      ],
+      "id": "12ac3f67-9c57-4595-abbf-90a0b87a3531",
+      "name": "Trigger Test Hypothèse courante",
+      "webhookId": "8173c994-565c-43d2-a69a-554bbd2757d5"
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ca6c79d3-aabc-470d-854b-bc3ed6bc4e62",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "9DoC4G5WUP1JNKgN",
+  "tags": []
+}
