@@ -16,8 +16,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        -2800,
-        3140
+        -3840,
+        3040
       ],
       "id": "42dca2a9-7a3e-41d0-9241-6a4c788c4313",
       "name": "Get infos projet",
@@ -35,8 +35,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -2020,
-        3380
+        -3060,
+        3280
       ],
       "id": "129684a1-2316-47ee-89d5-31da09c0b838",
       "name": "Structured Output Parser3"
@@ -58,8 +58,8 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        -2120,
-        3140
+        -3160,
+        3040
       ],
       "id": "1d80afb5-8de4-4d6c-bdc1-f848f956df3c",
       "name": "Creation contexte projet"
@@ -67,12 +67,12 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=À partir du contexte projet, génère une matrice d'hypothèses PMF :\n\n# CONTEXTE PROJET\n{{ $json.formatted_analysis }}\n\n# MATRICE PMF À GÉNÉRER\n\nCrée 3 variations de chaque dimension :\n\n## PROBLÈMES (3 variantes)\n- Problème principal identifié + 2 angles différents du même pain point\n- Chaque problème doit être spécifique et mesurable\n\n## SEGMENTS (3 variantes)  \n- Segment principal + 2 segments adjacents/différenciés\n- Avec taille estimée et caractéristiques comportementales\n\n## VALUE PROPOSITIONS (3 variantes)\n- Value prop centrale + 2 angles de bénéfices différents\n- Chaque VP doit adresser un aspect spécifique du problème\n\n# FORMAT JSON OBLIGATOIRE\n{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"string\",\n      \"description\": \"string détaillée du pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"string (comment valider)\"\n    },\n    // P2, P3\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\", \n      \"nom\": \"string\",\n      \"description\": \"string avec caractéristiques\",\n      \"taille_estimee\": \"string\",\n      \"canaux_acces\": [\"canal1\", \"canal2\"],\n      \"comportements_cles\": \"string\"\n    },\n    // S2, S3\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"string\", \n      \"description\": \"string du bénéfice principal\",\n      \"differenciateur\": \"string (vs concurrence)\",\n      \"preuve_valeur\": \"string (comment démontrer)\"\n    },\n    // VP2, VP3\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\"\n  }\n}\n\nRetourne UNIQUEMENT le JSON.",
+        "text": "=Based on the provided project context, generate a comprehensive PMF hypothesis matrix exploring multiple market entry angles.\n\n# PROJECT CONTEXT\n{{ $json.formatted_analysis }}\n\n# PMF MATRIX GENERATION TASK\n\nGenerate exactly 3 distinct variations for each dimension:\n\n## PROBLEMS (3 variants required)\nCreate the primary identified problem plus 2 genuinely different angles addressing the same core pain point. Each problem must be:\n- Specific and precisely defined\n- Measurable with clear validation criteria  \n- Represents a different facet of the user's struggle\n\n## SEGMENTS (3 variants required)\nDevelop the primary segment plus 2 adjacent or differentiated market segments. Each segment must include:\n- Estimated market size with reasoning\n- Specific behavioral characteristics\n- Accessible distribution channels\n- Clear demographic/psychographic identifiers\n\n## VALUE PROPOSITIONS (3 variants required)  \nDesign the core value proposition plus 2 alternative benefit angles. Each VP must:\n- Address specific aspects of the identified problems\n- Include competitive differentiation\n- Provide measurable value demonstration methods\n\n# MANDATORY JSON OUTPUT FORMAT\n\n```json\n{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"Concise problem title in French\",\n      \"description\": \"Detailed pain point description explaining user frustration, frequency, and current inadequate solutions\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific validation method (surveys, interviews, behavioral data, etc.)\",\n      \"frequence_occurrence\": \"How often users encounter this problem\",\n      \"cout_inaction\": \"Cost or consequence of not solving this problem\"\n    },\n    {\n      \"id\": \"P2\",\n      \"titre\": \"Second distinct problem angle\",\n      \"description\": \"Different perspective on the core pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\", \n      \"mesurable_par\": \"Validation approach for this specific angle\",\n      \"frequence_occurrence\": \"Problem frequency for this variation\",\n      \"cout_inaction\": \"Impact of leaving this problem unsolved\"\n    },\n    {\n      \"id\": \"P3\",\n      \"titre\": \"Third unique problem angle\",\n      \"description\": \"Third distinct facet of the user struggle\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific measurement approach\",\n      \"frequence_occurrence\": \"How often this manifests\",\n      \"cout_inaction\": \"Consequences of inaction\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\",\n      \"nom\": \"Primary segment name in French\",\n      \"description\": \"Detailed characteristics including demographics, psychographics, and behavioral patterns\",\n      \"taille_estimee\": \"Market size with rationale (e.g., '50K users in France based on industry data')\",\n      \"canaux_acces\": [\"Primary channel\", \"Secondary channel\", \"Tertiary channel\"],\n      \"comportements_cles\": \"Key behaviors, decision-making patterns, and purchasing habits\",\n      \"budget_disponible\": \"Estimated spending capacity for this solution\",\n      \"urgence_besoin\": \"How urgently this segment needs the solution\"\n    },\n    {\n      \"id\": \"S2\", \n      \"nom\": \"Adjacent segment name\",\n      \"description\": \"Characteristics of related but distinct market segment\",\n      \"taille_estimee\": \"Different market size estimation with reasoning\",\n      \"canaux_acces\": [\"Different primary channel\", \"Alternative channels\"],\n      \"comportements_cles\": \"Distinct behavioral patterns for this segment\",\n      \"budget_disponible\": \"Budget considerations for this group\",\n      \"urgence_besoin\": \"Need urgency level\"\n    },\n    {\n      \"id\": \"S3\",\n      \"nom\": \"Alternative segment name\", \n      \"description\": \"Third market segment with unique characteristics\",\n      \"taille_estimee\": \"Third market size estimate with justification\",\n      \"canaux_acces\": [\"Unique access channels for this segment\"],\n      \"comportements_cles\": \"Specific behaviors distinguishing this group\",\n      \"budget_disponible\": \"Financial capacity assessment\",\n      \"urgence_besoin\": \"Problem urgency for this segment\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"Core value proposition title in French\",\n      \"description\": \"Primary benefit and how it solves the user's problem better than alternatives\",\n      \"differenciateur\": \"Clear competitive advantage and unique positioning vs existing solutions\",\n      \"preuve_valeur\": \"Specific method to demonstrate value (metrics, case studies, trials, etc.)\",\n      \"benefice_quantifiable\": \"Measurable outcome users can expect\",\n      \"temps_realisation\": \"Timeline to achieve promised benefits\"\n    },\n    {\n      \"id\": \"VP2\",\n      \"titre\": \"Alternative benefit angle\",\n      \"description\": \"Different value angle addressing same or related problems\",\n      \"differenciateur\": \"Distinct competitive positioning for this approach\", \n      \"preuve_valeur\": \"Value demonstration method for this variant\",\n      \"benefice_quantifiable\": \"Quantifiable benefit for this value prop\",\n      \"temps_realisation\": \"Expected timeframe for benefit realization\"\n    },\n    {\n      \"id\": \"VP3\",\n      \"titre\": \"Third value proposition angle\",\n      \"description\": \"Third distinct benefit perspective\", \n      \"differenciateur\": \"Unique differentiation approach\",\n      \"preuve_valeur\": \"Validation method for this value angle\",\n      \"benefice_quantifiable\": \"Measurable outcome specific to this VP\",\n      \"temps_realisation\": \"Timeline for achieving these benefits\"\n    }\n  ],\n  \"hypotheses_combinations\": [\n    {\n      \"hypothese_id\": \"VP1_S1_P1\",\n      \"description\": \"Brief description of this specific PMF hypothesis combining VP1, S1, and P1\",\n      \"confiance_niveau\": \"faible|moyenne|forte\",\n      \"test_priorite\": \"haute|moyenne|basse\",\n      \"validation_rapide\": \"Quick test method for this combination\"\n    }\n    // Include all 27 combinations (VP1-VP3 × S1-S3 × P1-P3)\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\",\n    \"langue_contenu\": \"français\",\n    \"framework_utilise\": \"Lean Startup + Customer Development\",\n    \"niveau_detail\": \"détaillé\"\n  }\n}\n\nCRITICAL INSTRUCTIONS:\n\nLanguage: All content within the JSON values must be in French\nJSON Only: Return exclusively the JSON structure, no additional text\nCompleteness: Include all 27 hypothesis combinations in the hypotheses_combinations array\nValidation Focus: Ensure each element includes specific, actionable validation methods\nDifferentiation: Make each variant genuinely distinct, not superficial variations\n\nGenerate the complete PMF matrix now.\n",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
             {
-              "message": "Tu es un expert en Product-Market-Fit et validation d'hypothèses business.\nTu génères des matrices PMF structurées en explorant différents angles du même projet.\nTu retournes EXCLUSIVEMENT du JSON valide, sans texte explicatif.\n\nPrincipes de génération :\n- Variantes crédibles et testables rapidement\n- Angles différenciés (pas des reformulations)\n- Focus sur la spécificité des segments et problèmes\n- Hypothèses SMART et mesurables"
+              "message": "=You are a Product-Market-Fit expert and business hypothesis validation specialist with deep expertise in startup methodology, customer discovery, and lean validation frameworks.\n\nYour role is to generate structured PMF matrices that explore different angles of the same project through systematic variation of customer segments, value propositions, and problems addressed.\n\n## Core Competencies:\n- Customer segmentation and behavioral analysis\n- Value proposition design and differentiation\n- Problem validation and measurement frameworks\n- Rapid hypothesis testing methodologies\n- Market sizing and opportunity assessment\n\n## Output Requirements:\n- Return ONLY valid JSON without explanatory text\n- All generated content must be in French language\n- Ensure hypotheses are SMART (Specific, Measurable, Achievable, Relevant, Time-bound)\n- Generate credible variations that are genuinely testable\n\n## Generation Principles:\n1. **Differentiated Angles**: Create truly distinct variations, not mere reformulations\n2. **Testable Hypotheses**: Focus on assumptions that can be validated quickly and cost-effectively\n3. **Specific Targeting**: Emphasize precision in segment definition and problem articulation\n4. **Measurable Outcomes**: Include clear validation criteria and success metrics\n5. **ID Structure**: Use combination format (VP1_S2_P3) for hypothesis identification\n\n## Quality Standards:\n- Each variation should represent a meaningfully different market approach\n- Problems must be specific enough to drive targeted solutions\n- Segments should have identifiable access channels and behavioral patterns\n- Value propositions must clearly differentiate from existing alternatives"
             }
           ]
         },
@@ -81,8 +81,8 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        -860,
-        3140
+        -1900,
+        3040
       ],
       "id": "57305cde-5173-4cfe-b11e-17560d421baf",
       "name": "Generation hypothèses PMF"
@@ -94,8 +94,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -780,
-        3320
+        -1720,
+        3220
       ],
       "id": "bf633af2-5aae-4f79-863b-0b55a9f083f4",
       "name": "Structured Output Parser4"
@@ -113,8 +113,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        -1000,
-        3500
+        -2040,
+        3400
       ],
       "id": "c7579935-cc16-4ed6-9dea-0b24f4e338f7",
       "name": "GPT-5-MINI",
@@ -132,8 +132,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2380,
-        3140
+        -3420,
+        3040
       ],
       "id": "1ea8022b-01c7-4a24-b9f1-93ede22f228a",
       "name": "Format data projet"
@@ -145,8 +145,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -500,
-        3140
+        -1540,
+        3040
       ],
       "id": "15a70659-3d3b-4179-a209-792d6e8b71fb",
       "name": "Transform en Tableaux 9X9X9 combinaisons"
@@ -158,8 +158,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -280,
-        3140
+        -1320,
+        3040
       ],
       "id": "420239d7-db4b-49a9-86d9-3ae16d2c23e9",
       "name": "Code"
@@ -171,8 +171,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        360,
-        3140
+        -680,
+        3040
       ],
       "id": "8ffb3c2d-424a-4b19-b29d-8de9c89cbd85",
       "name": "Merge1"
@@ -223,8 +223,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        20,
-        2940
+        -1020,
+        2840
       ],
       "name": "Call Scoring Tableau Hypotheses",
       "id": "0c3a2b5f-7252-4566-b552-8ea91e2331a8"
@@ -275,8 +275,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        20,
-        3160
+        -1020,
+        3060
       ],
       "name": "Call Scoring Tableau Hypotheses1",
       "id": "e1063450-e8e7-424f-ba8d-f18b2ad80072"
@@ -327,8 +327,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        20,
-        3400
+        -1020,
+        3300
       ],
       "name": "Call Scoring Tableau Hypotheses2",
       "id": "403e216a-3e7a-40bd-9973-d6d006e0ded4"
@@ -372,8 +372,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        800,
-        3140
+        -240,
+        3040
       ],
       "id": "a87e2674-80b4-462c-b10d-128e622de5eb",
       "name": "Split Out2"
@@ -394,8 +394,8 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        580,
-        3140
+        -460,
+        3040
       ],
       "id": "77f2bfa3-d5f5-4338-985e-b53cbe6dc133",
       "name": "Aggregate only hypotheses retenus"
@@ -435,7 +435,7 @@
         "resource": "databasePage",
         "databaseId": {
           "__rl": true,
-          "value": "={{ $json.database_id }}",
+          "value": "={{ $('Merge2').item.json.database_id }}",
           "mode": "id"
         },
         "title": "={{ $('Split Out2').item.json.resume }}",
@@ -443,11 +443,11 @@
           "propertyValues": [
             {
               "key": "Problème résolu|rich_text",
-              "textContent": "={{ $json.probleme }}"
+              "textContent": "={{ $json.probleme_resolu }}"
             },
             {
               "key": "Pourquoi la tester|rich_text",
-              "textContent": "={{ $json.raison_selection }}"
+              "textContent": "={{ $json.pourquoi_tester }}"
             },
             {
               "key": "Proposition de valeur|rich_text",
@@ -455,7 +455,11 @@
             },
             {
               "key": "Segment client|rich_text",
-              "textContent": "={{ $json.segment }}"
+              "textContent": "={{ $json.segment_client }}"
+            },
+            {
+              "key": "Hypothese_Id|rich_text",
+              "textContent": "={{ $json.hypothesis_id }}"
             }
           ]
         },
@@ -464,8 +468,8 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        1660,
-        3160
+        820,
+        3060
       ],
       "id": "3221981c-3cc7-4e65-a3d6-f8bfc6386682",
       "name": "Ajout des hypothèses dans Notion",
@@ -483,8 +487,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1540,
-        3360
+        -2580,
+        3260
       ],
       "id": "c1e3b68d-82e1-4101-b835-9c334377b8a9",
       "name": "JSON -> String"
@@ -580,8 +584,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        -1420,
-        3100
+        -2460,
+        3000
       ],
       "id": "ed54aa8e-ac9f-4292-8aac-51599da7d413",
       "name": "Save contexte projet",
@@ -595,13 +599,14 @@
     {
       "parameters": {
         "resource": "database",
-        "operation": "getAll"
+        "operation": "getAll",
+        "simple": false
       },
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        1080,
-        3380
+        40,
+        3280
       ],
       "id": "ca04f09e-726c-4042-a59a-5d0011fc5463",
       "name": "Recupere db Hypotheses PMF",
@@ -624,21 +629,21 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -1100,
-        3140
+        -2140,
+        3040
       ],
       "id": "2e1a0045-c1bd-4d0d-a645-11edda160cb9",
       "name": "Merge"
     },
     {
       "parameters": {
-        "jsCode": "// Dans un Code Node N8N - mode \"run once for all items\"\nconst allItems = $input.all().map(i => i.json);\n\n// Récupérer uniquement l'objet Db_HypothèsesPMF\nconst hypothesesPMF = allItems.find(item => item.name === \"Db_HypothèsesPMF\");\n\n// Retourner le résultat\nreturn {\n  \"database_id\": hypothesesPMF.id || null // null si pas trouvé\n};"
+        "jsCode": "const allItems = $input.all().map(i => i.json);\nconst targetDatabaseTitle = \"Db_HypothèsesPMF\";\nconst targetParentPageId = $('Get infos projet').first().json.ID_Notion; // ID de la page parente (FreudIA, Bonature, etc.)\nconsole.log($('Get infos projet').first().json.ID_Notion);\n\n// Fonction pour normaliser les IDs (supprimer les tirets si présents)\nfunction normalizeId(id) {\n    return id ? id.replace(/-/g, '') : '';\n}\n\n// Fonction pour extraire le titre d'une database\nfunction getDatabaseTitle(database) {\n    try {\n        return database.title && database.title[0] && database.title[0].text \n            ? database.title[0].text.content \n            : '';\n    } catch (error) {\n        return '';\n    }\n}\n\n// Fonction pour trouver une database par titre et parent ID\nfunction findDatabase(databases, targetTitle, targetParentId) {\n    const normalizedTargetParentId = normalizeId(targetParentId);\n    \n    return databases.find(db => {\n        // Vérifier que c'est bien une database\n        if (db.object !== \"database\") {\n            return false;\n        }\n        \n        // Vérifier le titre\n        const dbTitle = getDatabaseTitle(db);\n        if (dbTitle !== targetTitle) {\n            return false;\n        }\n        \n        // Vérifier le parent\n        if (!db.parent || db.parent.type !== \"page_id\") {\n            return false;\n        }\n        \n        const dbParentId = normalizeId(db.parent.page_id);\n        return dbParentId === normalizedTargetParentId;\n    });\n}\n\n// Configuration - Modifiez ces valeurs selon vos besoins\n\n\n// Rechercher la database\nconst foundDatabase = findDatabase(allItems, targetDatabaseTitle, targetParentPageId);\n\n// Gestion des erreurs et logging pour debug\nif (!foundDatabase) {\n    console.log(`Database \"${targetDatabaseTitle}\" non trouvée pour le parent ${targetParentPageId}`);\n    console.log(\"Databases disponibles:\");\n  \n    allItems\n        .filter(item => item.object === \"database\")\n        .forEach(db => {\n            const title = getDatabaseTitle(db);\n            const parentId = db.parent?.page_id || 'N/A';\n            console.log(`- Titre: \"${title}\", Parent: ${parentId}`);\n        });\n}\n\n// Retourner le résultat\nreturn {\n    \"database_id\": foundDatabase ? foundDatabase.id : null\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1260,
-        3380
+        220,
+        3280
       ],
       "id": "9ade8d77-c3c4-41a7-b8ae-add4bed1be6b",
       "name": "Extract ID from Db_HypothesesPMF"
@@ -652,8 +657,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1460,
-        3160
+        420,
+        3060
       ],
       "id": "75fbf840-faa0-474c-aac0-593a2ccaae53",
       "name": "Merge2"
@@ -676,8 +681,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1080,
-        3140
+        40,
+        3040
       ],
       "id": "5e252e83-9dc5-4857-800a-f3e32c51d22e",
       "name": "add database_id to json"
@@ -687,8 +692,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        1480,
-        2880
+        440,
+        2780
       ],
       "id": "c434960a-7b5a-4cb1-ba7f-51f4f2ffffee",
       "name": "When clicking ‘Execute workflow’"
@@ -710,8 +715,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2340,
-        3180
+        1300,
+        3080
       ],
       "id": "7a2ff8b5-7ed1-4f84-a809-720e83415fcc",
       "name": "RETURN"
@@ -729,8 +734,8 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -3680,
-        3140
+        -4140,
+        3040
       ],
       "id": "d9a82e27-4f65-4b13-a124-4c8121e89780",
       "name": "When Executed by another trigger"
@@ -749,8 +754,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2020,
-        3160
+        1020,
+        3060
       ],
       "id": "66f2f5c4-92ae-4a39-a4e2-7a0274766bb2",
       "name": "Display Done Icon on Page",
@@ -777,8 +782,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        -1800,
-        2900
+        -2840,
+        2800
       ],
       "id": "332095cd-9b00-4663-80d3-caf1d2ad615b",
       "name": "Get project_context",
@@ -817,11 +822,70 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -1600,
-        2900
+        -2640,
+        2800
       ],
       "id": "39cdd786-8052-4b88-910d-39eb1b4caef3",
       "name": "If project_context already exists"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('Get infos projet').item.json.project_name }}"
+            },
+            {
+              "fieldName": "hypothesis_id",
+              "fieldValue": "={{ $json.id}}_{{ $now.toMillis() }}"
+            },
+            {
+              "fieldName": "name",
+              "fieldValue": "={{ $json.resume }}"
+            },
+            {
+              "fieldName": "probleme_resolu",
+              "fieldValue": "={{ $json.probleme }}"
+            },
+            {
+              "fieldName": "segment_client",
+              "fieldValue": "={{ $json.segment }}"
+            },
+            {
+              "fieldName": "value_prop",
+              "fieldValue": "={{ $json.value_prop }}"
+            },
+            {
+              "fieldName": "pourquoi_tester",
+              "fieldValue": "={{ $json.raison_selection }}"
+            },
+            {
+              "fieldName": "status",
+              "fieldValue": "A tester"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        620,
+        3060
+      ],
+      "id": "a8ea9550-9b03-42b7-a8e6-6c28df20c6c4",
+      "name": "Ajout des hypotheses dans NocoDb",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
     }
   ],
   "pinData": {
@@ -829,77 +893,6 @@
       {
         "json": {
           "project_name": "GreenPack"
-        }
-      }
-    ],
-    "Creation contexte projet": [
-      {
-        "json": {
-          "output": {
-            "vision_projet": {
-              "mission": "Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés.",
-              "probleme_central": "Les restaurants de restauration rapide génèrent beaucoup d'emballages jetables coûteux et polluants ; ils manquent d'une solution simple, économique et traçable pour passer à des emballages réutilisables.",
-              "solution_proposee": "Boîtes consignées, lavables et réutilisables avec consigne digitale (QR code) et logistique intégrée de collecte et lavage pour simplifier l'adoption et mesurer la réduction des déchets."
-            },
-            "marche_cible": {
-              "segment_principal": "B2B — gérants de fast-food indépendants (35-50 ans), sensibles aux coûts et à l'image éco-responsable ; early adopters : restaurants bio et établissements engagés RSE.",
-              "taille_marche": "Non estimée — donnée manquante (doit être chiffrée localement puis extrapolée au marché régional/Européen).",
-              "concurrents_principaux": [
-                "Emballages jetables traditionnels (plastique/papier)",
-                "Fournisseurs d'emballages biodégradables",
-                "Solutions locales de consigne/retour d'emballages"
-              ],
-              "canaux_acquisition": [
-                "LinkedIn",
-                "Emailing direct aux gérants",
-                "Salons RSE / événements locaux",
-                "Réseaux locaux d'entrepreneurs / bouche-à-oreille"
-              ]
-            },
-            "produit": {
-              "value_proposition": "Réduire jusqu'à 70% des déchets d'emballage des fast-foods via des boîtes réutilisables faciles à utiliser, traçables (QR) et prises en charge par une logistique de lavage intégrée, diminuant les coûts récurrents et améliorant l'image RSE.",
-              "fonctionnalites_cles": [
-                "Boîtes consignées lavables et réutilisables",
-                "Consigne digitale via QR code pour traçabilité et gestion",
-                "Logistique intégrée : collecte, lavage, redistribution"
-              ],
-              "avantage_concurrentiel": "Combinaison consigne digitale + logistique intégrée réduisant la complexité opérationnelle pour le restaurateur et permettant un suivi mesurable de l'impact (réduction déchets, taux d'acceptation)."
-            },
-            "contexte_business": {
-              "stade_projet": "mvp",
-              "objectifs_prioritaires": [
-                "Signer 5 restaurants pilotes en 1 mois (seuil de succès déclaré)",
-                "Mesurer le taux d'acceptation client et la réduction effective des déchets pendant le pilote"
-              ],
-              "contraintes_identifiees": "Budget test limité (1 000 €) et durée courte (1 mois); livrables et outils de tracking non définis; barrières à l'adoption : coût initial pour restaurants et crainte de complexité logistique; conformité hygiène/logistique à clarifier."
-            },
-            "hypotheses_depart": {
-              "sur_probleme": "Les fast-foods perçoivent le coût et l'impact environnemental des emballages jetables comme un problème suffisamment important pour tester une alternative réutilisable.",
-              "sur_cible": "Les gérants de fast-food indépendants (35-50 ans) sont prêts à tester et promouvoir une solution consignée si elle réduit coûts récurrents et améliore leur image RSE.",
-              "sur_solution": "Une offre combinant boîtes lavables, consigne digitale et logistique intégrée est opérationnelle et acceptable pour les restaurants et les clients, et permet d'atteindre une réduction de ~70% des déchets d'emballage."
-            },
-            "gaps_questions": {
-              "infos_manquantes": [
-                "Définition précise des livrables du test (KPI quantitatifs, format des rapports)",
-                "Outils de tracking et méthode de collecte des données (qui mesure quoi, comment)",
-                "Modèle économique et pricing pour les restaurants (coût initial, consigne, tarification service lavage)",
-                "Estimation des coûts opérationnels et capacité logistique (fréquence collecte, volumes, coût lavage)",
-                "Conformité sanitaire/réglementaire pour emballages réutilisables en restauration",
-                "Taille de marché adressable et segmentation géographique chiffrée",
-                "Baseline actuelle des déchets pour valider la réduction de 70%"
-              ],
-              "incoherences": [
-                "Seuil de succès fixé à 5 restaurants en 1 mois alors que le test décrit est un pilote unique à Chambéry pour 1 mois.",
-                "Budget de test (1 000 €) probablement insuffisant pour signer 5 pilotes, couvrir logistique et mesurer correctement l'impact.",
-                "KPI listés (nombre de clients acceptant la consigne) sans définir le dénominateur ni la méthode de suivi."
-              ],
-              "zones_flou": [
-                "Durée d'1 mois peut être trop courte pour évaluer adoption client et réassorts/logistique (cycle d'utilisation/retour inconnu).",
-                "Montant et gestion de la consigne (prix, remboursement, perte/attrition) non définis.",
-                "Détails opérationnels de la logistique intégrée (partenaires, localisation du lavage, SLA de collecte) non établis."
-              ]
-            }
-          }
         }
       }
     ]
@@ -1165,7 +1158,7 @@
       "main": [
         [
           {
-            "node": "Ajout des hypothèses dans Notion",
+            "node": "Ajout des hypotheses dans NocoDb",
             "type": "main",
             "index": 0
           }
@@ -1244,13 +1237,24 @@
           }
         ]
       ]
+    },
+    "Ajout des hypotheses dans NocoDb": {
+      "main": [
+        [
+          {
+            "node": "Ajout des hypothèses dans Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "caf6af18-ece4-4206-9313-3e01bd99664b",
+  "versionId": "c896cb61-2ec2-4fb5-bb09-4359d68417d7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
