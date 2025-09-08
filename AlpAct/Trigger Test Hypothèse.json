@@ -3,30 +3,382 @@
   "nodes": [
     {
       "parameters": {
-        "path": "test-hypothèse",
+        "httpMethod": "POST",
+        "path": "test-hypothese",
+        "responseMode": "responseNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -360,
-        -100
+        -940,
+        -160
       ],
       "id": "12ac3f67-9c57-4595-abbf-90a0b87a3531",
       "name": "Trigger Test Hypothèse courante",
       "webhookId": "8173c994-565c-43d2-a69a-554bbd2757d5"
+    },
+    {
+      "parameters": {
+        "content": "## On lance la partie Landing Page",
+        "height": 500,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        680,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "9e9d9b2d-927c-46ef-87ac-6c5291a815b2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## On reconstruit le contexte du projet avec l'hypothèse à tester",
+        "height": 700,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -380,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "b304ae3d-e16a-4223-b40e-e5ce5cf8eeb4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## On update le statut de l'hypothese à tester dans NocoDb",
+        "height": 500,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "8f543dff-136e-4154-8255-41aed1e6b279",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Get selected hypothesis').item.json.Id }}"
+            },
+            {
+              "fieldName": "status",
+              "fieldValue": "En cours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        360,
+        -140
+      ],
+      "id": "a34e6be3-6d7e-4341-8c5d-ce4b63ccf132",
+      "name": "Update hypothesis status",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "muqbk732nl9jb7c",
+        "limit": 1,
+        "options": {
+          "where": "=(project_name,eq,{{ $json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -220,
+        80
+      ],
+      "id": "a5a390e6-af18-45b9-ab77-2e0eb7ed7234",
+      "name": "Get project context",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        60,
+        -140
+      ],
+      "id": "f7e4278a-b75b-4411-876c-c7a058d0b6d5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1300,
+        -140
+      ],
+      "id": "5ec39729-0d2e-4bea-a63f-47ed81c52dd1",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "975a5c42-c5be-4a45-8995-ebec4d5bfa28",
+              "name": "hypothese_id",
+              "value": "={{ $json.body.data.properties.Hypothese_Id.rich_text[0].text.content }}",
+              "type": "string"
+            },
+            {
+              "id": "7eebb06d-9178-479a-8a94-d8ff4d9a60df",
+              "name": "project_name",
+              "value": "={{ $json.body.data.properties.project_name.rich_text[0].text.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -660,
+        -160
+      ],
+      "id": "2d970ba1-6abf-470b-bf85-9d905fd65da8",
+      "name": "Set Params"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "options": {
+          "where": "=(project_name,eq,{{ $json.project_name }})~and(hypothesis_id,eq,{{ $json.hypothese_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -220,
+        -160
+      ],
+      "id": "1890490e-e8c2-4bd5-bcb0-9b80fdea5c59",
+      "name": "Get selected hypothesis",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "C2c1go1oOHzHxVqN",
+          "mode": "list",
+          "cachedResultName": "Create Landing Page Ressources"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $('Set Params').item.json.hypothese_id }}",
+            "project_name": "={{ $('Set Params').item.json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        -140
+      ],
+      "id": "b1c87d13-2199-4473-a675-66007f854fc0",
+      "name": "Call Create Landing Page Ressources",
+      "alwaysOutputData": true,
+      "executeOnce": true
     }
   ],
-  "pinData": {},
-  "connections": {},
-  "active": false,
+  "pinData": {
+    "Set Params": [
+      {
+        "json": {
+          "hypothese_id": "H1_1756912325593",
+          "project_name": "GreenPack"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Trigger Test Hypothèse courante": {
+      "main": [
+        [
+          {
+            "node": "Set Params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Update hypothesis status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project context": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Update hypothesis status": {
+      "main": [
+        [
+          {
+            "node": "Call Create Landing Page Ressources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Params": {
+      "main": [
+        [
+          {
+            "node": "Get selected hypothesis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get project context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get selected hypothesis": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Create Landing Page Ressources": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "ca6c79d3-aabc-470d-854b-bc3ed6bc4e62",
+  "versionId": "a0efdffc-59ac-4904-a553-3c973049693e",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
   },
   "id": "9DoC4G5WUP1JNKgN",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
 }

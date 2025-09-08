@@ -1,0 +1,178 @@
+{
+  "name": "Webhooks",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "regenerate-image",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -160
+      ],
+      "id": "84759e65-5999-4b28-a585-c38fe5b5e4e5",
+      "name": "Regenerate image",
+      "webhookId": "3f2f8cbb-9644-4767-b663-3af1c809c15e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "975a5c42-c5be-4a45-8995-ebec4d5bfa28",
+              "name": "hypothese_id",
+              "value": "={{ $json.body.data.properties.Hypothese_Id.rich_text[0].text.content }}",
+              "type": "string"
+            },
+            {
+              "id": "7eebb06d-9178-479a-8a94-d8ff4d9a60df",
+              "name": "project_name",
+              "value": "={{ $json.body.data.properties.project_name.rich_text[0].text.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        100,
+        -160
+      ],
+      "id": "5ab214cd-4505-4473-bbec-1691ae907f19",
+      "name": "Set Params from webhook"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Jg8ZS5qqpmLpXCqk",
+          "mode": "list",
+          "cachedResultName": "Generate Visuals"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $json.hypothese_id }}",
+            "project_name": "={{ $json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        340,
+        -160
+      ],
+      "id": "c68bcae9-eca2-42fe-aee7-2edaffc0b201",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        -160
+      ],
+      "id": "51c968dd-134c-487d-9f33-54f7b48c917d",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {
+    "Set Params from webhook": [
+      {
+        "json": {
+          "hypothese_id": "H1_1756912325593",
+          "project_name": "GreenPack"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Regenerate image": {
+      "main": [
+        [
+          {
+            "node": "Set Params from webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Params from webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bda838cb-6a53-4fd4-b49f-81c46c273156",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "JDe698aLWImN14Rk",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

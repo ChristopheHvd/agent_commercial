@@ -1,0 +1,68 @@
+{
+  "name": "Split Text in Chunks",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Code pour diviser un texte long en blocks compatibles avec l'API Notion\n// Limite Notion : 2000 caractères par block\n\n// Usage principal\nconst longText = $input.first().json.text;\n\nfunction splitTextForNotion(text, maxLength = 1900) {\n    const chunks = [];\n    \n    // D'abord essayer de diviser par paragraphes (double saut de ligne)\n    const paragraphs = text.split('\\n\\n');\n    let currentChunk = '';\n    \n    for (const paragraph of paragraphs) {\n        const potentialChunk = currentChunk + (currentChunk ? '\\n\\n' : '') + paragraph;\n        \n        if (potentialChunk.length <= maxLength) {\n            currentChunk = potentialChunk;\n        } else {\n            // Si on a du contenu actuel, l'ajouter aux chunks\n            if (currentChunk) {\n                chunks.push(currentChunk);\n            }\n            \n            // Si le paragraphe seul est trop long, le diviser\n            if (paragraph.length > maxLength) {\n                const subChunks = splitLongParagraph(paragraph, maxLength);\n                chunks.push(...subChunks);\n                currentChunk = '';\n            } else {\n                currentChunk = paragraph;\n            }\n        }\n    }\n    \n    // Ajouter le dernier chunk s'il existe\n    if (currentChunk) {\n        chunks.push(currentChunk);\n    }\n    \n    return chunks;\n}\n\nfunction splitLongParagraph(paragraph, maxLength) {\n    const chunks = [];\n    \n    // Diviser par phrases d'abord (points, points d'exclamation, points d'interrogation)\n    const sentences = paragraph.split(/(?<=[.!?])\\s+/);\n    let currentChunk = '';\n    \n    for (const sentence of sentences) {\n        const potentialChunk = currentChunk + (currentChunk ? ' ' : '') + sentence;\n        \n        if (potentialChunk.length <= maxLength) {\n            currentChunk = potentialChunk;\n        } else {\n            if (currentChunk) {\n                chunks.push(currentChunk);\n            }\n            \n            // Si une phrase seule est trop longue, la diviser par mots\n            if (sentence.length > maxLength) {\n                const wordChunks = splitByWords(sentence, maxLength);\n                chunks.push(...wordChunks);\n                currentChunk = '';\n            } else {\n                currentChunk = sentence;\n            }\n        }\n    }\n    \n    if (currentChunk) {\n        chunks.push(currentChunk);\n    }\n    \n    return chunks;\n}\n\nfunction splitByWords(text, maxLength) {\n    const chunks = [];\n    const words = text.split(' ');\n    let currentChunk = '';\n    \n    for (const word of words) {\n        const potentialChunk = currentChunk + (currentChunk ? ' ' : '') + word;\n        \n        if (potentialChunk.length <= maxLength) {\n            currentChunk = potentialChunk;\n        } else {\n            if (currentChunk) {\n                chunks.push(currentChunk);\n            }\n            \n            // Si un mot seul est trop long (très rare), le tronquer\n            if (word.length > maxLength) {\n                chunks.push(word.substring(0, maxLength - 3) + '...');\n                const remaining = word.substring(maxLength - 3);\n                if (remaining.length > 3) {\n                    chunks.push(...splitByWords(remaining, maxLength));\n                }\n                currentChunk = '';\n            } else {\n                currentChunk = word;\n            }\n        }\n    }\n    \n    if (currentChunk) {\n        chunks.push(currentChunk);\n    }\n    \n    return chunks;\n}\n\n// Fonction pour créer les blocks Notion\nfunction createNotionBlocks(textChunks) {\n    return textChunks.map(chunk => ({\n        object: \"block\",\n        type: \"paragraph\",\n        paragraph: {\n            rich_text: [{\n                type: \"text\",\n                text: {\n                    content: chunk\n                }\n            }]\n        }\n    }));\n}\n\n\n\n// Diviser le texte\nconst textChunks = splitTextForNotion(longText);\n\n// Créer les blocks Notion\nconst notionBlocks = createNotionBlocks(textChunks);\n\n// Vérification (optionnelle)\nconsole.log(`Texte original: ${longText.length} caractères`);\nconsole.log(`Divisé en ${textChunks.length} chunks`);\ntextChunks.forEach((chunk, index) => {\n    console.log(`Chunk ${index + 1}: ${chunk.length} caractères`);\n});\n\n// Résultat final pour votre requête HTTP\nconst requestBody = {\n    children: notionBlocks\n};\n\n// Pour N8N, retourner le body de la requête\nreturn requestBody;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        2160
+      ],
+      "id": "799d6806-5627-4fbf-9226-4c73a46ed0a0",
+      "name": "Split prompt in chunks"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "text"
+            }
+          ]
+        }
+      },
+      "id": "03f17d37-f287-4fcf-b3a8-4bd98bb2f9b6",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        860,
+        2160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Split prompt in chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0898a93b-1344-43ba-8b92-1cfdb4e0778d",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "HHXwcVfXIM4ZDj4V",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

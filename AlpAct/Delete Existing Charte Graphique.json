@@ -1,0 +1,351 @@
+{
+  "name": "Delete Existing Charte Graphique",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n\"hypothese_id\": \"H1_1756912325593\",\n\"project_name\": \"GreenPack\"\n}"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        260,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "options": {
+          "fields": [
+            "ID_Notion"
+          ],
+          "where": "=(project_name,eq,{{$json.project_name}})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        520,
+        180
+      ],
+      "id": "481d2af9-3527-4702-a0f4-b33178ec87b2",
+      "name": "Get project Notion Id",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://api.notion.com/v1/blocks/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        260
+      ],
+      "id": "94784110-ca34-432a-8be5-2ed232b735a3",
+      "name": "HTTP Request",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1320,
+        180
+      ],
+      "id": "cb43e7ee-52f7-4a48-bad2-a100a34032ba",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 0.01
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1780,
+        260
+      ],
+      "id": "db0d0d05-922a-4ed3-a601-0ef8b43a139a",
+      "name": "Wait",
+      "webhookId": "5f65b681-03bd-43f9-bfe2-7c27279b2e2c"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "ml9civoifdkzxxn",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        800,
+        440
+      ],
+      "id": "00fcc302-7f04-4cec-8476-db7ba1ac82e3",
+      "name": "delete row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "258hRRJvTwdJTIUC",
+          "mode": "list",
+          "cachedResultName": "Get Notion Block Id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetBlockTitle": "Identité visuelle",
+            "targetMainPageId": "={{ $json.ID_Notion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "targetBlockTitle",
+              "displayName": "targetBlockTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "targetMainPageId",
+              "displayName": "targetMainPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        180
+      ],
+      "id": "82a53622-f467-48f3-a600-cefd59864d03",
+      "name": "Get Notion \"Charte Graphique\" Block Id"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "operation": "getAll",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $json.block_id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1100,
+        180
+      ],
+      "id": "59de0e30-2d41-4232-8b6e-b45a0900a218",
+      "name": "Get Existing Content",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "ml9civoifdkzxxn",
+        "options": {
+          "fields": [],
+          "where": "=(project_name,eq,{{$json.project_name}})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        540,
+        440
+      ],
+      "id": "78dc5cbe-f49d-40ba-a183-43b95ea825e8",
+      "name": "Get existing row",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "hypothese_id": "H1_1756912325593",
+          "project_name": "GreenPack"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get project Notion Id",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get existing row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project Notion Id": {
+      "main": [
+        [
+          {
+            "node": "Get Notion \"Charte Graphique\" Block Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Notion \"Charte Graphique\" Block Id": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Content": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get existing row": {
+      "main": [
+        [
+          {
+            "node": "delete row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "23f3a948-fdd1-4ac4-add2-e310ec581f94",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "zABlV1a4h3uupTJQ",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

@@ -1,0 +1,583 @@
+{
+  "name": "Generate Single Image",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "={{ $json.output.image_prompt }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        3080,
+        700
+      ],
+      "id": "1a343634-87af-4399-b1dc-59af4089b50d",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Context of the project in JSON format:\n{{ $json.project_full_context.toJsonString() }}\n\nVisual suggestion:\n{{ $json.visual_suggestion }}\n\nTask:\nReturn only a valid JSON object with three fields:\n{\n  \"image_prompt\": \"a complete, detailed description for GPT-1 image generation\",\n  \"alt_text\": \"a concise description for HTML accessibility and SEO\",\n  \"filename\":\"a human-friendly word to identify the produced file\"\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI assistant that generates detailed visual descriptions for startup marketing materials. \n\nYour role is to produce structured JSON outputs containing:\n1. \"image_prompt\": a rich, detailed description optimized for an AI image generation model (GPT-1), integrating:\n   - the startup project context (mission, target market, value proposition),\n   - the brand identity (colors, typography style, graphic mood),\n   - the specific visual suggestion.\n\n   The description should be long and descriptive (minimum 80–100 words) to ensure high-quality image generation.\n   Do not include any text or captions inside the visual unless explicitly requested.\n\nAll text must be in french language.\n\n2. \"alt_text\": a short, human-friendly description of the visual (1–2 sentences, max 30 words) suitable for a landing page’s HTML <img alt=\"...\"> attribute.\n3. \"filename\" : a human-friendly word to identify the produced file.\n\nOutput format:\n{\n  \"image_prompt\": \"...\",\n  \"alt_text\": \"...\",\n\"filename\": \"\"\n}\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2700,
+        700
+      ],
+      "id": "f16fc4ea-a390-4732-bec0-d78162dab8fa",
+      "name": "Generate a custom prompt for this specific image"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"image_prompt\": \"...\",\n  \"alt_text\": \"...\",\n  \"filename\":\"\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2860,
+        1000
+      ],
+      "id": "5dc02b85-1880-463f-b660-358af653c615",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer le fichier binaire\nconst binaryData = $input.first().binary;\n\n// Modifier le nom du fichier\nbinaryData.data.fileName = $('Generate a custom prompt for this specific image').first().json.output.filename + \".png\";\n\nreturn $input.first() ;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3380,
+        700
+      ],
+      "id": "0d5d11bc-9487-44ff-a513-2e5f0d915591",
+      "name": "Rename File"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2700,
+        1000
+      ],
+      "id": "3b8dae66-48c5-4f3b-a815-05a167fa0256",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.binary;\ntry {\n  const parsedData = JSON.parse(jsonString);\n  return [{ json: { data: parsedData } }];\n} catch (error) {\n  return [{ json: { error: 'Invalid JSON', original: jsonString } }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        700
+      ],
+      "id": "21d83595-b86f-48f2-977f-7c616cfa9c93",
+      "name": "Get Image Public Url"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mq17fi4jn3p7if8",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "=alt_text",
+              "fieldValue": "={{ $('Generate a custom prompt for this specific image').item.json.output.alt_text }}"
+            },
+            {
+              "fieldName": "binary",
+              "binaryData": true,
+              "binaryProperty": "data"
+            },
+            {
+              "fieldName": "prompt",
+              "fieldValue": "={{ $('Generate a custom prompt for this specific image').item.json.output.image_prompt }}"
+            },
+            {
+              "fieldName": "workflow_execution_id",
+              "fieldValue": "={{ $execution.id }}"
+            },
+            {
+              "fieldName": "visual_type",
+              "fieldValue": "landing_page"
+            },
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('Start').item.json.project_name }}"
+            },
+            {
+              "fieldName": "hypothesis_id",
+              "fieldValue": "={{ $('Start').item.json.hypothese_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        3640,
+        700
+      ],
+      "id": "79f62f3d-eb45-4aa6-9cd2-e859e17750d1",
+      "name": "Add to database",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mq17fi4jn3p7if8",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Add to database').item.json.Id }}"
+            },
+            {
+              "fieldName": "public_url",
+              "fieldValue": "={{ $json.data[0].signedUrl }}"
+            },
+            {
+              "fieldName": "filename",
+              "fieldValue": "={{ $json.data[0].title }}"
+            },
+            {
+              "fieldName": "size",
+              "fieldValue": "={{ $json.data[0].width }}x{{ $json.data[0].height }}px"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        4080,
+        700
+      ],
+      "id": "df756c08-63f4-4155-a37f-7e6e7c3b15f9",
+      "name": "Update public_url+filename+size of image",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "project_full_context"
+            },
+            {
+              "name": "visual_suggestion"
+            },
+            {
+              "name": "project_name"
+            },
+            {
+              "name": "hypothese_id"
+            }
+          ]
+        }
+      },
+      "id": "8e867b28-ba5c-4086-93b5-bc6b7bf2e9a1",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        2420,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96bd5c98-4755-4e16-a20e-610e3a288234",
+              "name": "output",
+              "value": "done",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5200,
+        700
+      ],
+      "id": "e8bcb06c-33ac-4380-a143-67c05175bca4",
+      "name": "Return"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "={{ $json.database_id }}",
+          "mode": "id"
+        },
+        "title": "={{ $('Update public_url+filename+size of image').item.json.filename }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "URL|url",
+              "urlValue": "={{ $('Update public_url+filename+size of image').item.json.public_url }}"
+            },
+            {
+              "key": "Image|files",
+              "fileUrls": {
+                "fileUrl": [
+                  {
+                    "name": "={{ $('Update public_url+filename+size of image').item.json.filename }}",
+                    "url": "={{ $('Update public_url+filename+size of image').item.json.public_url }}"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "alt_text|rich_text",
+              "textContent": "={{ $('Add to database').item.json.alt_text }}"
+            },
+            {
+              "key": "project_name|rich_text",
+              "textContent": "={{ $('Start').item.json.project_name }}"
+            },
+            {
+              "key": "Hypothese_Id|rich_text",
+              "textContent": "={{ $('Start').item.json.hypothese_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        4920,
+        700
+      ],
+      "id": "1234b14a-8e8c-4e9a-a001-271ac709ad81",
+      "name": "Insert images in Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "v5gvKdytgYdGjgYc",
+          "mode": "list",
+          "cachedResultName": "GetNotionDatabaseId"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetDatabaseTitle": "Db_Landing_Page_Visuals",
+            "targetParentPageId": "={{ $json.ID_Notion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "targetDatabaseTitle",
+              "displayName": "targetDatabaseTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetParentPageId",
+              "displayName": "targetParentPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4660,
+        1080
+      ],
+      "id": "38a4ac92-fb97-4b5e-97ff-7a0b3b75fcdc",
+      "name": "Get Notion Db_Visuals Id",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "options": {
+          "fields": [
+            "ID_Notion"
+          ],
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        4360,
+        1080
+      ],
+      "id": "0cecd101-7a2f-45be-b73d-75cb64052704",
+      "name": "Get project Notion Id",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Update public_url+filename+size of image": [
+      {
+        "json": {
+          "Id": 6,
+          "public_url": "https://nocohub-001-prod-app-attachments.s3.us-east-2.amazonaws.com/nc/uploads/2025/09/03/640e8fa524b53751ef93eb24c7dd0aab3c0d7a31/greenpack_comptoir_kvJ95.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIATUJCOBWTFSXT22F2%2F20250903%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20250903T174759Z&X-Amz-Expires=7321&X-Amz-Signature=2a251da7b9344f5ef59a8df9f0d50d6c8fc4d5453c4e7a8232501df54eb4059c&X-Amz-SignedHeaders=host&response-content-disposition=inline%3B&response-content-type=image%2Fpng&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+          "filename": "greenpack_comptoir.png",
+          "size": "1024x1536px"
+        }
+      }
+    ],
+    "Start": [
+      {
+        "json": {
+          "project_full_context": "{\"Id\":5,\"project_name\":\"La meute qui ose\",\"hypothesis_id\":\"P3_S2_VP1_1757066558860\",\"name\":\"Modules clés en main alignés séances 45–90 min, guides enseignants et pré/post-tests; déployable en atelier périscolaire sur 1–2 classes.\",\"probleme_resolu\":\"Friction d'intégration chez établissements et manque de ressources prêtes-à-l'emploi\",\"segment_client\":\"Établissements scolaires et collectivités (B2B2C)\",\"value_prop\":\"Abonnement mensuel blended 'Kits & Cours' prêt-à-l'usage\",\"pourquoi_tester\":\"Très cohérent avec besoins d’intégration scolaire; preuves rapides via LOIs + 1 pilote; production MVP réaliste.\",\"status\":\"En cours\",\"KPIs\":null,\"start_date\":null,\"CreatedAt\":\"2025-09-03 15:14:59+00:00\",\"UpdatedAt\":\"2025-09-05 09:53:36+00:00\",\"mission\":\"Éveiller chez les adolescents et jeunes adultes des notions de connaissance de soi, finance, entrepreneuriat et collaboration pour leur permettre d'entreprendre leur vie.\",\"probleme_central\":\"Les collèges et lycées ne préparent pas suffisamment les jeunes aux enjeux pratiques du monde actuel ; les parents peinent à transmettre ces savoir‑être et savoir‑faire à cet âge.\",\"segment_principal\":\"Parents d'adolescents (lycéens) et relais B2B2C via établissements/associations ; caractéristiques attendues : acheteurs adultes, intérêt pour préparation à la vie active, variabilité de pouvoir d'achat, adoption initiale attendue chez parents proactifs/engagés.\",\"concurrents_principaux\":\"Plateformes d'éducation en ligne / MOOCs (ex. Khan Academy, Coursera pour juniors),Ateliers/associations extrascolaires et ateliers entrepreneuriaux locaux,Abonnements éducatifs jeunesse (kits pédagogiques, magazines éducatifs)\",\"canaux_acquisition\":null,\"value_proposition\":\"Un parcours annuel hybride (physique + digital) qui enseigne compétences pratiques non couvertes par l'école pour préparer les adolescents à la vie et à l'entrepreneuriat, vendu sous forme d'abonnement parental.\",\"fonctionnalites_cles\":\"Box mensuelle physique avec supports et activités pratiques,Contenu digital (modules vidéo, fiches pratiques, exercices, quiz),Parcours pédagogique structuré sur 12 thèmes annuels avec suivi parental\",\"avantage_concurrentiel\":\"Non défini précisément dans les données ; hypothèse potentielle : combinaison hybride physique+digital ciblée spécifiquement sur adolescents avec curriculum pratique annuel et positionnement comme complément scolaire pour parents.\",\"stade_du_projet\":null,\"objectifs_prioritaires\":\"Valider l'intérêt marché et la willingness-to-pay des parents,Tester des canaux d'acquisition (Meta, LinkedIn) et définir les early adopters\",\"contraintes_identifiees\":\"Données manquantes sur budget et durée du test, KPI et seuils de succès, persona détaillée, différenciation, coûts de production/logistique des kits physiques, ressources nécessaires pour création de contenu.\",\"hypothese_depart_contraintes_identifiees\":null,\"hypothese_depart_sur_cible\":null,\"hypothese_depart_sur_solution\":null,\"infos_manquantes\":\"Estimation de la taille de marché (TAM/SAM/SOM) et segmentation géographique/démographique,Personas détaillés : âge, revenus, comportements d'achat, objections,Prix cible envisagé et elasticité prix / willingness-to-pay,Budget et durée du test, livrables attendus,KPI et seuils de succès clairs (acquisition, CAC, LTV, churn, NPS, conversion essai→payant),Données opérationnelles : coûts de production et logistique pour la box physique,Positionnement précis et différenciation par rapport aux alternatives existantes,Stratégie B2B2C (offre pour établissements, modèle commercial et partage de revenus),Plan de contenu (format, auteurs, fréquence, qualité pédagogique) et capacité de production\",\"incoherences\":\"Canaux mentionnés (LinkedIn) peu adaptés pour toucher directement les parents d'adolescents comparé à Instagram/Facebook ou écoles,Différenciation et bénéfice mesurable laissés nuls alors que la proposition repose sur une valeur claire à démontrer,Marketplace cible mélangée (B2C et B2B2C) sans stratégie distincte pour chacun,Premier cas d'usage ambigu : « un lycéen s'abonne » vs « un adulte abonne son enfant » — décisions marketing et de paiement différentes\",\"zones_flou\":\"Modèle exact de l'offre : uniquement physique, uniquement digital, ou mix et proportion entre les deux,Logistique et coût unitaire par abonné (frais d'envoi, production, retours),Stratégie d'acquisition détaillée et canal prioritaire après test initial,Mesure du 'bénéfice mesurable' pour prouver l'impact pédagogique et justifier la rétention/prix\",\"taille_marche\":null,\"ID_Notion\":\"265ca86a94e580188be2c92f48865018\",\"solution_proposee\":\"Un abonnement annuel délivrant chaque mois du contenu physique et/ou digital sur des thèmes pratiques (finance, gestion de projet, entrepreneuriat, etc.).\"}",
+          "visual_suggestion": "Frise 12 mois transformée en 12 boîtes numérotées qui s'écoulent vers une classe, chaque mois illustré par une icône thématique (finance, projet, collaboration), un mini graphique pré/post-test au-dessus et la mention « abonnement mensuel blended — Kits & Cours ». ",
+          "project_name": "La meute qui ose",
+          "hypothese_id": "P3_S2_VP1_1757066558860"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Rename File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate a custom prompt for this specific image": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate a custom prompt for this specific image",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate a custom prompt for this specific image",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename File": {
+      "main": [
+        [
+          {
+            "node": "Add to database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Public Url": {
+      "main": [
+        [
+          {
+            "node": "Update public_url+filename+size of image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to database": {
+      "main": [
+        [
+          {
+            "node": "Get Image Public Url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Generate a custom prompt for this specific image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update public_url+filename+size of image": {
+      "main": [
+        [
+          {
+            "node": "Get project Notion Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Notion Db_Visuals Id": {
+      "main": [
+        [
+          {
+            "node": "Insert images in Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert images in Notion": {
+      "main": [
+        [
+          {
+            "node": "Return",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project Notion Id": {
+      "main": [
+        [
+          {
+            "node": "Get Notion Db_Visuals Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 300
+  },
+  "versionId": "d730713b-85bc-4046-9615-3009442c37fd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "0ZHLQ2eSt5x7B26B",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

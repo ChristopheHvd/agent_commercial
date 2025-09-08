@@ -1,0 +1,148 @@
+{
+  "name": "GetNotionDatabaseId",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "getAll",
+        "simple": false
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        40,
+        3280
+      ],
+      "id": "ca04f09e-726c-4042-a59a-5d0011fc5463",
+      "name": "Recupere db Hypotheses PMF",
+      "executeOnce": true,
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all().map(i => i.json);\nconst targetDatabaseTitle = $('Start').first().json.targetDatabaseTitle;\nconst targetParentPageId = $('Start').first().json.targetParentPageId; // ID de la page parente (FreudIA, Bonature, etc.)\nconsole.log($('Start').first().json.targetParentPageId);\n\n// Fonction pour normaliser les IDs (supprimer les tirets si présents)\nfunction normalizeId(id) {\n    return id ? id.replace(/-/g, '') : '';\n}\n\n// Fonction pour extraire le titre d'une database\nfunction getDatabaseTitle(database) {\n    try {\n        return database.title && database.title[0] && database.title[0].text \n            ? database.title[0].text.content \n            : '';\n    } catch (error) {\n        return '';\n    }\n}\n\n// Fonction pour trouver une database par titre et parent ID\nfunction findDatabase(databases, targetTitle, targetParentId) {\n    const normalizedTargetParentId = normalizeId(targetParentId);\n    \n    return databases.find(db => {\n        // Vérifier que c'est bien une database\n        if (db.object !== \"database\") {\n            return false;\n        }\n        \n        // Vérifier le titre\n        const dbTitle = getDatabaseTitle(db);\n        if (dbTitle !== targetTitle) {\n            return false;\n        }\n        \n        // Vérifier le parent\n        if (!db.parent || db.parent.type !== \"page_id\") {\n            return false;\n        }\n        \n        const dbParentId = normalizeId(db.parent.page_id);\n        return dbParentId === normalizedTargetParentId;\n    });\n}\n\n// Configuration - Modifiez ces valeurs selon vos besoins\n\n\n// Rechercher la database\nconst foundDatabase = findDatabase(allItems, targetDatabaseTitle, targetParentPageId);\n\n// Gestion des erreurs et logging pour debug\nif (!foundDatabase) {\n    console.log(`Database \"${targetDatabaseTitle}\" non trouvée pour le parent ${targetParentPageId}`);\n    console.log(\"Databases disponibles:\");\n  \n    allItems\n        .filter(item => item.object === \"database\")\n        .forEach(db => {\n            const title = getDatabaseTitle(db);\n            const parentId = db.parent?.page_id || 'N/A';\n            console.log(`- Titre: \"${title}\", Parent: ${parentId}`);\n        });\n}\n\n// Retourner le résultat\nreturn {\n    \"database_id\": foundDatabase ? foundDatabase.id : null\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        3280
+      ],
+      "id": "9ade8d77-c3c4-41a7-b8ae-add4bed1be6b",
+      "name": "Extract ID from Db_HypothesesPMF"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "targetDatabaseTitle"
+            },
+            {
+              "name": "targetParentPageId"
+            }
+          ]
+        }
+      },
+      "id": "392d5ea3-a952-4ef4-b345-8539688391a1",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -180,
+        3280
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "56a12c7c-8b47-43f7-a060-17ed5f1ec65f",
+              "name": "database_id",
+              "value": "={{ $json.database_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        3280
+      ],
+      "id": "342d325e-8492-4c03-9b62-e6baa4be8d39",
+      "name": "Edit Fields",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "targetDatabaseTitle": "Db_HypothèsesPMF",
+          "targetParentPageId": "261ca86a94e58092b49ec6ba6f48e0b1"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Recupere db Hypotheses PMF": {
+      "main": [
+        [
+          {
+            "node": "Extract ID from Db_HypothesesPMF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Recupere db Hypotheses PMF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract ID from Db_HypothesesPMF": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9c3d1d80-d9e5-48b0-ab04-a575010abdf7",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "v5gvKdytgYdGjgYc",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

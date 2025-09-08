@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -480,
-        175
+        -760,
+        -100
       ],
       "id": "222328f0-a264-4381-b9ae-f342b26a1530",
       "name": "Called from Generate Hypotheses button",
@@ -20,105 +20,19 @@
     },
     {
       "parameters": {
-        "resource": "databasePage",
-        "operation": "getAll",
-        "databaseId": {
-          "__rl": true,
-          "value": "261ca86a94e580d1b93af2a91a07d5cd",
-          "mode": "id"
-        },
-        "returnAll": true,
-        "options": {}
-      },
-      "type": "n8n-nodes-base.notion",
-      "typeVersion": 2.2,
-      "position": [
-        -40,
-        175
-      ],
-      "id": "597195fa-d924-4a28-83cd-3dda4a6ec444",
-      "name": "Get toutes les hypotheses courantes",
-      "alwaysOutputData": true,
-      "credentials": {
-        "notionApi": {
-          "id": "snOvbWupBFXeHmM7",
-          "name": "Notion AlpAct"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "archive",
-        "pageId": {
-          "__rl": true,
-          "value": "={{ $json.id }}",
-          "mode": "id"
-        }
-      },
-      "type": "n8n-nodes-base.notion",
-      "typeVersion": 2.2,
-      "position": [
-        400,
-        100
-      ],
-      "id": "72652cfd-8664-4a83-bf50-2d3050db3eae",
-      "name": "Archive page",
-      "alwaysOutputData": true,
-      "credentials": {
-        "notionApi": {
-          "id": "snOvbWupBFXeHmM7",
-          "name": "Notion AlpAct"
-        }
-      }
-    },
-    {
-      "parameters": {
         "content": "## On commence par delete les hypotheses existantes",
-        "height": 460,
-        "width": 800,
+        "height": 400,
+        "width": 680,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -60,
-        -60
+        -300,
+        -260
       ],
       "typeVersion": 1,
       "id": "7c5f45bc-c871-4cdb-8ae4-1d8a7b1c8f71",
       "name": "Sticky Note4"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "8c4ffd1a-291c-4d1c-a1ed-a91c043f85f2",
-              "leftValue": "={{ $json.values().length }}",
-              "rightValue": 0,
-              "operator": {
-                "type": "number",
-                "operation": "gt"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        180,
-        175
-      ],
-      "id": "01adeee3-5b96-42ea-be6f-3bbcf6aaf70e",
-      "name": "If there are hypotheses to delete"
     },
     {
       "parameters": {
@@ -134,8 +48,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -260,
-        175
+        -460,
+        -100
       ],
       "id": "5e38ffa7-395b-4ee5-bd42-8e577a17dbd0",
       "name": "Display Sync Icon on Page",
@@ -152,7 +66,7 @@
           "__rl": true,
           "value": "DPcwNm4VwzwSFpwT",
           "mode": "list",
-          "cachedResultName": "Init project + Hypotheses PMF"
+          "cachedResultName": "Create Hypothesis"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -182,11 +96,12 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        620,
-        175
+        480,
+        -100
       ],
       "id": "25e2e274-0370-41cd-9723-cef0a9975e2d",
-      "name": "Execute Init project"
+      "name": "Execute Init project",
+      "executeOnce": true
     },
     {
       "parameters": {
@@ -195,11 +110,56 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1060,
-        175
+        840,
+        -100
       ],
       "id": "e898e59b-7bbb-4185-8885-93b9d7df5e3b",
       "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Lh6ZSJJhLW75mnNG",
+          "mode": "list",
+          "cachedResultName": "Delete Existing Hypothesis"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "project_name": "={{ $('Called from Generate Hypotheses button').item.json.headers.project_name }}"
+          },
+          "matchingColumns": [
+            "id",
+            "headers_project_name"
+          ],
+          "schema": [
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        -100
+      ],
+      "name": "Call Delete Existing Hypothesis",
+      "id": "2c7229b6-d936-4349-8f47-6a9070b57720",
+      "alwaysOutputData": true,
+      "executeOnce": true
     }
   ],
   "pinData": {
@@ -208,54 +168,55 @@
         "json": {
           "headers": {
             "host": "n8n.cloudron.alpes-ia.fr",
-            "x-real-ip": "44.237.227.106",
-            "x-forwarded-for": "44.237.227.106",
+            "x-real-ip": "44.227.140.35",
+            "x-forwarded-for": "44.227.140.35",
             "x-forwarded-host": "n8n.cloudron.alpes-ia.fr",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
             "x-forwarded-ssl": "on",
             "connection": "close",
-            "content-length": "1101",
+            "content-length": "1240",
             "user-agent": "NotionAutomation",
             "content-type": "application/json",
-            "project_name": "GreenPack",
-            "database_id_hypothesepmf": "261ca86a94e580d1b93af2a91a07d5cd",
-            "sentry-trace": "7116ebda1f1c4b7f9a94476ff870ae7e-819ec4c003987b56",
-            "baggage": "sentry-environment=production,sentry-release=0.0.4454,sentry-public_key=529a6d1990e5471d874257842c4f4ad8,sentry-trace_id=7116ebda1f1c4b7f9a94476ff870ae7e",
-            "traceparent": "00-9cebf94cfa36a64ee9aa2f1ee46619ef-be7fefd66924d7f9-00"
+            "project_name": "La meute qui ose",
+            "sentry-trace": "4a7f2136487f4d05855b626abc4068ea-9fef3fd864a8ab06",
+            "baggage": "sentry-environment=production,sentry-release=20250904.2218-df12828,sentry-public_key=529a6d1990e5471d874257842c4f4ad8,sentry-trace_id=4a7f2136487f4d05855b626abc4068ea",
+            "traceparent": "00-200b8c127c7d7544b2be6bdd7f4dd363-976a9bcbce359822-00"
           },
           "params": {},
           "query": {},
           "body": {
             "source": {
               "type": "automation",
-              "automation_id": "261ca86a-94e5-80b4-92dc-004de82b6c8d",
-              "action_id": "261ca86a-94e5-809e-a1c0-005addd03ff2",
-              "event_id": "94ddb479-913f-4fea-b5c3-69b4c532cc81",
+              "automation_id": "265ca86a-94e5-81d1-a04e-004d41797c24",
+              "action_id": "265ca86a-94e5-8120-bd32-005a6938a9c3",
+              "event_id": "da82c6e4-9a0a-499e-9e63-23e94e399d52",
               "user_id": "53e51f0e-19cf-4d1e-97e8-af68ff8d31c8",
               "attempt": 1
             },
             "data": {
               "object": "page",
-              "id": "261ca86a-94e5-8092-b49e-c6ba6f48e0b1",
-              "created_time": "2025-09-01T12:59:00.000Z",
-              "last_edited_time": "2025-09-02T08:57:00.000Z",
+              "id": "265ca86a-94e5-8018-8be2-c92f48865018",
+              "created_time": "2025-09-05T09:50:00.000Z",
+              "last_edited_time": "2025-09-05T09:51:00.000Z",
               "created_by": {
                 "object": "user",
                 "id": "53e51f0e-19cf-4d1e-97e8-af68ff8d31c8"
               },
               "last_edited_by": {
                 "object": "user",
-                "id": "53e51f0e-19cf-4d1e-97e8-af68ff8d31c8"
+                "id": "5620770f-c148-485c-ab92-32e2c118beda"
               },
               "cover": null,
               "icon": {
-                "type": "emoji",
-                "emoji": "🪄"
+                "type": "external",
+                "external": {
+                  "url": "https://www.notion.so/icons/sync_red.svg?mode=light&size=256"
+                }
               },
               "parent": {
-                "type": "workspace",
-                "workspace": true
+                "type": "block_id",
+                "block_id": "263ca86a-94e5-8078-a0c2-c195b29f2e44"
               },
               "archived": false,
               "in_trash": false,
@@ -267,7 +228,7 @@
                     {
                       "type": "text",
                       "text": {
-                        "content": "MVP IA",
+                        "content": "Test Christophe (1)",
                         "link": null
                       },
                       "annotations": {
@@ -278,15 +239,15 @@
                         "code": false,
                         "color": "default"
                       },
-                      "plain_text": "MVP IA",
+                      "plain_text": "Test Christophe (1)",
                       "href": null
                     }
                   ]
                 }
               },
-              "url": "https://www.notion.so/MVP-IA-261ca86a94e58092b49ec6ba6f48e0b1",
+              "url": "https://www.notion.so/Test-Christophe-1-265ca86a94e580188be2c92f48865018",
               "public_url": null,
-              "request_id": "db25aa49-9a0f-4564-82ec-24c13baa481c"
+              "request_id": "39809647-c30e-4e93-8d55-47ad03aba46b"
             }
           },
           "webhookUrl": "https://n8n.cloudron.alpes-ia.fr/webhook/generate-hypotheses",
@@ -307,51 +268,11 @@
         ]
       ]
     },
-    "Get toutes les hypotheses courantes": {
-      "main": [
-        [
-          {
-            "node": "If there are hypotheses to delete",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If there are hypotheses to delete": {
-      "main": [
-        [
-          {
-            "node": "Archive page",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute Init project",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Display Sync Icon on Page": {
       "main": [
         [
           {
-            "node": "Get toutes les hypotheses courantes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Archive page": {
-      "main": [
-        [
-          {
-            "node": "Execute Init project",
+            "node": "Call Delete Existing Hypothesis",
             "type": "main",
             "index": 0
           }
@@ -368,16 +289,35 @@
           }
         ]
       ]
+    },
+    "Call Delete Existing Hypothesis": {
+      "main": [
+        [
+          {
+            "node": "Execute Init project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "522c3183-7709-4002-8de5-02c3093f8331",
+  "versionId": "8290418b-0856-4a17-8af9-b35dc6212b0b",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
   },
   "id": "KsjNu1xhjb31CoAf",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
 }

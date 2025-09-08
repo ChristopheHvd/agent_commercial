@@ -1,0 +1,359 @@
+{
+  "name": "Create Landing Page Ressources",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "kzUPsCMJL4OPFPBR",
+          "mode": "list",
+          "cachedResultName": "Generate Charte Graphique"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $('Start').item.json.hypothese_id }}",
+            "project_name": "={{ $('Start').item.json.project_name }}"
+          },
+          "matchingColumns": [
+            "hypothese_toJsonString"
+          ],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        980,
+        520
+      ],
+      "name": "Call Generate Charte Graphique",
+      "id": "1cadb76b-c786-4902-83c5-a186c449e61a"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "EAmMlbrHhBZyt30V",
+          "mode": "list",
+          "cachedResultName": "Generate Landing Text Content"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $('Start').item.json.hypothese_id }}",
+            "project_name": "={{ $('Start').item.json.project_name}}"
+          },
+          "matchingColumns": [
+            "hypothese_toJsonString",
+            "hypothese_contexte_business_nom_du_projet",
+            "hypothese_hypothese_courante_id"
+          ],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "name": "Call Generate Landing Text Content",
+      "id": "538ff827-c7a1-45d5-9d0b-bc225d6186d1",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Jg8ZS5qqpmLpXCqk",
+          "mode": "list",
+          "cachedResultName": "Generate Visuals"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $('Start').item.json.hypothese_id }}",
+            "project_name": "={{ $('Start').item.json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        520
+      ],
+      "id": "02909107-0b79-4594-973b-ad7ecf8a6684",
+      "name": "Call Generate visuals",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "IbrxVGMowifQR6Jx",
+          "mode": "list",
+          "cachedResultName": "Generate Prompt Landing Page"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $('Start').item.json.hypothese_id }}",
+            "project_name": "={{ $('Start').item.json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1220,
+        520
+      ],
+      "id": "8c83815c-4b2e-42bb-9482-45ba892a83f4",
+      "name": "Call Generate Landing Page Prompt",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8071af5f-0a7d-4510-9012-99980ad836c6",
+              "name": "output",
+              "value": "done",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1520,
+        520
+      ],
+      "id": "81b9fe01-cf47-412a-889f-4d466fcdee5d",
+      "name": "RETURN"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "hypothese_id"
+            },
+            {
+              "name": "project_name"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        0,
+        520
+      ]
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "hypothese_id": "P3_S2_VP1_1757066558860",
+          "project_name": "La meute qui ose"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Call Generate Charte Graphique": {
+      "main": [
+        [
+          {
+            "node": "Call Generate Landing Page Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Generate Landing Text Content": {
+      "main": [
+        [
+          {
+            "node": "Call Generate visuals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Generate visuals": {
+      "main": [
+        [
+          {
+            "node": "Call Generate Charte Graphique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Generate Landing Page Prompt": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Call Generate Landing Text Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "83d57829-45c9-4164-85c1-df2e0551190c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "C2c1go1oOHzHxVqN",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

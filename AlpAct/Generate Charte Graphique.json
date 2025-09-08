@@ -1,0 +1,790 @@
+{
+  "name": "Generate Charte Graphique",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the complete context for the startup project, in JSON format:\n\n<startup_context>\n{{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.toJsonString() }}\n</startup_context>\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a branding expert tasked with creating a comprehensive brand identity and style guide for a startup project. Your goal is to develop a cohesive visual identity that can be used for the startup's landing page, marketing materials, and other visual assets.\n\nBased on this context, you will create a brand identity and style guide. Before providing the final output, conduct a thorough brand analysis. Wrap this analysis in <brand_analysis> tags, including the following steps:\n\n1. Summarize the key points from the project context\n2. Identify and describe the target audience\n3. List potential brand personality traits (aim for 6-8)\n4. Brainstorm ideas for core values (aim for 6-8)\n5. Consider color associations that might work well for this brand\n6. Think about typography styles that could represent the brand effectively\n7. Suggest visual element ideas that align with the brand's personality\n\nYour final output should be a JSON object containing the following elements:\n\n1. brandElements:\n   - brandPersonality (array of 3-5 adjectives)\n   - brandVoice (object with tone and style properties)\n   - coreValues (array of 3-5 key principles)\n\n2. colorPalette:\n   - primaryColor (object with hex code and explanation)\n   - secondaryColor (object with hex code and explanation)\n   - accentColor (object with hex code and explanation)\n   - neutralColors (array of objects, each with hex code and explanation)\n\n3. typography:\n   - headerFont (object with serif and sans-serif options, each including font name and explanation)\n   - bodyFont (object with serif and sans-serif options, each including font name and explanation)\n   - accentFont (optional, object with font name and explanation)\n\n4. visualElements:\n   - logoStyle (string describing the style)\n   - iconographyStyle (string describing the style)\n   - imageryStyle (string describing photography or illustration style)\n   - patternsTextures (string describing patterns or textures, if applicable)\n\n5. summary (string summarizing the brand guidelines and explaining how these elements work together to represent the startup's identity and appeal to its target audience)\n\nRemember to ensure that all elements of the brand identity and style guide are cohesive and align with the startup's goals, values, and target audience as described in the project context.\n\nAlways answer in french language.\n\nAfter completing your analysis, create a JSON object containing the brand identity and style guide elements. The JSON structure should be as follows:\n\n{\n \"brand_elements\": {\n   \"brand_personality\": [\"adjective1\", \"adjective2\", \"adjective3\"],\n   \"brand_voice\": {\n     \"tone\": \"description\",\n     \"style\": \"description\"\n   },\n   \"core_values\": [\"value1\", \"value2\", \"value3\"]\n },\n \"color_palette\": {\n   \"primary_color\": {\n     \"hex_code\": \"#000000\",\n     \"explanation\": \"reason for choice\"\n   },\n   \"secondary_color\": {\n     \"hex_code\": \"#000000\",\n     \"explanation\": \"reason for choice\"\n   },\n   \"accent_color\": {\n     \"hex_code\": \"#000000\",\n     \"explanation\": \"reason for choice\"\n   },\n   \"neutral_colors\": [\n     {\n       \"hex_code\": \"#000000\",\n       \"explanation\": \"reason for choice\"\n     },\n     {\n       \"hex_code\": \"#000000\",\n       \"explanation\": \"reason for choice\"\n     }\n   ]\n },\n \"typography\": {\n   \"header_font\": {\n     \"serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     },\n     \"sans_serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     }\n   },\n   \"body_font\": {\n     \"serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     },\n     \"sans_serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     }\n   },\n   \"accent_font\": {\n     \"font_name\": \"Font Name\",\n     \"explanation\": \"reason for choice\"\n   }\n },\n \"visual_elements\": {\n   \"logo_style\": \"description of style\",\n   \"iconography_style\": \"description of style\",\n   \"imagery_style\": \"description of photography or illustration style\",\n   \"patterns_textures\": \"description of patterns or textures, if applicable\"\n },\n \"executive_summary\": \"A comprehensive summary of the brand guidelines, explaining how these elements work together to represent the startup's identity and appeal to its target audience.\"\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -280,
+        2160
+      ],
+      "id": "fc220cca-f5c5-4d6b-b9d3-2338bcdde30c",
+      "name": "Generate Charte Graphique"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n \"brand_elements\": {\n   \"brand_personality\": [\"adjective1\", \"adjective2\", \"adjective3\"],\n   \"brand_voice\": {\n     \"tone\": \"description\",\n     \"style\": \"description\"\n   },\n   \"core_values\": [\"value1\", \"value2\", \"value3\"]\n },\n \"color_palette\": {\n   \"primary_color\": {\n     \"hex_code\": \"#000000\",\n     \"explanation\": \"reason for choice\"\n   },\n   \"secondary_color\": {\n     \"hex_code\": \"#000000\",\n     \"explanation\": \"reason for choice\"\n   },\n   \"accent_color\": {\n     \"hex_code\": \"#000000\",\n     \"explanation\": \"reason for choice\"\n   },\n   \"neutral_colors\": [\n     {\n       \"hex_code\": \"#000000\",\n       \"explanation\": \"reason for choice\"\n     },\n     {\n       \"hex_code\": \"#000000\",\n       \"explanation\": \"reason for choice\"\n     }\n   ]\n },\n \"typography\": {\n   \"header_font\": {\n     \"serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     },\n     \"sans_serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     }\n   },\n   \"body_font\": {\n     \"serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     },\n     \"sans_serif\": {\n       \"font_name\": \"Font Name\",\n       \"explanation\": \"reason for choice\"\n     }\n   },\n   \"accent_font\": {\n     \"font_name\": \"Font Name\",\n     \"explanation\": \"reason for choice\"\n   }\n },\n \"visual_elements\": {\n   \"logo_style\": \"description of style\",\n   \"iconography_style\": \"description of style\",\n   \"imagery_style\": \"description of photography or illustration style\",\n   \"patterns_textures\": \"description of patterns or textures, if applicable\"\n },\n \"executive_summary\": \"A comprehensive summary of the brand guidelines, explaining how these elements work together to represent the startup's identity and appeal to its target audience.\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -140,
+        2380
+      ],
+      "id": "51ad0560-d032-4445-a118-1cf6e413a713",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n\"hypothese_id\": \"H1_1756912325593\",\n\"project_name\": \"GreenPack\"\n}"
+      },
+      "id": "cde7be9e-1854-4a01-a48d-802ddef43e79",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -1680,
+        2220
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "limit": 1,
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -860,
+        2400
+      ],
+      "id": "ca109f9d-3cf7-4d4a-ae3e-b0209aed6d19",
+      "name": "Get project context",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})~and(hypothesis_id,eq,{{ $('Start').item.json.hypothese_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -860,
+        2140
+      ],
+      "id": "c72114f7-d64d-4a3a-988e-5aa6381563a2",
+      "name": "Get selected hypothesis",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -520,
+        2160
+      ],
+      "id": "d4574e3f-8fcc-41f3-93ac-923ddb50146d",
+      "name": "FULL PROJECT CONTEXT + HYPOTHESIS"
+    },
+    {
+      "parameters": {
+        "content": "## Pour assurer l'idempotence, on supprime le prompt précédent",
+        "height": 420,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1420,
+        2080
+      ],
+      "typeVersion": 1,
+      "id": "c1f63730-809c-418f-b194-5cbd2b3d52f4",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Ajout dans NocoDb + Notion",
+        "height": 720,
+        "width": 1460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        1860
+      ],
+      "typeVersion": 1,
+      "id": "db385488-2d17-44c0-9b64-31ab4e72a4f6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "ml9civoifdkzxxn",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('Start').item.json.project_name }}"
+            },
+            {
+              "fieldName": "hypothesis_id",
+              "fieldValue": "={{ $('Start').item.json.hypothese_id }}"
+            },
+            {
+              "fieldName": "executive_summary",
+              "fieldValue": "={{ $json.output.executive_summary }}"
+            },
+            {
+              "fieldName": "primary_color",
+              "fieldValue": "={{ $json.output.color_palette.primary_color.hex_code }}"
+            },
+            {
+              "fieldName": "secondary_color",
+              "fieldValue": "={{ $json.output.color_palette.secondary_color.hex_code }}"
+            },
+            {
+              "fieldName": "accent_color",
+              "fieldValue": "={{ $json.output.color_palette.accent_color.hex_code }}"
+            },
+            {
+              "fieldName": "neutral_color_1",
+              "fieldValue": "={{ $json.output.color_palette.neutral_colors[0].hex_code }}"
+            },
+            {
+              "fieldName": "neutral_color_2",
+              "fieldValue": "={{ $json.output.color_palette.neutral_colors[1].hex_code }}"
+            },
+            {
+              "fieldName": "header_font_serif",
+              "fieldValue": "={{ $json.output.typography.header_font.serif.font_name }}"
+            },
+            {
+              "fieldName": "header_font_sansserif",
+              "fieldValue": "={{ $json.output.typography.header_font.sans_serif.font_name }}"
+            },
+            {
+              "fieldName": "body_font_serif",
+              "fieldValue": "={{ $json.output.typography.body_font.serif.font_name }}"
+            },
+            {
+              "fieldName": "body_font_sansserif",
+              "fieldValue": "={{ $json.output.typography.body_font.sans_serif.font_name }}"
+            },
+            {
+              "fieldName": "font_accent",
+              "fieldValue": "={{ $json.output.typography.accent_font.font_name }}"
+            },
+            {
+              "fieldName": "logo_description",
+              "fieldValue": "={{ $json.output.visual_elements.logo_style }}"
+            },
+            {
+              "fieldName": "iconography_description",
+              "fieldValue": "={{ $json.output.visual_elements.iconography_style }}"
+            },
+            {
+              "fieldName": "photo_style",
+              "fieldValue": "={{ $json.output.visual_elements.imagery_style }}"
+            },
+            {
+              "fieldName": "texture_description",
+              "fieldValue": "={{ $json.output.visual_elements.patterns_textures }}"
+            },
+            {
+              "fieldName": "brand_traits",
+              "fieldValue": "={{ $json.output.brand_elements.brand_personality.toJsonString() }}"
+            },
+            {
+              "fieldName": "brand_values",
+              "fieldValue": "={{ $json.output.brand_elements.core_values.toJsonString() }}"
+            },
+            {
+              "fieldName": "brand_communication_tone",
+              "fieldValue": "={{ $json.output.brand_elements.brand_voice.tone }}"
+            },
+            {
+              "fieldName": "brand_communication_style",
+              "fieldValue": "={{ $json.output.brand_elements.brand_voice.style }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        300,
+        2160
+      ],
+      "id": "fbf6197e-10cc-458a-ac5e-1990b3378a9a",
+      "name": "Create a row",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "258hRRJvTwdJTIUC",
+          "mode": "list",
+          "cachedResultName": "Get Notion Block Id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetBlockTitle": "Identité visuelle",
+            "targetMainPageId": "={{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.ID_Notion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "targetBlockTitle",
+              "displayName": "targetBlockTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetMainPageId",
+              "displayName": "targetMainPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        2160
+      ],
+      "id": "d2a5ee29-de5a-4425-bde6-ef55d377f831",
+      "name": "Get Notion Block Id"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "children",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        2160
+      ],
+      "id": "469a9cae-f14b-4578-bd54-58410dfb37e0",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "content": "## Obligé de split le texte pour insert dans Notion sinon c'est trop long",
+        "height": 320,
+        "width": 1020,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        680,
+        2040
+      ],
+      "typeVersion": 1,
+      "id": "ca92acf5-995b-4bcd-a651-05b4ee1219f2",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b2605b3-09b0-493e-90ca-13b35608adf5",
+              "name": "output",
+              "value": "created identite visuelle",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1560,
+        2160
+      ],
+      "id": "fdf79e15-d2c3-479a-8379-f74e167703cc",
+      "name": "RETURN"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('Get Notion Block Id').item.json.block_id }}",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $json.paragraph.rich_text[0].text.content }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        2160
+      ],
+      "id": "3e1df65a-b47b-4b8f-ad2d-b6d901d43eb0",
+      "name": "Append a block",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## On reconstruit le contexte du projet avec l'hypothèse à tester",
+        "height": 700,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1000,
+        1900
+      ],
+      "typeVersion": 1,
+      "id": "a2cecf42-f404-499a-8f11-ed473f3a7f8f",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "zABlV1a4h3uupTJQ",
+          "mode": "list",
+          "cachedResultName": "Delete Existing Charte Graphique"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $json.hypothese_id }}",
+            "project_name": "={{ $json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        2240
+      ],
+      "id": "f80d7eb3-5160-4d76-b2ab-3498a20c521d",
+      "name": "Delete existing charte graphique",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "responseFormat": "json_object",
+          "timeout": 500000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        2400
+      ],
+      "id": "776b8b40-6908-4b5d-af21-50b1d2dcbc8e",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        2620
+      ],
+      "id": "49e3c0c8-1009-4a2d-ab6a-d3a5ab16bc70",
+      "name": "GPT-5-NANO",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Template N8N pour créer le contenu Notion de l'identité visuelle\nreturn {\n  notion_content: \n    '## 🎯 Résumé Exécutif\\n\\n' +\n    $json.executive_summary + '\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## 🎨 Palette de Couleurs\\n\\n' +\n    \n    '### <span style=\"color: ' + $json.primary_color + ';\">■ Couleur Primaire - ' + $json.primary_color + '</span>\\n' +\n    '**Couleur principale** - Couleur dominante de la marque, évoque les valeurs fondamentales.\\n\\n' +\n    \n    '### <span style=\"color: ' + $json.secondary_color + ';\">■ Couleur Secondaire - ' + $json.secondary_color + '</span>\\n' +\n    '**Couleur de support** - Apporte profondeur et complète la palette principale.\\n\\n' +\n    \n    '### <span style=\"color: ' + $json.accent_color + ';\">■ Couleur d\\'Accent - ' + $json.accent_color + '</span>\\n' +\n    '**Couleur dynamique** - Pour les appels à l\\'action et éléments interactifs.\\n\\n' +\n    \n    '### <span style=\"color: ' + $json.neutral_color_1 + ';\">■ Neutre Foncé - ' + $json.neutral_color_1 + '</span>\\n' +\n    '**Couleur de texte** - Pour les contenus principaux et éléments de lecture.\\n\\n' +\n    \n    '### <span style=\"color: ' + $json.neutral_color_2 + ';\">■ Neutre Clair - ' + $json.neutral_color_2 + '</span>\\n' +\n    '**Couleur de fond** - Pour les arrière-plans et espaces de respiration.\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## ✍️ Typographie\\n\\n' +\n    \n    '### **Titres (Headers)**\\n' +\n    '- **Serif :** *' + $json.header_font_serif + '* - Police élégante pour les titres importants\\n' +\n    '- **Sans-serif :** **' + $json.header_font_sansserif + '** - Police moderne pour les titres web\\n\\n' +\n    \n    '### **Corps de texte (Body)**\\n' +\n    '- **Serif :** *' + $json.body_font_serif + '* - Police confortable pour la lecture longue\\n' +\n    '- **Sans-serif :** ' + $json.body_font_sansserif + ' - Police optimale pour interfaces et écrans\\n\\n' +\n    \n    '### **Accent**\\n' +\n    '- **' + $json.font_accent + '** - *Police spéciale pour éléments distinctifs*\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## 🏷️ Logo & Identité\\n\\n' +\n    \n    '### Description du Logo\\n' +\n    $json.logo_description + '\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## 🔧 Iconographie\\n\\n' +\n    $json.iconography_description + '\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## 📸 Style Visuel\\n\\n' +\n    \n    '### Style Photographique & Illustrations\\n' +\n    $json.photo_style + '\\n\\n' +\n    \n    '### Textures & Motifs\\n' +\n    $json.texture_description + '\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## 🧬 Personnalité de Marque\\n\\n' +\n    \n    '### Traits de Personnalité\\n' +\n    $json.brand_traits + '\\n\\n' +\n    \n    '### Valeurs Fondamentales\\n' +\n    $json.brand_values + '\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '## 💬 Communication\\n\\n' +\n    \n    '### **Ton de Communication**\\n' +\n    $json.brand_communication_tone + '\\n\\n' +\n    \n    '### **Style de Communication**\\n' +\n    $json.brand_communication_style + '\\n\\n' +\n    \n    '---\\n\\n' +\n    \n    '> 🎯 **Identité créée pour ' + $json.project_name + '** - Guide complet pour une communication cohérente et efficace.'\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        2160
+      ],
+      "id": "b6380893-2790-4a31-8501-adcfe374f28a",
+      "name": "Template Notion"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "HHXwcVfXIM4ZDj4V",
+          "mode": "list",
+          "cachedResultName": "Split Text in Chunks"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "text": "={{ $('Template Notion').item.json.notion_content }}"
+          },
+          "matchingColumns": [
+            "text"
+          ],
+          "schema": [
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        980,
+        2160
+      ],
+      "name": "Call Split Text in Chunks",
+      "id": "758867b7-aa26-446f-be25-5918f6d17fa3",
+      "executeOnce": true
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "hypothese_id": "P2_S1_VP2_1757084803625",
+          "project_name": "La meute qui ose"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Charte Graphique",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Charte Graphique": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Delete existing charte graphique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project context": {
+      "main": [
+        [
+          {
+            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get selected hypothesis": {
+      "main": [
+        [
+          {
+            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FULL PROJECT CONTEXT + HYPOTHESIS": {
+      "main": [
+        [
+          {
+            "node": "Generate Charte Graphique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Template Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Notion Block Id": {
+      "main": [
+        [
+          {
+            "node": "Call Split Text in Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append a block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append a block": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete existing charte graphique": {
+      "main": [
+        [
+          {
+            "node": "Get selected hypothesis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get project context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Charte Graphique",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-NANO": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Template Notion": {
+      "main": [
+        [
+          {
+            "node": "Get Notion Block Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Split Text in Chunks": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "737fcd7a-5608-4115-9a15-c5d093d1f808",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "kzUPsCMJL4OPFPBR",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

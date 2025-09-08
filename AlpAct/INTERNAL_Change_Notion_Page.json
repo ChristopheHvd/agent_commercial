@@ -1,0 +1,249 @@
+{
+  "name": "INTERNAL_Change_Notion_Page",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "muqbk732nl9jb7c",
+        "options": {
+          "fields": [
+            "Id",
+            "project_name"
+          ],
+          "where": "=(ID_Notion,eq,{{ $('Start').item.json.ancien_id_Notion }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        0,
+        -40
+      ],
+      "id": "baafbc4c-9ec1-4931-a97a-464d6240b101",
+      "name": "Get All Fiche Projet",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Fiche Projet",
+        "height": 500,
+        "width": 580
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "e20acdf5-6b70-4855-8299-8b19f35f0b28",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        220
+      ],
+      "id": "3d7c5549-d55d-4f4e-91cb-d973d54be568",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "muqbk732nl9jb7c",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID_Notion",
+              "fieldValue": "={{ $('Start').item.json.nouvel_id_Notion }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        260,
+        -40
+      ],
+      "id": "2a80b19a-14ca-42dd-8594-ad03ed03c17c",
+      "name": "Update Fiche Projet ID_Notion",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## project_context",
+        "height": 500,
+        "width": 580
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        280
+      ],
+      "typeVersion": 1,
+      "id": "cd4339d1-b32e-4438-a83c-95cc65a4f466",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "options": {
+          "fields": [
+            "Id",
+            "project_name"
+          ],
+          "where": "=(ID_Notion,eq,{{ $('Start').item.json.ancien_id_Notion }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        0,
+        480
+      ],
+      "id": "b77f935a-b476-462d-bee1-26f43cec95c7",
+      "name": "Get All project_context",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID_Notion",
+              "fieldValue": "={{ $('Start').item.json.nouvel_id_Notion }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        260,
+        480
+      ],
+      "id": "39b86aff-a54a-4a18-9761-a83a39e146b9",
+      "name": "Update project_context",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "nouvel_id_Notion": "265ca86a94e580188be2c92f48865018",
+          "ancien_id_Notion": "264ca86a94e58088ae61c0be820ba088"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get All Fiche Projet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get All project_context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Fiche Projet": {
+      "main": [
+        [
+          {
+            "node": "Update Fiche Projet ID_Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Fiche Projet ID_Notion": {
+      "main": [
+        []
+      ]
+    },
+    "Get All project_context": {
+      "main": [
+        [
+          {
+            "node": "Update project_context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b4f1a02b-1d55-4696-80af-338bb7e82ef8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "WPHIeIESma4QUJRB",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

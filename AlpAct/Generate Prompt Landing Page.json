@@ -1,0 +1,1127 @@
+{
+  "name": "Generate Prompt Landing Page",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "limit": 1,
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -1120,
+        600
+      ],
+      "id": "259949bd-b2dd-4638-9404-84cbc830162a",
+      "name": "Get project context",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})~and(hypothesis_id,eq,{{ $('Start').item.json.hypothese_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -1120,
+        340
+      ],
+      "id": "1720b3ac-5d3c-478a-aa32-469fac8745c5",
+      "name": "Get selected hypothesis",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## On reconstruit le contexte du projet avec l'hypothèse à tester",
+        "height": 700,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1260,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "8fde0378-d3d1-480a-9fc4-57541e0c7dcc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Si une charte graphique existe, on va s'en servir, sinon on va en créer une minimaliste\nAvec uniquement des suggestions visuelles",
+        "height": 700,
+        "width": 1080
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "ee8ad728-c9bf-4fb1-9a4e-e5598d9056a5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "ml9civoifdkzxxn",
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -520,
+        360
+      ],
+      "id": "b5afd890-e377-461f-a90c-6d5856ddb9fd",
+      "name": "Get brand identity",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f2263e1f-7634-4f88-bcbf-7f630a8d717e",
+              "leftValue": "={{ $json.values().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -280,
+        360
+      ],
+      "id": "1be25c9a-88ce-48d5-a768-6711ca49a267",
+      "name": "If project_branding already exists"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -780,
+        360
+      ],
+      "id": "bc0793ec-4a2c-44fd-a701-88eff18e3597",
+      "name": "FULL PROJECT CONTEXT + HYPOTHESIS"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  \"A customer at a fast-food counter returning a reusable container with a smile, showing the deposit system in action.\",\n  \"A clean, modern illustration of a stack of branded reusable food boxes with a green recycling loop symbol around them.\",\n  \"An eco-friendly restaurant scene where disposable packaging is replaced by reusable containers, highlighting sustainability.\"\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        280,
+        680
+      ],
+      "id": "9647d105-b2bb-40f0-bcf5-300487f3cf51",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Context of the project in JSON format, including a product-market-fit hypothesis currently tested:\n{{$('FULL PROJECT CONTEXT + HYPOTHESIS').all().toJsonString()}}\n\n\nTask:\nGenerate 2 to 3 suggestions of visuals that could illustrate this project and hypothesis. \nReturn only a valid JSON array of strings, each string being a distinct suggestion.\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI assistant specialized in generating creative visual ideas for startup landing pages and marketing tests.  \n\nYour task is to propose a short list of 2 to 3 visual suggestions that could illustrate the project’s mission and the tested hypothesis.  \n\nConstraints:  \n- The suggestions must be concrete and easy to understand.  \n- Each suggestion should be 1–2 sentences long.  \n- Output must be a valid JSON array of strings.  \n- Do not include explanations outside of JSON.  \n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        160,
+        460
+      ],
+      "id": "01e09e79-2c97-494a-a4ef-703d4dc218fd",
+      "name": "Create 3 visual suggestions"
+    },
+    {
+      "parameters": {
+        "content": "## Pour assurer l'idempotence, on supprime le prompt précédent",
+        "height": 420,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1680,
+        280
+      ],
+      "typeVersion": 1,
+      "id": "f574cd88-5043-49a6-ae02-b05df1ef1caf",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        680
+      ],
+      "id": "a6a737d7-12f9-47da-8b10-031ef54ef0c8",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Génération du prompt + ajout dans Notion",
+        "height": 720,
+        "width": 1460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        740,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "df22abee-585d-44d3-89a1-2f6ea99a88cc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n\"hypothese_id\": \"H1_1756912325593\",\n\"project_name\": \"GreenPack\"\n}"
+      },
+      "id": "dca90389-cdab-4977-814d-1756e551c06f",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -2040,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "2TxGPFiiycPRGJeN",
+          "mode": "list",
+          "cachedResultName": "Delete Existing Landing Prompt"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $json.hypothese_id }}",
+            "project_name": "={{ $json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1540,
+        440
+      ],
+      "id": "7bc490be-d83d-4d8c-be38-2f8c979384a8",
+      "name": "Delete existing prompt",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=PROJECT CONTEXT & HYPOTHESIS (in JSON format)\n{{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.toJsonString() }}\n\nCONTENT JSON (authoritative copy — use verbatim where keys exist)\n{{ $json.structure.toJsonString() }}\n\nBRAND IDENTITY (optional; if omitted, propose a tasteful theme)\n{{ $json.identity ? $json.identity.toJsonString() : \"/\" }}\n\nVISUAL SUGGESTIONS (optional; 2–5 ideas to inspire imagery)\n{{ $json.landing_visuals? $json.landing_visuals.toJsonString() : ($json.structure ? $json.structure[0].visual_suggestions.toJsonString() : \"/\") }}\n\nGOAL\nCreate a high-converting landing page aligned to the hypothesis and KPI(s) above.\n\nINSTRUCTIONS\nUsing the inputs, generate a Lovable-ready prompt that strictly follows the “Output structure” from your System role. \n- Derive the section plan from the context and provided copy; don’t force sections that don’t fit.\n- If lead capture is relevant (contact/demo/waitlist/quote/preorder/booking/newsletter), include a form with: \n  fields [name, email, (company/phone if B2B)], validation, GDPR consent text, success/error messages; instruct Lovable to store submissions in Google Sheets (Airtable as fallback).\n- Map each section’s copy to specific Content JSON keys (explicitly name keys). For missing keys, write minimal placeholder copy consistent with the brand/context.\n- For each image, specify subject & composition and provide alt text; no text baked into images.\n- Apply the provided brand; otherwise propose: a 3–5 color palette with hex, a Google Fonts pairing (headings/body), spacing & radius guidance, and button/card styles.\n- Include SEO/accessibility/performance notes and end with a checklist of what Lovable must build.\n\nOUTPUT\nReturn a single plain-text prompt ready to paste into Lovable (no code fences).\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are GPT-5 acting as a “Lovable Prompt Composer.” Your output must be a single, plain-text prompt that the user will paste into Lovable.dev to generate a production-ready landing page.\n\nFollow Lovable’s prompting guidance and best practices: be specific, name pages/sections/components, and describe behaviors, data, and integrations explicitly. Favor unambiguous, directive language. (Do not include code fences.) \n\nAuthoritative inputs:\n- Project context and hypothesis\n- “Content JSON” (canonical copy blocks to use verbatim)\n- Optional brand identity\n- Optional visual suggestions\n\nGlobal rules:\n- Use the Content JSON exactly where keys exist (e.g., headline, subheadline, benefits[], features[], social_proof[], faq[], cta_primary, cta_secondary, pricing[], legal, etc.). If some copy is missing, write minimal, on-brand placeholder copy consistent with the context—no fabricated claims, numbers, or endorsements.\n- Language: keep provided copy in its original language; write the rest in English.\n- Visuals: for each section that needs imagery, specify the asset type (hero illustration/product mockup/icon set), subject, composition, and alt text. No text embedded inside images.\n- Brand: if brand identity is provided, follow it. If absent, propose a tasteful generic theme aligned to the domain (palette of 3–5 colors with hex, Google Fonts pairing with roles, spacing scale, buttons/cards styles).\n- Form logic (conditional): include a form only when the goal implies lead capture or data collection (signals: contact us, book a demo, waitlist, quote, preorder, booking, newsletter). When included, specify fields, validation (required, formats), consent text, success/error UX, and instruct Lovable to store submissions in Google Sheets; allow Airtable as fallback.\n- Accessibility & SEO: add alt text, aria-labels for key controls, clear focus states; include page title and meta description derived from Content JSON or context; propose basic Open Graph data.\n- Performance & UX: mobile-first layout, responsive grid, avoid heavy media by default, use image placeholders with intrinsic sizes/aspect ratios, clear visual hierarchy, and readable whitespace.\n\nOutput structure you must produce (in this exact order):\n1) Project Summary (1–2 sentences) + Primary Goal/KPI\n2) Pages & Routes (single page “/”; add “/privacy” only if a form is present)\n3) Visual & Brand Theme (palette, fonts, components tone)\n4) Section Plan (only relevant sections; each with: purpose → components → copy mapping from Content JSON keys → imagery + alt → interactions)\n   - Typical sections to consider: Hero, Value Proposition, Problem/Solution, Features, How it works, Social Proof, Pricing/Plan teaser, FAQs, Final CTA, Footer.\n5) Form (Conditional) — fields, validation, consent, success/error messages; “Store submissions in Google Sheets; use Airtable if Sheets isn’t available.”\n6) SEO & Accessibility — title, meta description, OG hints, alt/aria, keyboard navigation/focus cues.\n7) Performance Notes — mobile-first, image sizes/aspects, defer heavy media.\n8) Build Checklist for Lovable — bullet list of exact items to create.\n\nDeliver the prompt as clean plain text, ready to paste into Lovable.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1320,
+        420
+      ],
+      "id": "7ab9f645-5bad-4c54-8f51-acdd30062043",
+      "name": "Create Lovable prompt"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "timeout": 500000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1320,
+        640
+      ],
+      "id": "731694d3-7e31-4f17-b488-9d1fe4b90d62",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## On récupère aussi la structure pour la landing",
+        "height": 340,
+        "width": 1080
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        820
+      ],
+      "typeVersion": 1,
+      "id": "e403cbdc-e579-4a01-87fb-aa24816c6e57",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mscuz3u72wn6har",
+        "options": {
+          "where": "=(project_name,eq,{{ $json.project_name }})~and(hypothesis_id,eq,{{ $('Start').item.json.hypothese_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -280,
+        960
+      ],
+      "id": "81165999-f6ba-411a-937c-d69e2a5bd6d9",
+      "name": "Get landing structure",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "structure",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        960
+      ],
+      "id": "282f5fee-6d34-45b8-bd62-87d9fa4ff9d7",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mapjxs90a0xc4le",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "=project_name",
+              "fieldValue": "={{ $('Start').item.json.project_name }}"
+            },
+            {
+              "fieldName": "hypothesis_id",
+              "fieldValue": "={{ $('Start').item.json.hypothese_id }}"
+            },
+            {
+              "fieldName": "prompt",
+              "fieldValue": "={{ $json.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        420
+      ],
+      "id": "2812160d-51f8-4c02-b7b8-7198726a8e9f",
+      "name": "Create a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mapjxs90a0xc4le",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2040,
+        420
+      ],
+      "id": "82f170d3-9fc6-4076-a6fc-a04b8224003d",
+      "name": "Get a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "258hRRJvTwdJTIUC",
+          "mode": "list",
+          "cachedResultName": "Get Notion Block Id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetBlockTitle": "Prompt lovable",
+            "targetMainPageId": "={{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.ID_Notion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "targetBlockTitle",
+              "displayName": "targetBlockTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetMainPageId",
+              "displayName": "targetMainPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2300,
+        420
+      ],
+      "id": "6d27ca7b-c55c-4f70-a177-f0699e2d19d1",
+      "name": "Get Notion Block Id"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code pour diviser un texte long en blocks compatibles avec l'API Notion\n// Limite Notion : 2000 caractères par block\n\n// Usage principal\nconst longText = $input.first().json.instructions + $('Create Lovable prompt').first().json.text;\n\nfunction splitTextForNotion(text, maxLength = 1900) {\n    const chunks = [];\n    \n    // D'abord essayer de diviser par paragraphes (double saut de ligne)\n    const paragraphs = text.split('\\n\\n');\n    let currentChunk = '';\n    \n    for (const paragraph of paragraphs) {\n        const potentialChunk = currentChunk + (currentChunk ? '\\n\\n' : '') + paragraph;\n        \n        if (potentialChunk.length <= maxLength) {\n            currentChunk = potentialChunk;\n        } else {\n            // Si on a du contenu actuel, l'ajouter aux chunks\n            if (currentChunk) {\n                chunks.push(currentChunk);\n            }\n            \n            // Si le paragraphe seul est trop long, le diviser\n            if (paragraph.length > maxLength) {\n                const subChunks = splitLongParagraph(paragraph, maxLength);\n                chunks.push(...subChunks);\n                currentChunk = '';\n            } else {\n                currentChunk = paragraph;\n            }\n        }\n    }\n    \n    // Ajouter le dernier chunk s'il existe\n    if (currentChunk) {\n        chunks.push(currentChunk);\n    }\n    \n    return chunks;\n}\n\nfunction splitLongParagraph(paragraph, maxLength) {\n    const chunks = [];\n    \n    // Diviser par phrases d'abord (points, points d'exclamation, points d'interrogation)\n    const sentences = paragraph.split(/(?<=[.!?])\\s+/);\n    let currentChunk = '';\n    \n    for (const sentence of sentences) {\n        const potentialChunk = currentChunk + (currentChunk ? ' ' : '') + sentence;\n        \n        if (potentialChunk.length <= maxLength) {\n            currentChunk = potentialChunk;\n        } else {\n            if (currentChunk) {\n                chunks.push(currentChunk);\n            }\n            \n            // Si une phrase seule est trop longue, la diviser par mots\n            if (sentence.length > maxLength) {\n                const wordChunks = splitByWords(sentence, maxLength);\n                chunks.push(...wordChunks);\n                currentChunk = '';\n            } else {\n                currentChunk = sentence;\n            }\n        }\n    }\n    \n    if (currentChunk) {\n        chunks.push(currentChunk);\n    }\n    \n    return chunks;\n}\n\nfunction splitByWords(text, maxLength) {\n    const chunks = [];\n    const words = text.split(' ');\n    let currentChunk = '';\n    \n    for (const word of words) {\n        const potentialChunk = currentChunk + (currentChunk ? ' ' : '') + word;\n        \n        if (potentialChunk.length <= maxLength) {\n            currentChunk = potentialChunk;\n        } else {\n            if (currentChunk) {\n                chunks.push(currentChunk);\n            }\n            \n            // Si un mot seul est trop long (très rare), le tronquer\n            if (word.length > maxLength) {\n                chunks.push(word.substring(0, maxLength - 3) + '...');\n                const remaining = word.substring(maxLength - 3);\n                if (remaining.length > 3) {\n                    chunks.push(...splitByWords(remaining, maxLength));\n                }\n                currentChunk = '';\n            } else {\n                currentChunk = word;\n            }\n        }\n    }\n    \n    if (currentChunk) {\n        chunks.push(currentChunk);\n    }\n    \n    return chunks;\n}\n\n// Fonction pour créer les blocks Notion\nfunction createNotionBlocks(textChunks) {\n    return textChunks.map(chunk => ({\n        object: \"block\",\n        type: \"paragraph\",\n        paragraph: {\n            rich_text: [{\n                type: \"text\",\n                text: {\n                    content: chunk\n                }\n            }]\n        }\n    }));\n}\n\n\n\n// Diviser le texte\nconst textChunks = splitTextForNotion(longText);\n\n// Créer les blocks Notion\nconst notionBlocks = createNotionBlocks(textChunks);\n\n// Vérification (optionnelle)\nconsole.log(`Texte original: ${longText.length} caractères`);\nconsole.log(`Divisé en ${textChunks.length} chunks`);\ntextChunks.forEach((chunk, index) => {\n    console.log(`Chunk ${index + 1}: ${chunk.length} caractères`);\n});\n\n// Résultat final pour votre requête HTTP\nconst requestBody = {\n    children: notionBlocks\n};\n\n// Pour N8N, retourner le body de la requête\nreturn requestBody;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        420
+      ],
+      "id": "82e978d6-e404-4c06-97d6-5f44a566ad26",
+      "name": "Split prompt in chunks"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "children",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3260,
+        420
+      ],
+      "id": "a172521c-93b1-4e78-8796-b825eda70604",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "content": "## Obligé de split le texte pour insert dans Notion sinon c'est trop long",
+        "height": 320,
+        "width": 1020,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2020,
+        280
+      ],
+      "typeVersion": 1,
+      "id": "d099d0f2-ed79-4ae2-88da-8f951c6f2fb6",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b2605b3-09b0-493e-90ca-13b35608adf5",
+              "name": "output",
+              "value": "created landing page prompt",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3760,
+        420
+      ],
+      "id": "de6bac96-8236-4dcb-b902-398c76b58b82",
+      "name": "RETURN"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('Get Notion Block Id').item.json.block_id }}",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $json.paragraph.rich_text[0].text.content }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        3540,
+        420
+      ],
+      "id": "2539b5de-9590-41a0-9887-8a0725d03229",
+      "name": "Append a block",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "identity",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        200,
+        240
+      ],
+      "id": "4e66b9d3-6a95-40bb-b1f8-0579bf218cf9",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8bfdfe0a-09e1-49cd-93ab-05a00e148838",
+              "name": "instructions",
+              "value": "=Ce prompt est à copier/coller tel quel dans l'interface de Lovable pour vous donner les meilleurs résultats.\n\n-------------\n\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2560,
+        680
+      ],
+      "id": "0082b34c-ab75-4a05-bc62-b55534c7c896",
+      "name": "Set Notion instructions"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2800,
+        420
+      ],
+      "id": "50196198-85f8-48be-9f04-e6823adec7c2",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## On récupère aussi les visuels existants s'ils existent",
+        "height": 420,
+        "width": 1080
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        1180
+      ],
+      "typeVersion": 1,
+      "id": "68556d70-21f9-4b25-9146-761d58b2f8a4",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "landing_visuals",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        1300
+      ],
+      "id": "b9488c84-25ec-4103-88d3-bad264d306ec",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mq17fi4jn3p7if8",
+        "options": {
+          "fields": [
+            "alt_text",
+            "public_url",
+            "filename"
+          ],
+          "where": "=(project_name,eq,{{ $json.project_name }})~and(hypothesis_id,eq,{{ $('Start').item.json.hypothese_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -280,
+        1300
+      ],
+      "id": "ae21fd51-b96f-487f-86ec-dfeedb202ca1",
+      "name": "Get visuals public_url",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1080,
+        480
+      ],
+      "id": "bab4271f-a183-409d-a804-97ba1668c65d",
+      "name": "IDENTITY + STRUCTURE + VISUALS"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "hypothese_id": "P3_S2_VP1_1757066558860",
+          "project_name": "La meute qui ose"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Get project context": {
+      "main": [
+        [
+          {
+            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get selected hypothesis": {
+      "main": [
+        [
+          {
+            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand identity": {
+      "main": [
+        [
+          {
+            "node": "If project_branding already exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If project_branding already exists": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create 3 visual suggestions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FULL PROJECT CONTEXT + HYPOTHESIS": {
+      "main": [
+        [
+          {
+            "node": "Get brand identity",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get landing structure",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get visuals public_url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Create 3 visual suggestions",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create 3 visual suggestions": {
+      "main": [
+        [
+          {
+            "node": "IDENTITY + STRUCTURE + VISUALS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create 3 visual suggestions",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Delete existing prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete existing prompt": {
+      "main": [
+        [
+          {
+            "node": "Get selected hypothesis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get project context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create Lovable prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get landing structure": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "IDENTITY + STRUCTURE + VISUALS",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create Lovable prompt": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Get Notion Block Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Notion Block Id": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Notion instructions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split prompt in chunks": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append a block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append a block": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "IDENTITY + STRUCTURE + VISUALS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Notion instructions": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split prompt in chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get visuals public_url": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "IDENTITY + STRUCTURE + VISUALS",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "IDENTITY + STRUCTURE + VISUALS": {
+      "main": [
+        [
+          {
+            "node": "Create Lovable prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "31f7c780-7b02-4840-a51c-257ee2ea50f9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "IbrxVGMowifQR6Jx",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

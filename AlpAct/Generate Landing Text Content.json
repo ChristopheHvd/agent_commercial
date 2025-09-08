@@ -1,0 +1,470 @@
+{
+  "name": "Generate Landing Text Content",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"headline\": \"string\",\n  \"subheadline\": \"string\",\n  \"description\": \"string\",\n  \"features\": [\n    {\n      \"title\": \"string\",\n      \"description\": \"string\"\n    }\n  ],\n  \"cta\": \"string\",\n  \"tagline\": \"string\",\n  \"visualSuggestions\": [\n    \"string\"\n  ]\n}\n",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        200
+      ],
+      "id": "1fce380f-1f21-46f4-9cfc-7cae401ebe14",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the complete context for the startup project, in JSON format:\n\n<startup_context>\n{{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.toJsonString() }}\n</startup_context>\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert marketing copywriter and web designer specializing in creating compelling landing pages for startups. Your task is to generate content for a simple, effective landing page based on the provided startup context. The landing page should not include a contact form at this stage.\n\nBefore generating the landing page content, carefully analyze the startup context. In <startup_analysis> tags:\n\n1. List out each key element of the startup's offering with a brief description:\n   - Product or service\n   - Target audience\n   - Unique value proposition\n   - Key features or benefits (list more than 5)\n   - Startup's mission or vision\n   - Specific branding elements mentioned\n\n2. For each element, consider how it appeals to the target audience's perspective.\n\n3. From the list of features/benefits, select the top 3-5 that would be most compelling to the target audience.\n\nAfter your analysis, generate content for a landing page that effectively communicates the startup's offering and value proposition. The landing page should include the following elements:\n\n1. A catchy headline that grabs attention and clearly states the main benefit (5-10 words)\n2. A subheadline that elaborates on the headline and provides additional context (10-20 words)\n3. A brief, compelling description of the product or service (2-3 sentences)\n4. 3-5 key features or benefits, each with a short description (1-2 sentences each)\n5. A clear call-to-action (CTA) that encourages visitors to take the next step (e.g., \"Learn More\", \"Get Started\", \"Sign Up for Early Access\")\n6. A tagline or mission statement that encapsulates the startup's vision (5-15 words)\n7. Suggested visual elements or imagery that would complement the content (describe 2-3 elements, don't generate actual images)\n\nWhen creating the content:\n- Use French language\n- Use clear, concise, and persuasive language\n- Focus on the benefits to the user rather than just listing features\n- Maintain a consistent tone that aligns with the startup's brand and target audience\n- Ensure all content is directly relevant to the product/service and target audience\n\nAfter generating the content, present your landing page content in JSON format. The JSON structure should be as follows:\n\n{\n  \"headline\": \"string\",\n  \"subheadline\": \"string\",\n  \"description\": \"string\",\n  \"features\": [\n    {\n      \"title\": \"string\",\n      \"description\": \"string\"\n    }\n  ],\n  \"cta\": \"string\",\n  \"tagline\": \"string\",\n  \"visualSuggestions\": [\n    \"string\"\n  ]\n}\n\nRemember to focus solely on the product or service described in the startup context. Do not add any elements or information that are not directly related to or supported by the provided context. The goal is to create a simple, focused, and effective landing page that accurately represents the startup's offering."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        540,
+        0
+      ],
+      "id": "3ebcb2d0-6823-4b86-b35e-e3e025757ba9",
+      "name": "Generate text content"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "hypothese_id"
+            },
+            {
+              "name": "project_name"
+            }
+          ]
+        }
+      },
+      "id": "5b0f49fa-6f17-44a0-a839-6404c73f41d8",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -840,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "limit": 1,
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -40,
+        240
+      ],
+      "id": "305f0922-cc75-44f3-a5ea-69417927f388",
+      "name": "Get project context",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})~and(hypothesis_id,eq,{{ $('Start').item.json.hypothese_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -40,
+        -20
+      ],
+      "id": "4acca473-d8d2-4d9d-8042-022422347d76",
+      "name": "Get selected hypothesis",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## On reconstruit le contexte du projet avec l'hypothèse à tester",
+        "height": 700,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -180,
+        -260
+      ],
+      "typeVersion": 1,
+      "id": "ac00ee4f-4fe2-4318-91d9-62dd0a6ccc92",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        300,
+        0
+      ],
+      "id": "0706e04b-4c0a-4491-8414-75ed8b1d8829",
+      "name": "FULL PROJECT CONTEXT + HYPOTHESIS"
+    },
+    {
+      "parameters": {
+        "content": "## Pour assurer l'idempotence, on supprime les les textes précédents pour cette hypothese",
+        "height": 420,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "c344d2ea-b79c-4c48-9ace-2d1b895ece7a",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "TkWEofapjGW9Nrlx",
+          "mode": "list",
+          "cachedResultName": "Delete Existing Landing Page Text Content"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothese_id": "={{ $json.hypothese_id }}",
+            "project_name": "={{ $json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "hypothese_id",
+              "displayName": "hypothese_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        0
+      ],
+      "id": "b0851726-3410-4ef4-b216-ba5401676210",
+      "name": "Delete existing text content",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        220
+      ],
+      "id": "1e6d947c-08af-48a9-a37c-404f849bbb6b",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mscuz3u72wn6har",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('Start').item.json.project_name }}"
+            },
+            {
+              "fieldName": "=headline",
+              "fieldValue": "={{ $json.output.headline }}"
+            },
+            {
+              "fieldName": "subheadline",
+              "fieldValue": "={{ $json.output.subheadline }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.output.description }}"
+            },
+            {
+              "fieldName": "features",
+              "fieldValue": "={{ $json.output.features.toJsonString() }}"
+            },
+            {
+              "fieldName": "cta",
+              "fieldValue": "={{ $json.output.cta }}"
+            },
+            {
+              "fieldName": "tagline",
+              "fieldValue": "={{ $json.output.tagline }}"
+            },
+            {
+              "fieldName": "visual_suggestions",
+              "fieldValue": "={{ $json.output.visualSuggestions.toJsonString() }}"
+            },
+            {
+              "fieldName": "hypothesis_id",
+              "fieldValue": "={{ $('Start').item.json.hypothese_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        940,
+        0
+      ],
+      "id": "efabd2a9-f8b8-4826-be46-6b5dfd08f697",
+      "name": "Add landing structure to NocoDb",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "25f3736a-96fe-4588-b47e-ddfb9422b917",
+              "name": "output.rowId",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1180,
+        0
+      ],
+      "id": "5055eb3d-5bd7-4a28-975e-6a85f1ec37a4",
+      "name": "RETURN"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "hypothese_id": "H1_1757061298076",
+          "project_name": "La meute qui ose"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate text content",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate text content": {
+      "main": [
+        [
+          {
+            "node": "Add landing structure to NocoDb",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Delete existing text content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project context": {
+      "main": [
+        [
+          {
+            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get selected hypothesis": {
+      "main": [
+        [
+          {
+            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete existing text content": {
+      "main": [
+        [
+          {
+            "node": "Get selected hypothesis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get project context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FULL PROJECT CONTEXT + HYPOTHESIS": {
+      "main": [
+        [
+          {
+            "node": "Generate text content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate text content",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add landing structure to NocoDb": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "558b2a61-f8e9-4f55-8fb3-0005b7fd6480",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "EAmMlbrHhBZyt30V",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

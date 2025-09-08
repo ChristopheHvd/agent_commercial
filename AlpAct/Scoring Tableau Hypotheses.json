@@ -31,7 +31,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Filtre rapidement ces 27 combinaisons PMF et garde seulement les 2 plus prometteuses :\n\n# MATRICE PMF\n{{ $json.tableau_1_text }}\n\n# CONTEXTE PROJET  \n{{ $('Start').item.json.formatted_analysis }}\n\n# CRITÈRES DE PRÉ-FILTRAGE\n- Cohérence problème/segment (éliminer les mismatches évidents)\n- Value prop réalisable avec les ressources projet\n- Testabilité rapide (< 4 semaines)\n\n# FORMAT JSON\n{\n  \"combinations_retenues\": [\n    {\n      \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n    // 2 combinaisons max\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}",
+        "text": "=Filtre rapidement ces 9 combinaisons PMF et garde seulement les 2 plus prometteuses :\n\n# MATRICE PMF\n{{ $json.tableau_1_text }}\n\n# CONTEXTE PROJET  \n{{ $('Start').item.json.formatted_analysis }}\n\n# CRITÈRES DE PRÉ-FILTRAGE\n- Cohérence problème/segment (éliminer les mismatches évidents)\n- Value prop réalisable avec les ressources projet\n- Testabilité rapide (< 4 semaines)\n\n# FORMAT JSON\n{\n  \"combinations_retenues\": [\n    {\n      \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n    // 2 combinaisons max\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
@@ -139,10 +139,17 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "61e17a19-fee2-4450-9033-e0af6a7d7320",
+  "versionId": "60870878-94c3-40c1-adb8-6dc929382a1f",
   "meta": {
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
   },
   "id": "7MO9r8wEjRc7IVDC",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
 }

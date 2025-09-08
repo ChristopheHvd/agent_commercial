@@ -1,0 +1,1320 @@
+{
+  "name": "Create Hypothesis",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "muqbk732nl9jb7c",
+        "limit": 1,
+        "options": {
+          "where": "=(project_name,eq,{{ $json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -3840,
+        3040
+      ],
+      "id": "42dca2a9-7a3e-41d0-9241-6a4c788c4313",
+      "name": "Get infos projet",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"vision_projet\": {\n    \"mission\": \"string (1 phrase)\",\n    \"probleme_central\": \"string\",\n    \"solution_proposee\": \"string\"\n  },\n  \"marche_cible\": {\n    \"segment_principal\": \"string avec caractéristiques\",\n    \"taille_marche\": \"string\",\n    \"concurrents_principaux\": [\"string1\", \"string2\", \"string3\"],\n    \"canaux_acquisition\": [\"string1\", \"string2\", \"string3\"]\n  },\n  \"produit\": {\n    \"value_proposition\": \"string\",\n    \"fonctionnalites_cles\": [\"string1\", \"string2\", \"string3\"],\n    \"avantage_concurrentiel\": \"string\"\n  },\n  \"contexte_business\": {\n    \"stade_projet\": \"idee|mvp|traction\",\n    \"objectifs_prioritaires\": [\"string1\", \"string2\"],\n    \"contraintes_identifiees\": \"string\"\n  },\n  \"hypotheses_depart\": {\n    \"sur_probleme\": \"string\",\n    \"sur_cible\": \"string\", \n    \"sur_solution\": \"string\"\n  },\n  \"gaps_questions\": {\n    \"infos_manquantes\": [\"string1\", \"string2\"],\n    \"incoherences\": [\"string1\", \"string2\"],\n    \"zones_flou\": [\"string1\", \"string2\"]\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -3060,
+        3280
+      ],
+      "id": "129684a1-2316-47ee-89d5-31da09c0b838",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyse ces données et retourne la synthèse au format JSON suivant :\n\n# DONNÉES PROJET\n{{ $json.formatted_data }}\n\n# FORMAT JSON OBLIGATOIRE\n{\n  \"vision_projet\": {\n    \"mission\": \"string (1 phrase)\",\n    \"probleme_central\": \"string\",\n    \"solution_proposee\": \"string\"\n  },\n  \"marche_cible\": {\n    \"segment_principal\": \"string avec caractéristiques\",\n    \"taille_marche\": \"string\",\n    \"concurrents_principaux\": [\"string1\", \"string2\", \"string3\"],\n    \"canaux_acquisition\": [\"string1\", \"string2\", \"string3\"]\n  },\n  \"produit\": {\n    \"value_proposition\": \"string\",\n    \"fonctionnalites_cles\": [\"string1\", \"string2\", \"string3\"],\n    \"avantage_concurrentiel\": \"string\"\n  },\n  \"contexte_business\": {\n    \"stade_projet\": \"idee|mvp|traction\",\n    \"objectifs_prioritaires\": [\"string1\", \"string2\"],\n    \"contraintes_identifiees\": \"string\"\n  },\n  \"hypotheses_depart\": {\n    \"sur_probleme\": \"string\",\n    \"sur_cible\": \"string\", \n    \"sur_solution\": \"string\"\n  },\n  \"gaps_questions\": {\n    \"infos_manquantes\": [\"string1\", \"string2\"],\n    \"incoherences\": [\"string1\", \"string2\"],\n    \"zones_flou\": [\"string1\", \"string2\"]\n  }\n}\n\nRetourne UNIQUEMENT le JSON, sans texte explicatif.",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un consultant en stratégie business expert en validation d'hypothèses PMF.\nTu analyses des données projets et retournes EXCLUSIVEMENT du JSON valide.\nAucun texte avant ou après le JSON.\nSois factuel, synthétique et identifie les gaps critiques."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -3160,
+        3040
+      ],
+      "id": "1d80afb5-8de4-4d6c-bdc1-f848f956df3c",
+      "name": "Creation contexte projet"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Contexte du projet :\n{{ $json.formatted_analysis }}\n\nTâche : Générer une matrice complète d’hypothèses PMF avec 3 variantes pour chaque dimension (problèmes, segments, propositions de valeur).\n\nInstructions pour les variantes :\n- PROBLÈMES (P1, P2, P3) :\n  - P1 = problème principal identifié\n  - P2 = autre angle du même pain point mais vécu différemment (ex: émotionnel, opérationnel, financier)\n  - P3 = un frein plus systémique ou caché qui empêche la résolution du problème\n- SEGMENTS (S1, S2, S3) :\n  - S1 = segment prioritaire évident\n  - S2 = segment adjacent ou niche proche\n  - S3 = early adopters atypiques ou segment extrême\n- VALUE PROPOSITIONS (VP1, VP2, VP3) :\n  - VP1 = bénéfice direct le plus attendu\n  - VP2 = différenciation sur la vitesse, l’expérience utilisateur ou l’intégration\n  - VP3 = angle de preuve sociale, réduction de risque, ou coût\n\nFormat JSON attendu :\n{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"Concise problem title in French\",\n      \"description\": \"Detailed pain point description explaining user frustration, frequency, and current inadequate solutions\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific validation method (surveys, interviews, behavioral data, etc.)\",\n      \"frequence_occurrence\": \"How often users encounter this problem\",\n      \"cout_inaction\": \"Cost or consequence of not solving this problem\"\n    },\n    {\n      \"id\": \"P2\",\n      \"titre\": \"Second distinct problem angle\",\n      \"description\": \"Different perspective on the core pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\", \n      \"mesurable_par\": \"Validation approach for this specific angle\",\n      \"frequence_occurrence\": \"Problem frequency for this variation\",\n      \"cout_inaction\": \"Impact of leaving this problem unsolved\"\n    },\n    {\n      \"id\": \"P3\",\n      \"titre\": \"Third unique problem angle\",\n      \"description\": \"Third distinct facet of the user struggle\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific measurement approach\",\n      \"frequence_occurrence\": \"How often this manifests\",\n      \"cout_inaction\": \"Consequences of inaction\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\",\n      \"nom\": \"Primary segment name in French\",\n      \"description\": \"Detailed characteristics including demographics, psychographics, and behavioral patterns\",\n      \"taille_estimee\": \"Market size with rationale (e.g., '50K users in France based on industry data')\",\n      \"canaux_acces\": [\"Primary channel\", \"Secondary channel\", \"Tertiary channel\"],\n      \"comportements_cles\": \"Key behaviors, decision-making patterns, and purchasing habits\",\n      \"budget_disponible\": \"Estimated spending capacity for this solution\",\n      \"urgence_besoin\": \"How urgently this segment needs the solution\"\n    },\n    {\n      \"id\": \"S2\", \n      \"nom\": \"Adjacent segment name\",\n      \"description\": \"Characteristics of related but distinct market segment\",\n      \"taille_estimee\": \"Different market size estimation with reasoning\",\n      \"canaux_acces\": [\"Different primary channel\", \"Alternative channels\"],\n      \"comportements_cles\": \"Distinct behavioral patterns for this segment\",\n      \"budget_disponible\": \"Budget considerations for this group\",\n      \"urgence_besoin\": \"Need urgency level\"\n    },\n    {\n      \"id\": \"S3\",\n      \"nom\": \"Alternative segment name\", \n      \"description\": \"Third market segment with unique characteristics\",\n      \"taille_estimee\": \"Third market size estimate with justification\",\n      \"canaux_acces\": [\"Unique access channels for this segment\"],\n      \"comportements_cles\": \"Specific behaviors distinguishing this group\",\n      \"budget_disponible\": \"Financial capacity assessment\",\n      \"urgence_besoin\": \"Problem urgency for this segment\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"Core value proposition title in French\",\n      \"description\": \"Primary benefit and how it solves the user's problem better than alternatives\",\n      \"differenciateur\": \"Clear competitive advantage and unique positioning vs existing solutions\",\n      \"preuve_valeur\": \"Specific method to demonstrate value (metrics, case studies, trials, etc.)\",\n      \"benefice_quantifiable\": \"Measurable outcome users can expect\",\n      \"temps_realisation\": \"Timeline to achieve promised benefits\"\n    },\n    {\n      \"id\": \"VP2\",\n      \"titre\": \"Alternative benefit angle\",\n      \"description\": \"Different value angle addressing same or related problems\",\n      \"differenciateur\": \"Distinct competitive positioning for this approach\", \n      \"preuve_valeur\": \"Value demonstration method for this variant\",\n      \"benefice_quantifiable\": \"Quantifiable benefit for this value prop\",\n      \"temps_realisation\": \"Expected timeframe for benefit realization\"\n    },\n    {\n      \"id\": \"VP3\",\n      \"titre\": \"Third value proposition angle\",\n      \"description\": \"Third distinct benefit perspective\", \n      \"differenciateur\": \"Unique differentiation approach\",\n      \"preuve_valeur\": \"Validation method for this value angle\",\n      \"benefice_quantifiable\": \"Measurable outcome specific to this VP\",\n      \"temps_realisation\": \"Timeline for achieving these benefits\"\n    }\n  ],\n  \"hypotheses_combinations\": [\n    {\n      \"hypothese_id\": \"VP1_S1_P1\",\n      \"description\": \"Brief description of this specific PMF hypothesis combining VP1, S1, and P1\",\n      \"confiance_niveau\": \"faible|moyenne|forte\",\n      \"test_priorite\": \"haute|moyenne|basse\",\n      \"validation_rapide\": \"Quick test method for this combination\"\n    }\n    // Include all 27 combinations (VP1-VP3 × S1-S3 × P1-P3)\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\",\n    \"langue_contenu\": \"français\",\n    \"framework_utilise\": \"Lean Startup + Customer Development\",\n    \"niveau_detail\": \"détaillé\"\n  }\n}\n\nRègles :\n- Produire 3 problèmes, 3 segments, 3 VP, puis 27 combinaisons complètes\n- Tous les textes doivent être en français\n- Inclure pour chaque problème un critère mesurable, pour chaque segment un canal d’accès précis, pour chaque VP une méthode de preuve de valeur\n- Sortir uniquement le JSON, sans aucun texte supplémentaire",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a Product-Market-Fit expert and business hypothesis validation specialist with deep expertise in startup methodology, customer discovery, and lean validation frameworks.\n\nYour role is to generate structured PMF matrices that explore *meaningfully different* angles of the same project through systematic variation of customer segments, value propositions, and problems addressed.\n\nCore Competencies:\n- Customer segmentation and behavioral analysis\n- Value proposition design and differentiation\n- Problem validation and measurement frameworks\n- Rapid hypothesis testing methodologies\n- Market sizing and opportunity assessment\n\nCritical Divergence Rules:\n- Each of the 3 variants for a dimension (problems, segments, value propositions) must explore *different perspectives*:\n  - Segments: demographic vs. psychographic vs. behavioral vs. niche B2B/B2C\n  - Problems: functional pain vs. emotional friction vs. systemic barrier\n  - Value propositions: efficiency vs. cost saving vs. experience enhancement\n- Do not produce superficial rewordings; each variant must stand alone as a distinct hypothesis.\n- Ensure each hypothesis is SMART and testable with clear validation methods.\n\nOutput Rules:\n- Return ONLY valid JSON, in French language\n- Include 27 hypotheses combinations (3 × 3 × 3)\n- Each combination must have a unique ID and a quick test method\n- No explanatory text outside the JSON\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1900,
+        3040
+      ],
+      "id": "57305cde-5173-4cfe-b11e-17560d421baf",
+      "name": "Generation hypothèses PMF"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"string\",\n      \"description\": \"string détaillée du pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"string (comment valider)\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\", \n      \"nom\": \"string\",\n      \"description\": \"string avec caractéristiques\",\n      \"taille_estimee\": \"string\",\n      \"canaux_acces\": [\"canal1\", \"canal2\"],\n      \"comportements_cles\": \"string\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"string\", \n      \"description\": \"string du bénéfice principal\",\n      \"differenciateur\": \"string (vs concurrence)\",\n      \"preuve_valeur\": \"string (comment démontrer)\"\n    }\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\"\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1720,
+        3220
+      ],
+      "id": "bf633af2-5aae-4f79-863b-0b55a9f083f4",
+      "name": "Structured Output Parser4"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3220,
+        3260
+      ],
+      "id": "c7579935-cc16-4ed6-9dea-0b24f4e338f7",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code à utiliser dans un nœud \"Code\" de N8N\n// Récupérer les données du nœud NocoDB précédent\nconst data = $input.all();\n\n// Fonction pour transformer le JSON en texte structuré\nfunction formatDataForPrompt(item) {\n  const json = item.json;\n  \n  return `\nPROJET: ${json.project_name}\n\nINFORMATIONS GÉNÉRALES:\n- Contact fondateurs: ${json.founders_contact}\n- Mission: ${json.mission}\n- Vision: ${json.vision}\n- Valeurs: ${json.values}\n\nHYPOTHÈSE ET TEST:\n- Hypothèse: ${json.hypothesis}\n- Objectif de test: ${json.test_objective}\n- Premier cas d'usage: ${json.first_use_case}\n\nPROBLÈME ET SOLUTION:\n- Point de douleur: ${json.pain_point}\n- Solution proposée: ${json.solution}\n- Bénéfice mesurable: ${json.measurable_benefit}\n- Différenciation: ${json.differentiation}\n\nMARCHÉ ET CIBLE:\n- Type de marché: ${json.market_type}\n- Persona: ${json.persona}\n- Alternatives actuelles: ${json.current_alternatives}\n- Barrières à l'adoption: ${json.adoption_barriers}\n- Early adopters: ${json.early_adopters}\n\nCANAUX ET STRATÉGIE:\n- Canaux existants: ${json.existing_channels}\n- Canaux prioritaires: ${json.priority_channels}\n\nPARAMÈTRES DU TEST:\n- Budget test: ${json.test_budget}\n- Durée test: ${json.test_duration}\n- Livrables demandés: ${json.outputs_requested}\n\nMESURES DE SUCCÈS:\n- KPI: ${json.kpi}\n- Seuil de succès: ${json.success_threshold}\n- Outils de tracking: ${json.tracking_tools}\n\n---\n`;\n}\n\n// Transformer tous les items en texte\nconst formattedText = data.map(formatDataForPrompt).join('\\n');\n\n// Retourner le texte formaté\nreturn [{\n  json: {\n    formatted_data: formattedText,\n    original_count: data.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3420,
+        3040
+      ],
+      "id": "1ea8022b-01c7-4a24-b9f1-93ede22f228a",
+      "name": "Format data projet"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all();\n\n// Fonction pour générer toutes les combinaisons et les répartir en 3 tableaux\nfunction generateCombinationTables(item) {\n  const analysis = item.json.output;\n  const { problemes, segments, value_propositions } = analysis;\n  \n  // Générer toutes les 27 combinaisons (3×3×3)\n  const allCombinations = [];\n  \n  problemes.forEach(probleme => {\n    segments.forEach(segment => {\n      value_propositions.forEach(vp => {\n        allCombinations.push({\n          combination_id: `${probleme.id}_${segment.id}_${vp.id}`,\n          probleme: {\n            id: probleme.id,\n            titre: probleme.titre,\n            description: probleme.description,\n            intensite: probleme.intensite_estimee,\n            mesurable_par: probleme.mesurable_par\n          },\n          segment: {\n            id: segment.id,\n            nom: segment.nom,\n            description: segment.description,\n            taille_estimee: segment.taille_estimee,\n            canaux_acces: segment.canaux_acces,\n            comportements_cles: segment.comportements_cles\n          },\n          value_proposition: {\n            id: vp.id,\n            titre: vp.titre,\n            description: vp.description,\n            differenciateur: vp.differenciateur,\n            preuve_valeur: vp.preuve_valeur\n          }\n        });\n      });\n    });\n  });\n  \n  // Répartir les 27 combinaisons en 3 tableaux de 9\n  const table1 = allCombinations.slice(0, 9);   // Combinaisons 1-9\n  const table2 = allCombinations.slice(9, 18);  // Combinaisons 10-18\n  const table3 = allCombinations.slice(18, 27); // Combinaisons 19-27\n  \n  return {\n    metadata: {\n      projet: analysis.metadata.projet,\n      total_combinaisons: analysis.metadata.total_combinaisons,\n      genere_le: analysis.metadata.genere_le,\n      repartition: \"3 tableaux de 9 combinaisons chacun\"\n    },\n    tableau_1: {\n      nom: \"Combinaisons 1-9\",\n      description: \"Premier lot de combinaisons Problème × Segment × Value Proposition\",\n      combinaisons: table1\n    },\n    tableau_2: {\n      nom: \"Combinaisons 10-18\", \n      description: \"Deuxième lot de combinaisons Problème × Segment × Value Proposition\",\n      combinaisons: table2\n    },\n    tableau_3: {\n      nom: \"Combinaisons 19-27\",\n      description: \"Troisième lot de combinaisons Problème × Segment × Value Proposition\", \n      combinaisons: table3\n    }\n  };\n}\n\n// Traiter les données\nconst result = generateCombinationTables(data[0]);\n\n// Retourner les 3 tableaux\nreturn [{\n  json: result\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1540,
+        3040
+      ],
+      "id": "15a70659-3d3b-4179-a209-792d6e8b71fb",
+      "name": "Transform en Tableaux 9X9X9 combinaisons"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fonction pour formatter une combinaison en texte\nfunction formatCombinationToText(combination) {\n  return `\nCOMBINAISON: ${combination.combination_id}\n🎯 PROBLÈME CIBLÉ:\nID: ${combination.probleme.id}\nTitre: ${combination.probleme.titre}\nDescription: ${combination.probleme.description}\nIntensité: ${combination.probleme.intensite}\nMesurable par: ${combination.probleme.mesurable_par}\n\n👥 SEGMENT DE MARCHÉ:\nID: ${combination.segment.id}\nNom: ${combination.segment.nom}\nDescription: ${combination.segment.description}\nTaille estimée: ${combination.segment.taille_estimee}\nCanaux d'accès: ${combination.segment.canaux_acces.join(' • ')}\nComportements clés: ${combination.segment.comportements_cles}\n\n💎 PROPOSITION DE VALEUR:\nID: ${combination.value_proposition.id}\nTitre: ${combination.value_proposition.titre}\nDescription: ${combination.value_proposition.description}\nDifférenciateur: ${combination.value_proposition.differenciateur}\nPreuve de valeur: ${combination.value_proposition.preuve_valeur}\n\n───────────────────────────────────────────────────────────────\n`;\n}\n\n// Fonction pour formatter un tableau complet de combinaisons\nfunction formatTableToText(tableData) {\n  const headerText = `\n🚀 ${tableData.nom.toUpperCase()}\n${tableData.description}\n\nNombre de combinaisons: ${tableData.combinaisons.length}\n═══════════════════════════════════════════════════════════════\n`;\n\n  const combinationsText = tableData.combinaisons\n    .map(combination => formatCombinationToText(combination))\n    .join('\\n');\n\n  return headerText + combinationsText;\n}\n\n// Traiter les données d'entrée\nconst inputData = $input.first().json;\n\n// Vous pouvez choisir quel tableau formatter (tableau_1, tableau_2, ou tableau_3)\n// Par défaut, on formate le tableau_1, mais vous pouvez changer selon vos besoins\n\nconst formattedTable1 = formatTableToText(inputData.tableau_1);\nconst formattedTable2 = formatTableToText(inputData.tableau_2);\nconst formattedTable3 = formatTableToText(inputData.tableau_3);\n\n// Retourner les textes formatés\nreturn [{\n  json: {\n    metadata: inputData.metadata,\n    tableau_1_text: formattedTable1,\n    tableau_2_text: formattedTable2,\n    tableau_3_text: formattedTable3,\n    // Format combiné si vous voulez tout en une fois\n    all_tables_text: formattedTable1 + '\\n\\n' + formattedTable2 + '\\n\\n' + formattedTable3\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        3040
+      ],
+      "id": "420239d7-db4b-49a9-86d9-3ae16d2c23e9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -680,
+        3040
+      ],
+      "id": "8ffb3c2d-424a-4b19-b29d-8de9c89cbd85",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7MO9r8wEjRc7IVDC",
+          "mode": "list",
+          "cachedResultName": "Scoring Tableau Hypotheses"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_analysis": "={{ $('JSON -> String').item.json.formatted_analysis }}",
+            "tableau_1_text": "={{ $json.tableau_1_text }}"
+          },
+          "matchingColumns": [
+            "formatted_analysis",
+            "tableau_1_text"
+          ],
+          "schema": [
+            {
+              "id": "formatted_analysis",
+              "displayName": "formatted_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tableau_1_text",
+              "displayName": "tableau_1_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1020,
+        2840
+      ],
+      "name": "Call Scoring Tableau Hypotheses",
+      "id": "0c3a2b5f-7252-4566-b552-8ea91e2331a8"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7MO9r8wEjRc7IVDC",
+          "mode": "list",
+          "cachedResultName": "Scoring Tableau Hypotheses"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_analysis": "={{ $('JSON -> String').item.json.formatted_analysis }}",
+            "tableau_1_text": "={{ $json.tableau_2_text }}"
+          },
+          "matchingColumns": [
+            "formatted_analysis",
+            "tableau_1_text"
+          ],
+          "schema": [
+            {
+              "id": "formatted_analysis",
+              "displayName": "formatted_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tableau_1_text",
+              "displayName": "tableau_1_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1020,
+        3060
+      ],
+      "name": "Call Scoring Tableau Hypotheses1",
+      "id": "e1063450-e8e7-424f-ba8d-f18b2ad80072"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7MO9r8wEjRc7IVDC",
+          "mode": "list",
+          "cachedResultName": "Scoring Tableau Hypotheses"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_analysis": "={{ $('JSON -> String').item.json.formatted_analysis }}",
+            "tableau_1_text": "={{ $json.tableau_3_text }}"
+          },
+          "matchingColumns": [
+            "formatted_analysis",
+            "tableau_1_text"
+          ],
+          "schema": [
+            {
+              "id": "formatted_analysis",
+              "displayName": "formatted_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tableau_1_text",
+              "displayName": "tableau_1_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1020,
+        3300
+      ],
+      "name": "Call Scoring Tableau Hypotheses2",
+      "id": "403e216a-3e7a-40bd-9973-d6d006e0ded4"
+    },
+    {
+      "parameters": {
+        "content": "## On se retrouve avec 6 hypothèses à tester",
+        "height": 980,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        2640
+      ],
+      "typeVersion": 1,
+      "id": "4bda7041-a54c-49c3-aec0-2670d4f5f296",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Insert des hypothèses à tester dans Notion",
+        "height": 980,
+        "width": 1720,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -140,
+        2640
+      ],
+      "typeVersion": 1,
+      "id": "f7db398b-64df-4ccf-8b45-a028f349f7f2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "combinations_retenues",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        3040
+      ],
+      "id": "a87e2674-80b4-462c-b10d-128e622de5eb",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output.combinations_retenues"
+            }
+          ]
+        },
+        "options": {
+          "mergeLists": true
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        3040
+      ],
+      "id": "77f2bfa3-d5f5-4338-985e-b53cbe6dc133",
+      "name": "Aggregate only hypotheses retenus"
+    },
+    {
+      "parameters": {
+        "content": "## Génération et consolidation du contexte projet\nNote : Les informations du projet sont rentrés par les porteurs de projet lors du kickoff avec AlpAct",
+        "height": 980,
+        "width": 1160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3420,
+        2640
+      ],
+      "typeVersion": 1,
+      "id": "3edbdf6a-bb30-41e8-a86f-66068b4d975c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Génération des différentes hypothèses PMF\n1. Le LLM crée 27 combinaisons possibles de (Proposition de valeur X Segment Client X problème résolu)\n2. Le LLM trie ces combinaisons pour ne garder que les 6 plus pertinentes\n",
+        "height": 980,
+        "width": 1460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2240,
+        2640
+      ],
+      "typeVersion": 1,
+      "id": "dd4a334a-bbd3-45d6-96e3-32e81bf56a68",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "={{ $('Merge2').item.json.database_id }}",
+          "mode": "id"
+        },
+        "title": "={{ $('Split Out2').item.json.resume }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Problème résolu|rich_text",
+              "textContent": "={{ $json.probleme_resolu }}"
+            },
+            {
+              "key": "Pourquoi la tester|rich_text",
+              "textContent": "={{ $json.pourquoi_tester }}"
+            },
+            {
+              "key": "Proposition de valeur|rich_text",
+              "textContent": "={{ $json.value_prop }}"
+            },
+            {
+              "key": "Segment client|rich_text",
+              "textContent": "={{ $json.segment_client }}"
+            },
+            {
+              "key": "Hypothese_Id|rich_text",
+              "textContent": "={{ $json.hypothesis_id }}"
+            },
+            {
+              "key": "project_name|rich_text",
+              "textContent": "={{ $json.project_name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        820,
+        3060
+      ],
+      "id": "3221981c-3cc7-4e65-a3d6-f8bfc6386682",
+      "name": "Ajout des hypothèses dans Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer les données du nœud précédent\nconst data = $input.all();\n\n// Fonction pour transformer le JSON d'analyse en texte structuré\nfunction formatAnalysisForPrompt(item) {\n  const analysis = item.json.output;\n  \n  return `\nVISION DU PROJET:\n- Mission: ${analysis.vision_projet.mission}\n- Problème central: ${analysis.vision_projet.probleme_central}\n- Solution proposée: ${analysis.vision_projet.solution_proposee}\n\nMARCHÉ CIBLE:\n- Segment principal: ${analysis.marche_cible.segment_principal}\n- Taille du marché: ${analysis.marche_cible.taille_marche}\n- Concurrents principaux:\n  ${analysis.marche_cible.concurrents_principaux.map(c => `  • ${c}`).join('\\n')}\n- Canaux d'acquisition:\n  ${analysis.marche_cible.canaux_acquisition.map(c => `  • ${c}`).join('\\n')}\n\nPRODUIT:\n- Proposition de valeur: ${analysis.produit.value_proposition}\n- Fonctionnalités clés:\n  ${analysis.produit.fonctionnalites_cles.map(f => `  • ${f}`).join('\\n')}\n- Avantage concurrentiel: ${analysis.produit.avantage_concurrentiel}\n\nCONTEXTE BUSINESS:\n- Stade du projet: ${analysis.contexte_business.stade_projet}\n- Objectifs prioritaires:\n  ${analysis.contexte_business.objectifs_prioritaires.map(o => `  • ${o}`).join('\\n')}\n- Contraintes identifiées: ${analysis.contexte_business.contraintes_identifiees}\n\nHYPOTHÈSES DE DÉPART:\n- Sur le problème: ${analysis.hypotheses_depart.sur_probleme}\n- Sur la cible: ${analysis.hypotheses_depart.sur_cible}\n- Sur la solution: ${analysis.hypotheses_depart.sur_solution}\n\nGAPS ET QUESTIONS:\n- Informations manquantes:\n  ${analysis.gaps_questions.infos_manquantes.map(i => `  • ${i}`).join('\\n')}\n\n- Incohérences détectées:\n  ${analysis.gaps_questions.incoherences.map(i => `  • ${i}`).join('\\n')}\n\n- Zones de flou:\n  ${analysis.gaps_questions.zones_flou.map(z => `  • ${z}`).join('\\n')}\n\n---\n`;\n}\n\n// Transformer tous les items en texte\nconst formattedText = data.map(formatAnalysisForPrompt).join('\\n');\n\n// Retourner le texte formaté\nreturn [{\n  json: {\n    formatted_analysis: formattedText\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2580,
+        3260
+      ],
+      "id": "c1e3b68d-82e1-4101-b835-9c334377b8a9",
+      "name": "JSON -> String"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mission",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.vision_projet.mission }}"
+            },
+            {
+              "fieldName": "=probleme_central",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.vision_projet.probleme_central }}"
+            },
+            {
+              "fieldName": "=solution_proposee",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.vision_projet.solution_proposee }}"
+            },
+            {
+              "fieldName": "=segment_principal",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.marche_cible.segment_principal }}"
+            },
+            {
+              "fieldName": "=concurrents_principaux",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.marche_cible.concurrents_principaux }}"
+            },
+            {
+              "fieldName": "=value_proposition",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.produit.value_proposition }}"
+            },
+            {
+              "fieldName": "=fonctionnalites_cles",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.produit.fonctionnalites_cles }}"
+            },
+            {
+              "fieldName": "=avantage_concurrentiel",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.produit.avantage_concurrentiel }}"
+            },
+            {
+              "fieldName": "=stade_projet",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.contexte_business.stade_projet }}"
+            },
+            {
+              "fieldName": "=objectifs_prioritaires",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.contexte_business.objectifs_prioritaires }}"
+            },
+            {
+              "fieldName": "=contraintes_identifiees",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.contexte_business.contraintes_identifiees }}"
+            },
+            {
+              "fieldName": "=hypotheses_depart_sur_probleme",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.hypotheses_depart.sur_probleme }}"
+            },
+            {
+              "fieldName": "hypotheses_depart_sur_solution",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.hypotheses_depart.sur_solution }}"
+            },
+            {
+              "fieldName": "hypotheses_depart_sur_cible",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.hypotheses_depart.sur_cible }}"
+            },
+            {
+              "fieldName": "infos_manquantes",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.gaps_questions.infos_manquantes }}"
+            },
+            {
+              "fieldName": "incoherences",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.gaps_questions.incoherences }}"
+            },
+            {
+              "fieldName": "zones_flou",
+              "fieldValue": "={{ $('Creation contexte projet').item.json.output.gaps_questions.zones_flou }}"
+            },
+            {
+              "fieldName": "ID_Notion",
+              "fieldValue": "={{ $('Get infos projet').item.json.ID_Notion }}"
+            },
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('Get infos projet').item.json.project_name }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2460,
+        3000
+      ],
+      "id": "ed54aa8e-ac9f-4292-8aac-51599da7d413",
+      "name": "Save contexte projet",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2140,
+        3040
+      ],
+      "id": "2e1a0045-c1bd-4d0d-a645-11edda160cb9",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        420,
+        3060
+      ],
+      "id": "75fbf840-faa0-474c-aac0-593a2ccaae53",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "57585531-799b-4c7d-99cb-0b32616e767c",
+              "name": "database_id",
+              "value": "=",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        3040
+      ],
+      "id": "5e252e83-9dc5-4857-800a-f3e32c51d22e",
+      "name": "add database_id to json"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        440,
+        2780
+      ],
+      "id": "c434960a-7b5a-4cb1-ba7f-51f4f2ffffee",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b5483db-a3a9-42a7-a417-9d6dc7d7bd63",
+              "name": "output",
+              "value": "done",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        3080
+      ],
+      "id": "7a2ff8b5-7ed1-4f84-a809-720e83415fcc",
+      "name": "RETURN"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/pages/{{ $('Get infos projet').item.json.ID_Notion }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"icon\": \n  { \n    \"type\": \"emoji\",\n    \"emoji\": \"✨\"\n  }\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        3060
+      ],
+      "id": "66f2f5c4-92ae-4a39-a4e2-7a0274766bb2",
+      "name": "Display Done Icon on Page",
+      "executeOnce": true,
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "limit": 1,
+        "options": {
+          "where": "=(project_name,eq,{{ $('Get infos projet').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2840,
+        2800
+      ],
+      "id": "332095cd-9b00-4663-80d3-caf1d2ad615b",
+      "name": "Get project_context",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f2263e1f-7634-4f88-bcbf-7f630a8d717e",
+              "leftValue": "={{ $json.values().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2640,
+        2800
+      ],
+      "id": "39cdd786-8052-4b88-910d-39eb1b4caef3",
+      "name": "If project_context already exists"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "project_name",
+              "fieldValue": "={{ $('Get infos projet').item.json.project_name }}"
+            },
+            {
+              "fieldName": "hypothesis_id",
+              "fieldValue": "={{ $json.id}}_{{ $now.toMillis() }}"
+            },
+            {
+              "fieldName": "name",
+              "fieldValue": "={{ $json.resume }}"
+            },
+            {
+              "fieldName": "probleme_resolu",
+              "fieldValue": "={{ $json.probleme }}"
+            },
+            {
+              "fieldName": "segment_client",
+              "fieldValue": "={{ $json.segment }}"
+            },
+            {
+              "fieldName": "value_prop",
+              "fieldValue": "={{ $json.value_prop }}"
+            },
+            {
+              "fieldName": "pourquoi_tester",
+              "fieldValue": "={{ $json.raison_selection }}"
+            },
+            {
+              "fieldName": "status",
+              "fieldValue": "A tester"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        620,
+        3060
+      ],
+      "id": "a8ea9550-9b03-42b7-a8e6-6c28df20c6c4",
+      "name": "Ajout des hypotheses dans NocoDb",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "v5gvKdytgYdGjgYc",
+          "mode": "list",
+          "cachedResultName": "GetNotionDatabaseId"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetDatabaseTitle": "Db_HypothèsesPMF",
+            "targetParentPageId": "={{ $('Get infos projet').item.json.ID_Notion }}"
+          },
+          "matchingColumns": [
+            "ID_Notion_firstItem"
+          ],
+          "schema": [
+            {
+              "id": "targetDatabaseTitle",
+              "displayName": "targetDatabaseTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "targetParentPageId",
+              "displayName": "targetParentPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        3280
+      ],
+      "name": "Call GetNotionDatabaseId",
+      "id": "17cad77a-fa35-4979-ab4f-bed6b89cac3c"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "project_name"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -4140,
+        3040
+      ],
+      "id": "d9a82e27-4f65-4b13-a124-4c8121e89780",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "responseFormat": "json_object",
+          "timeout": 500000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1920,
+        3240
+      ],
+      "id": "7d308544-431c-44a4-a99d-3e6fffad611b",
+      "name": "GPT-5 Calibrated",
+      "notesInFlow": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "Pour maximiser la divergence et éviter les redites :\nmodel: gpt-5\ntemperature: 0.9 (augmente la créativité/divergence)\ntop_p: 0.9 (favorise la diversité tout en restant cohérent)\nfrequency_penalty: 0.4 (évite répétitions)\npresence_penalty: 0.6 (encourage l’exploration de nouvelles idées)\nmax_tokens: 4000–6000 (il faut de la marge pour 27 combinaisons détaillées)"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "project_name": "GreenPack"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Get infos projet": {
+      "main": [
+        [
+          {
+            "node": "Format data projet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Creation contexte projet",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Creation contexte projet": {
+      "main": [
+        [
+          {
+            "node": "JSON -> String",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get project_context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser4": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generation hypothèses PMF",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generation hypothèses PMF": {
+      "main": [
+        [
+          {
+            "node": "Transform en Tableaux 9X9X9 combinaisons",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Creation contexte projet",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format data projet": {
+      "main": [
+        [
+          {
+            "node": "Creation contexte projet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform en Tableaux 9X9X9 combinaisons": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Call Scoring Tableau Hypotheses",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Scoring Tableau Hypotheses1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Scoring Tableau Hypotheses2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Scoring Tableau Hypotheses": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Scoring Tableau Hypotheses1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Call Scoring Tableau Hypotheses2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate only hypotheses retenus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "add database_id to json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate only hypotheses retenus": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call GetNotionDatabaseId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajout des hypothèses dans Notion": {
+      "main": [
+        [
+          {
+            "node": "Display Done Icon on Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON -> String": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Save contexte projet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Generation hypothèses PMF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Ajout des hypotheses dans NocoDb",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add database_id to json": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Display Done Icon on Page": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project_context": {
+      "main": [
+        [
+          {
+            "node": "If project_context already exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If project_context already exists": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save contexte projet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajout des hypotheses dans NocoDb": {
+      "main": [
+        [
+          {
+            "node": "Ajout des hypothèses dans Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call GetNotionDatabaseId": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get infos projet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5 Calibrated": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generation hypothèses PMF",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b075ebc-3307-404e-b99d-8e47c08fe063",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "DPcwNm4VwzwSFpwT",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

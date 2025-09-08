@@ -1,0 +1,334 @@
+{
+  "name": "Delete Existing Hypothesis",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "archive",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        840,
+        -440
+      ],
+      "id": "72652cfd-8664-4a83-bf50-2d3050db3eae",
+      "name": "Archive page",
+      "alwaysOutputData": true,
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "options": {
+          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1080,
+        -440
+      ],
+      "id": "894c9b4d-51ae-4a32-9bd7-6df7bd878915",
+      "name": "Get existing hypotheses",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mxejv5f52945plh",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1340,
+        -440
+      ],
+      "id": "729ab316-8961-4725-9c54-fc2a361e49ba",
+      "name": "Delete existing hypotheses",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "project_name"
+            }
+          ]
+        }
+      },
+      "id": "238dae63-cba8-42f9-aae9-69c7bfa94abd",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -80,
+        -440
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "v5gvKdytgYdGjgYc",
+          "mode": "list",
+          "cachedResultName": "GetNotionDatabaseId"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetDatabaseTitle": "=Db_HypothèsesPMF",
+            "targetParentPageId": "={{ $json.ID_Notion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "targetDatabaseTitle",
+              "displayName": "targetDatabaseTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetParentPageId",
+              "displayName": "targetParentPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        -440
+      ],
+      "id": "f4aa33bf-8191-4e71-9de0-3b32c3f9e2c3",
+      "name": "Get Database HypothesePMF"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "options": {
+          "fields": [
+            "ID_Notion"
+          ],
+          "where": "=(project_name,eq,{{ $json.project_name }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        140,
+        -440
+      ],
+      "id": "7b3d067c-40a7-4527-b618-5307f71bf77f",
+      "name": "Get project ID_Notion",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "={{ $json.database_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        580,
+        -440
+      ],
+      "id": "c3118898-443f-4f0d-a1f8-c917fac7f448",
+      "name": "Get All Hypothesis from Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb3cb8c9-2680-4f40-85cc-18deb9adf2b2",
+              "name": "output",
+              "value": "deleted",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1560,
+        -440
+      ],
+      "id": "d309eb2b-abe1-49c9-b890-b3874d499a12",
+      "name": "RETURN"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "project_name": "La meute qui ose"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Archive page": {
+      "main": [
+        [
+          {
+            "node": "Get existing hypotheses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get existing hypotheses": {
+      "main": [
+        [
+          {
+            "node": "Delete existing hypotheses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get project ID_Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Database HypothesePMF": {
+      "main": [
+        [
+          {
+            "node": "Get All Hypothesis from Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get project ID_Notion": {
+      "main": [
+        [
+          {
+            "node": "Get Database HypothesePMF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Hypothesis from Notion": {
+      "main": [
+        [
+          {
+            "node": "Archive page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete existing hypotheses": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c01d750b-ded3-4b16-b2f2-283b81fda6d8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "Lh6ZSJJhLW75mnNG",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}
