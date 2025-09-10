@@ -3,70 +3,14 @@
   "nodes": [
     {
       "parameters": {
-        "authentication": "nocoDbApiToken",
-        "operation": "getAll",
-        "workspaceId": "w8fin9y3",
-        "projectId": "pb01kdovzticqxi",
-        "table": "mgkbmw38vd2aknn",
-        "limit": 1,
-        "options": {
-          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})"
-        }
-      },
-      "type": "n8n-nodes-base.nocoDb",
-      "typeVersion": 3,
-      "position": [
-        1120,
-        528
-      ],
-      "id": "d3399673-8796-42dd-9dcf-621e2f87b502",
-      "name": "Get project context",
-      "executeOnce": true,
-      "alwaysOutputData": true,
-      "credentials": {
-        "nocoDbApiToken": {
-          "id": "A7ud9P88oTJkeL1f",
-          "name": "NocoDb AlpAct - Cloud"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "authentication": "nocoDbApiToken",
-        "operation": "getAll",
-        "workspaceId": "w8fin9y3",
-        "projectId": "pb01kdovzticqxi",
-        "table": "mxejv5f52945plh",
-        "options": {
-          "where": "=(project_name,eq,{{ $('Start').item.json.project_name }})~and(hypothesis_id,eq,{{ $('Start').item.json.hypothese_id }})"
-        }
-      },
-      "type": "n8n-nodes-base.nocoDb",
-      "typeVersion": 3,
-      "position": [
-        1120,
-        272
-      ],
-      "id": "5be2d861-4b2b-41f3-ba43-36d152a63e9e",
-      "name": "Get selected hypothesis",
-      "executeOnce": true,
-      "credentials": {
-        "nocoDbApiToken": {
-          "id": "A7ud9P88oTJkeL1f",
-          "name": "NocoDb AlpAct - Cloud"
-        }
-      }
-    },
-    {
-      "parameters": {
         "content": "## On reconstruit le contexte du projet avec l'hypothèse à tester",
         "height": 700,
-        "width": 400
+        "width": 656
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        992,
-        32
+        1520,
+        112
       ],
       "typeVersion": 1,
       "id": "15e67331-b534-47c6-9b50-cd6d3f5ba543",
@@ -80,8 +24,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        560,
-        128
+        1088,
+        208
       ],
       "typeVersion": 1,
       "id": "1e908b03-e941-43da-a370-da655cf99e75",
@@ -97,8 +41,8 @@
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        320,
-        288
+        848,
+        368
       ]
     },
     {
@@ -122,8 +66,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        704,
-        288
+        1232,
+        368
       ],
       "id": "b91e4c7c-8426-45e9-a45c-947dfbc211ec",
       "name": "Delete existing",
@@ -138,28 +82,11 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        1904,
+        2528,
         560
       ],
       "id": "804935b9-59ea-4b6b-aa5c-e1811b8cf8f1",
       "name": "Structured Output Parser"
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineByPosition",
-        "options": {
-          "includeUnpaired": true
-        }
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        1504,
-        368
-      ],
-      "id": "c7389990-2608-44a9-a3f8-e6cb45e3dad9",
-      "name": "FULL PROJECT CONTEXT + HYPOTHESIS"
     },
     {
       "parameters": {
@@ -174,7 +101,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        1728,
+        2352,
         592
       ],
       "id": "9539470c-d622-4545-ab47-265a354453e3",
@@ -203,8 +130,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3680,
-        432
+        3952,
+        48
       ],
       "id": "6f073ecc-5d3f-40bc-96a4-99542fddd2f7",
       "name": "RETURN"
@@ -212,7 +139,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Here is the complete context for the startup project, in JSON format:\n\n<startup_context>\n{{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.toJsonString() }}\n</startup_context>\n\nPlease analyze this information and return the JSON output indicating the **single most relevant advertising channel**.\n\n\n",
+        "text": "=Here is the complete context for the startup project, in JSON format:\n\n<currently_tested_PMF_hypothesis>\n{{ $json.currently_tested_PMF_hypothesis.toJsonString() }}\n</currently_tested_PMF_hypothesis>\n<project_inital_data>\n{{ $json.project_inital_data.toJsonString() }}\n</project_inital_data>\n\nPlease analyze this information and return the JSON output indicating the **single most relevant advertising channel**.\n\n\n",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
@@ -226,7 +153,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        1744,
+        2368,
         368
       ],
       "id": "e66a1081-2ede-43ef-bcd2-e9f76a3e0147",
@@ -317,7 +244,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        2112,
+        2736,
         368
       ],
       "id": "61f0fc30-7f6d-4b78-89e2-5cf423ae7c60",
@@ -340,7 +267,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        2368,
+        2992,
         -128
       ],
       "id": "a827d559-bf71-4472-b3b0-da81a9226825",
@@ -348,40 +275,13 @@
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-5",
-          "mode": "list",
-          "cachedResultName": "gpt-5"
-        },
-        "options": {
-          "timeout": 500000
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        2384,
-        112
-      ],
-      "id": "4ba47d40-f4fc-482b-a2d7-7903f940c718",
-      "name": "OpenAI Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "xA5aDLFhcAyipXLc",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "promptType": "define",
-        "text": "=Contexte projet et hypothèse pour Instagram Ads :\n\n<startup_context>\n{{ $('FULL PROJECT CONTEXT + HYPOTHESIS').item.json.toJsonString() }}\n</startup_context>\n\nPlease return only a valid json following system prompt instructions.",
+        "text": "=Contexte projet et hypothèse pour Instagram Ads :\n\n<startup_context>\n{\n  \"project_name\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.project_name }}\",\n  \"hypothesis_id\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.hypothesis_id }}\",\n  \"startup_context\": {\n    \"mission\": \"{{ $('Get Project Context').item.json.project_inital_data.mission }}\",\n    \"value_proposition\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.value_prop }}\",\n    \"pain_points\":  \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.probleme_resolu }}\" ,\n    \"market_type\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.market_type }}\",\n    \"target_segments\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.segment_client }}\"\",\n    \"known_competitors\":\"{{ $('Get Project Context').item.json.project_inital_data.concurrents_principaux }}\" \n  },\n  \"offer\": {\n    \"product_name\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.product_name }}\",\n    \"key_benefits\": \"{{ $('Get Project Context').item.json.currently_tested_PMF_hypothesis.key_benefits }}\"\n  },\n  \"landing_url\": \"https://exemple.com/demo\",\n  \"geo\": { \"countries\": [\"FR\"] },\n\n}\n</startup_context>\n\nPlease return only a valid json following system prompt instructions.",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
             {
-              "message": "=You are a senior digital marketer specialized in Meta Ads (Instagram + Facebook).  \nYour task is to generate a **single JSON object** matching the simplified schema `campaign_assets_minimal`.\n\nRules:\n- Output only valid JSON, no explanations.\n- Language: French for all ad copy.\n- Generate assets for a **single-image Instagram ad** (format 4:5 or 1080x1350).\n- Provide one or two variants of text (primary text, headline, description).\n- Include a CTA relevant to acquisition (ex: S’INSCRIRE, EN SAVOIR PLUS, ACHETER).\n- Provide an image prompt suitable for AI image generation, plus alt_text.\n- Fill JSON fields as follows:\n  - copy_json: ad copy (primary_text, headline, description, CTA)\n  - creative_json: visual prompt, alt text\n  - targeting_json: audiences (interests/lookalikes), geo, placements (feed, stories, reels)\n  - channel_specific_json: reserved for Meta-specific features (e.g. custom audience name, lookalike %, exclusions)\n  - utm_json: utm tags\n  - schedule_json: campaign start/end dates\n\nTarget JSON shape:\n{\n  \"id\": \"string\",\n  \"project_id\": \"string\",\n  \"hypothesis_id\": \"string\",\n  \"channel\": \"instagram_meta\",\n  \"campaign_name\": \"string\",\n  \"variant_id\": \"A\",\n  \"objective\": \"traffic|leads|sales|awareness\",\n  \"ad_format\": \"single_image\",\n  \"landing_url\": \"string\",\n  \"budget_daily\": 15,\n  \"currency\": \"EUR\",\n  \"status\": \"ready_for_review\",\n  \"generated_at\": \"YYYY-MM-DDTHH:MM:SSZ\",\n  \"copy_json\": {\n    \"primary_text\": \"...\",\n    \"headline\": \"...\",\n    \"description\": \"...\",\n    \"cta\": \"S’INSCRIRE\"\n  },\n  \"creative_json\": {\n    \"image_prompt\": \"description visuelle riche pour génération IA\",\n    \"alt_text\": \"description courte de l’image\"\n  },\n  \"targeting_json\": {\n    \"geo\": { \"countries\": [\"FR\"] },\n    \"audiences\": { \"interests\": [\"...\", \"...\"] },\n    \"placements\": { \"instagram\": [\"feed\",\"stories\",\"reels\"] }\n  },\n  \"channel_specific_json\": {\n    \"custom_audience\": \"\",\n    \"lookalike\": \"\"\n  },\n  \"utm_json\": {\n    \"utm_source\": \"instagram\",\n    \"utm_medium\": \"paid\",\n    \"utm_campaign\": \"...\",\n    \"utm_content\": \"varA\"\n  },\n  \"schedule_json\": {\n    \"start_date\": \"YYYY-MM-DD\",\n    \"end_date\": \"YYYY-MM-DD\"\n  },\n  \"notes\": \"\"\n}\n"
+              "message": "=You are a senior digital marketer specialized in Meta Ads (Instagram + Facebook).  \nYour task is to generate a **single JSON object** matching the simplified schema `campaign_assets_minimal`.\n\nRules:\n- Output only valid JSON, no explanations.\n- Language: French for all ad copy.\n- Generate assets for a **single-image Instagram ad** (format 4:5 or 1080x1350).\n- Provide 3 variants of text (primary text, headline, description, CTA) and visuals (image prompt + alt_text)\n- Include a CTA relevant to acquisition (ex: S’INSCRIRE, EN SAVOIR PLUS, ACHETER).\n- Provide 3 variants of image prompt suitable for AI image generation, plus alt_text.\n- Fill JSON fields as follows:\n  - ad --> array of (variant_id, primary_text, headline, description, CTA, visual prompt, alt_text)\n  - targeting_json: audiences (interests/lookalikes), geo, placements (feed, stories, reels)\n  - channel_specific_json: reserved for Meta-specific features (e.g. custom audience name, lookalike %, exclusions)\n  - utm_json: utm tags\n  - schedule_json: campaign start/end dates\n\nTarget JSON shape:\n{\n  \"id\": \"string\",\n  \"project_id\": \"string\",\n  \"hypothesis_id\": \"string\",\n  \"channel\": \"instagram_meta\",\n  \"campaign_name\": \"string\",\n  \"objective\": \"traffic|leads|sales|awareness\",\n  \"ad_format\": \"single_image\",\n  \"landing_url\": \"string\",\n  \"budget_daily\": 15,\n  \"currency\": \"EUR\",\n  \"status\": \"ready_for_review\",\n  \"generated_at\": \"YYYY-MM-DDTHH:MM:SSZ\",\n  \"ad\": [{\n    \"variant_id\": \"A\",\n    \"primary_text\": \"...\",\n    \"headline\": \"...\",\n    \"description\": \"...\",\n    \"cta\": \"S’INSCRIRE\",\n    \"image_prompt\": \"description visuelle riche pour génération IA\",\n    \"alt_text\": \"description courte de l’image\"\n  }],\n  \"targeting_json\": {\n    \"geo\": { \"countries\": [\"FR\"] },\n    \"audiences\": { \"interests\": [\"...\", \"...\"] },\n    \"placements\": { \"instagram\": [\"feed\",\"stories\",\"reels\"] }\n  },\n  \"channel_specific_json\": {\n    \"custom_audience\": \"\",\n    \"lookalike\": \"\"\n  },\n  \"utm_json\": {\n    \"utm_source\": \"instagram\",\n    \"utm_medium\": \"paid\",\n    \"utm_campaign\": \"...\",\n    \"utm_content\": \"varA\"\n  },\n  \"schedule_json\": {\n    \"start_date\": \"YYYY-MM-DD\",\n    \"end_date\": \"YYYY-MM-DD\"\n  },\n  \"notes\": \"\"\n}\n"
             }
           ]
         },
@@ -390,7 +290,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        2352,
+        3136,
         544
       ],
       "id": "0ea796ae-8cf2-48d6-b799-45db5213c5ec",
@@ -403,7 +303,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        2368,
+        2992,
         912
       ],
       "id": "c29d2259-f2f6-4a37-9d0c-836f1b330e24",
@@ -411,13 +311,13 @@
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"id\": \"string\",\n  \"project_id\": \"string\",\n  \"hypothesis_id\": \"string\",\n  \"channel\": \"google_ads\",\n  \"campaign_name\": \"string\",\n  \"variant_id\": \"A\",\n  \"objective\": \"traffic|leads|sales|awareness\",\n  \"ad_format\": \"search_text\",\n  \"landing_url\": \"string\",\n  \"budget_daily\": 20,\n  \"currency\": \"EUR\",\n  \"status\": \"ready_for_review\",\n  \"generated_at\": \"YYYY-MM-DDTHH:MM:SSZ\",\n  \"copy_json\": {\n    \"headlines\": [\"...\", \"...\"],\n    \"descriptions\": [\"...\", \"...\"],\n    \"cta\": \"EN SAVOIR PLUS\"\n  },\n  \"creative_json\": {},\n  \"targeting_json\": {\n    \"geo\": { \"countries\": [\"FR\"] },\n    \"placements\": { \"google_search\": true, \"search_partners\": true }\n  },\n  \"channel_specific_json\": {\n    \"keywords\": [\n      { \"keyword\": \"logiciel gestion PME\", \"match\": \"phrase\" }\n    ],\n    \"negative_keywords\": [\"gratuit\", \"emploi\"],\n    \"extensions\": {\n      \"sitelinks\": [{ \"text\": \"...\", \"url\": \"...\" }]\n    }\n  },\n  \"utm_json\": {\n    \"utm_source\": \"google\",\n    \"utm_medium\": \"cpc\",\n    \"utm_campaign\": \"...\",\n    \"utm_content\": \"varA\"\n  },\n  \"schedule_json\": {\n    \"start_date\": \"YYYY-MM-DD\",\n    \"end_date\": \"YYYY-MM-DD\"\n  },\n  \"notes\": \"\"\n}",
+        "jsonSchemaExample": "{\n  \"id\": \"string\",\n  \"project_id\": \"string\",\n  \"hypothesis_id\": \"string\",\n  \"channel\": \"google_ads\",\n  \"campaign_name\": \"string\",\n  \"objective\": \"traffic|leads|sales|awareness\",\n  \"ad_format\": \"search_text\",\n  \"landing_url\": \"string\",\n  \"budget_daily\": 20,\n  \"currency\": \"EUR\",\n  \"status\": \"ready_for_review\",\n  \"generated_at\": \"YYYY-MM-DDTHH:MM:SSZ\",\n   \"ad\": [{\n    \"variant_id\": \"A\",\n    \"primary_text\":\"...\",\n    \"headlines\": [\"...\", \"...\"],\n    \"descriptions\": [\"...\", \"...\"],\n    \"cta\": \"EN SAVOIR PLUS\",\n    \"image_prompt\": \"description visuelle riche pour génération IA\",\n    \"alt_text\": \"description courte de l’image\"\n  }],\n  \"targeting_json\": {\n    \"geo\": { \"countries\": [\"FR\"] },\n    \"placements\": { \"google_search\": true, \"search_partners\": true }\n  },\n  \"channel_specific_json\": {\n    \"keywords\": [\n      { \"keyword\": \"logiciel gestion PME\", \"match\": \"phrase\" }\n    ],\n    \"negative_keywords\": [\"gratuit\", \"emploi\"],\n    \"extensions\": {\n      \"sitelinks\": [{ \"text\": \"...\", \"url\": \"...\" }]\n    }\n  },\n  \"utm_json\": {\n    \"utm_source\": \"google\",\n    \"utm_medium\": \"cpc\",\n    \"utm_campaign\": \"...\",\n    \"utm_content\": \"varA\"\n  },\n  \"schedule_json\": {\n    \"start_date\": \"YYYY-MM-DD\",\n    \"end_date\": \"YYYY-MM-DD\"\n  },\n  \"notes\": \"\"\n}",
         "autoFix": true
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2608,
+        3232,
         64
       ],
       "id": "f80439a5-04d4-4567-8409-6dd8b99f4833",
@@ -436,7 +336,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        2608,
+        3232,
         288
       ],
       "id": "2f870f77-4a6c-4b59-94f1-67cf047e41a5",
@@ -450,17 +350,67 @@
     },
     {
       "parameters": {
+        "content": "## Creation des assets, par canal",
+        "height": 1456,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2208,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "408fecef-ace0-489a-9330-e4e7399892e6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
         "workflowId": {
           "__rl": true,
           "value": "O7NnHj6HqlEVcXWC",
           "mode": "list",
-          "cachedResultName": "Create Image"
+          "cachedResultName": "Create Image for Ads"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
-          "value": {},
+          "value": {
+            "ai_model": "nano-banana",
+            "prompt": "={{ $json.output.ad[0].image_prompt }}",
+            "variant_id": "={{ $json.output.ad[0].variant_id }}"
+          },
           "matchingColumns": [],
-          "schema": [],
+          "schema": [
+            {
+              "id": "ai_model",
+              "displayName": "ai_model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "variant_id",
+              "displayName": "variant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
           "attemptToConvertTypes": false,
           "convertFieldsToString": true
         },
@@ -469,11 +419,116 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        2704,
-        544
+        4240,
+        720
       ],
       "id": "544b4572-c35e-4b15-94a2-54de4d764406",
-      "name": "Execute Workflow"
+      "name": "Create visuals for Insta"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "timeout": 500000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3008,
+        112
+      ],
+      "id": "4ba47d40-f4fc-482b-a2d7-7903f940c718",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "y2LEjpUB53iTcggE",
+          "mode": "list",
+          "cachedResultName": "Get project context"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hypothesis_id": "={{ $('Start').item.json.hypothese_id }}",
+            "project_name": "={{ $('Start').item.json.project_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "hypothesis_id",
+              "displayName": "hypothesis_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1808,
+        368
+      ],
+      "id": "660a0f61-fb6c-48df-8696-c0621d7a44b5",
+      "name": "Get Project Context"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.ad",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3648,
+        544
+      ],
+      "id": "6edff165-3623-44a0-9bd4-09286714499e",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3920,
+        544
+      ],
+      "id": "a30a2b37-3669-419e-9391-d6dafce8a807",
+      "name": "Loop Over Items"
     }
   ],
   "pinData": {
@@ -502,12 +557,7 @@
       "main": [
         [
           {
-            "node": "Get selected hypothesis",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Get project context",
+            "node": "Get Project Context",
             "type": "main",
             "index": 0
           }
@@ -525,17 +575,6 @@
         ]
       ]
     },
-    "FULL PROJECT CONTEXT + HYPOTHESIS": {
-      "main": [
-        [
-          {
-            "node": "Determine which channel to target",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "GPT-5-MINI": {
       "ai_languageModel": [
         [
@@ -547,28 +586,6 @@
           {
             "node": "Structured Output Parser",
             "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get project context": {
-      "main": [
-        [
-          {
-            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Get selected hypothesis": {
-      "main": [
-        [
-          {
-            "node": "FULL PROJECT CONTEXT + HYPOTHESIS",
-            "type": "main",
             "index": 0
           }
         ]
@@ -610,27 +627,6 @@
         ]
       ]
     },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Google",
-            "type": "ai_languageModel",
-            "index": 0
-          },
-          {
-            "node": "Meta/Insta",
-            "type": "ai_languageModel",
-            "index": 0
-          },
-          {
-            "node": "LinkedIn",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Structured Output Parser1": {
       "ai_outputParser": [
         [
@@ -662,7 +658,67 @@
       "main": [
         [
           {
-            "node": "Execute Workflow",
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Google",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Meta/Insta",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "LinkedIn",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Project Context": {
+      "main": [
+        [
+          {
+            "node": "Determine which channel to target",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create visuals for Insta": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Create visuals for Insta",
             "type": "main",
             "index": 0
           }
@@ -674,7 +730,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "8817017b-063b-4b5e-8490-3b742a7a46b5",
+  "versionId": "52efaea4-b199-4a50-98ea-57ad3f2fd5c9",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"

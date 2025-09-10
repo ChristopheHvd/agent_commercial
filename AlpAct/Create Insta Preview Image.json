@@ -1,0 +1,543 @@
+{
+  "name": "Create Insta Preview Image",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "ai_model"
+            },
+            {
+              "name": "prompt"
+            },
+            {
+              "name": "variant_id"
+            }
+          ]
+        }
+      },
+      "id": "b206466d-8c2d-4c50-b2f0-7fdac1651e64",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -1488,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1248,
+        240
+      ],
+      "id": "2c7d5bf2-548e-4ef3-ba74-eac07c5026ff",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.optimized_prompt }}"
+            },
+            {
+              "name": "size",
+              "value": "auto"
+            },
+            {
+              "name": "background",
+              "value": "transparent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -384,
+        -144
+      ],
+      "id": "53468883-6ef4-491b-acb6-cc1a8b8def2e",
+      "name": "GPT-image-1",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "=data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -144
+      ],
+      "id": "a681087c-921e-4b03-ba59-7977999e25bc",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"contents\": [{\n      \"parts\": [\n        {\"text\": \"{{ $json.output.optimized_prompt }}\"}\n      ]\n    }]\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -384,
+        128
+      ],
+      "id": "c62de273-83a3-4df4-9abd-32d3c8ec67b7",
+      "name": "Nano Banana1",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "pz6jgmIpvxJWRyPK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "candidates[0].content.parts[1].inlineData.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        304
+      ],
+      "id": "020f1a57-d940-4239-8290-8fd347f94dcc",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Start').item.json.ai_model }}",
+                    "rightValue": "gpt-image-1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2162c0d0-c838-456f-9b27-889765ab0e02"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "gpt-image-1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "27b49933-0532-4c97-acc9-314bd2299a58",
+                    "leftValue": "={{ $('Start').item.json.ai_model }}",
+                    "rightValue": "nano-banana",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "nano-banana"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": 0
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -816,
+        48
+      ],
+      "id": "3542d048-3006-4173-96f4-9ccf8898918a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Raw image prompt (French):\n{{ $json.prompt }}\n\nModel:\n{{ $json.ai_model ? $json.ai_model : \"gpt-image-1\"}}\n\nOutput your result in JSON format following this structure : \n{\n  \"optimized_prompt\":\"...\",\n  \"filename\":\"...\"\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI image prompt optimizer for ad creatives. \nInput: a raw French prompt for an Instagram ad visual + requested model id.\nTask: rewrite the prompt to be optimal for the selected model and output ONLY the optimized prompt as plain text, and a filename. No explanations.\n\nModel rules:\n- If ai_model == \"nano-banana\" (Google Gemini 2.5):\n  • Translate to English\n  • Expand to 80–120 words\n  • No text overlays/logos; describe scene, subject, mood, color palette, composition, and lighting\n  • Mention portrait orientation suitable for Instagram ads (1080x1350, 4:5)\n  • Prefer natural, photorealistic style and diverse, inclusive depiction\n- If ai_model == \"gpt-image-1\":\n  • Keep French OR translate to English if it improves clarity\n  • 60–100 words, photorealistic or clean vector depending on intent inferred\n  • No text in-image, no watermarks\n  • Explicitly request 4:5 portrait framing (1080x1350), clear subject focus, ad-friendly composition\n\nFor the  filename, figure something out based on the given prompt. Keep it to 1-2 compound word.\n\nOutput only the optimized prompt text and the filename.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1232,
+        48
+      ],
+      "id": "44c33439-40fe-4c45-ba5a-c62f9baf83fb",
+      "name": "Prompt Optimizer"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"model\": \"{{ $('Start').item.json.ai_model.isEmpty() ? \"gpt-image-1\" : $('Start').item.json.ai_model  }}\",\n  \"optimized_prompt\": \"{{ $('Prompt Optimizer').item.json.output.optimized_prompt }}\",\n  \"render_format\": { \"width\": {{ $json.width }}, \"height\": {{ $json.render_format.height }}, \"ratio\": \"{{ $json.render_format.ratio }}\" },\n  \"image_public_url\": \"https://files.cloudron.alpes-ia.fr/tmp/images/{{ $('Prompt Optimizer').item.json.output.filename }}.png\",\n  \"creative_block\": {\n    \"image_prompt\": \"{{ $('Prompt Optimizer').item.json.output.optimized_prompt }}\",\n    \"alt_text\": \"{{ $('Prompt Optimizer').item.json.output.optimized_prompt.split(/\\s+/).slice(0,12).join(\" \") }}\",\n    \"variant_id\": \"{{ $('Start').item.json.variant_id }}\",\n    \"needs_postprod\":\"{{ $json.needs_postprocess }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        96
+      ],
+      "id": "c0c4a846-c547-4530-a46f-8c91f9278b40",
+      "name": "RETURN"
+    },
+    {
+      "parameters": {
+        "jsCode": "// cible Instagram portrait 4:5\nconst TARGET = { width: 1080, height: 1350 };\nconst TARGET_DEC = +(TARGET.width / TARGET.height).toFixed(4); // 0.8\n\n// Utilitaire: pgcd pour ratio a:b\nconst gcd = (a,b) => b ? gcd(b, a % b) : a;\n\n// 1) Récupère la string size \"WxH\" depuis différentes structures possibles\n//    - direct: $json.size\n//    - nested: $json.data[0].size (cas certaines libs)\nlet sizeStr = $input.first().json.size;\nif (!sizeStr && Array.isArray($json.data) && $json.data[0] && $json.data[0].size) {\n  sizeStr = $json.data[0].size;\n}\n\n// 2) Parse \"1024x1024\" → width/height, sinon fallback sur cible\nlet width = TARGET.width;\nlet height = TARGET.height;\n\nif (typeof sizeStr === 'string') {\n  const m = sizeStr.match(/^(\\d+)\\s*x\\s*(\\d+)$/i);\n  if (m) {\n    width = parseInt(m[1], 10);\n    height = parseInt(m[2], 10);\n  }\n}\n\n// 3) Calcule le ratio\nconst g = gcd(width, height);\nconst ratioStr = `${width/g}:${height/g}`;\nconst ratioDec = +(width / height).toFixed(4);\n\n// 4) Marque l’écart vs 4:5 avec tolérance (1%)\nconst offSpec = Math.abs(ratioDec - TARGET_DEC) > 0.01;\n\n// 5) Suggère une action de post-process minimale\n//    - si taille ≠ 1080x1350 → resize\n//    - si ratio ≠ 4:5 → crop centré ensuite\nlet needsPostprocess = \"none\";\nif (width !== TARGET.width || height !== TARGET.height) {\n  needsPostprocess = \"resize_to_1080x1350\";\n}\nif (offSpec) {\n  // priorise le crop si le ratio est différent\n  needsPostprocess = \"crop_center_4_5\";\n}\n\n\nreturn [{\n  json: {\n    ...$json,\n    // On consigne ce qui a réellement été produit/compris\n    width,\n    height,\n    render_format: {\n      width,\n      height,\n      ratio: ratioStr,\n      ratio_decimal: ratioDec\n    },\n    off_spec_ratio: offSpec,\n    needs_postprocess: needsPostprocess,   // \"none\" | \"resize_to_1080x1350\" | \"crop_center_4_5\"\n\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        80
+      ],
+      "id": "4254ea9c-1bad-4b94-8429-756092a9800d",
+      "name": "Compute size and ratio"
+    },
+    {
+      "parameters": {
+        "protocol": "sftp",
+        "operation": "upload",
+        "path": "=/public/tmp/images/{{ $('Prompt Optimizer').item.json.output.filename }}.png"
+      },
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [
+        464,
+        144
+      ],
+      "id": "134ba291-ed21-406d-babb-407f24acefc0",
+      "name": "Upload to temp location",
+      "credentials": {
+        "sftp": {
+          "id": "KGdgRuIUmVx5GWT5",
+          "name": "Surfer SFTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        784,
+        96
+      ],
+      "id": "55489422-c728-429e-b225-a90da32dd7c0",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "### L'utilisation du merge permet d'être sûr que le noeud qui upload le fichier s'execute bien avant de rendre la main.",
+        "height": 300,
+        "width": 340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "0f958ae2-ce21-440c-b35e-d8f8ad111c7d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"optimized_prompt\":\"...\",\n  \"filename\":\"...\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1104,
+        256
+      ],
+      "id": "5d5cbc57-d2a1-454c-87c6-e19387fb35f7",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer le fichier binaire\nconst binaryData = $input.first().binary;\n\n// Modifier le nom du fichier\nbinaryData.data.fileName = $('Prompt Optimizer').first().json.output.filename+ \".png\";\n\nreturn $input.first() ;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        144
+      ],
+      "id": "0040c902-addb-475a-aeb8-320c33955a73",
+      "name": "Rename File"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "ai_model": "nano-banana",
+          "prompt": "Photo réaliste, format 4:5 (1080x1350), d’un gérant de fast-food indépendant (40 ans) au comptoir, remettant un contenant réutilisable robuste marqué GreenPack à un client. Ambiance chaleureuse, palette vert/blanc minimaliste, affichage clair « Consigne 2€ — Rendu facile », clients divers en arrière-plan rendant leurs contenants. Focalisation nette sur le contenant, éclairage naturel, profondeur de champ, style documentaire premium, badge discret « -30% déchets » en surimpression légère.",
+          "variant_id": "A"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Prompt Optimizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Prompt Optimizer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-image-1": {
+      "main": [
+        [
+          {
+            "node": "Compute size and ratio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Rename File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nano Banana1": {
+      "main": [
+        [
+          {
+            "node": "Compute size and ratio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Rename File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "GPT-image-1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nano Banana1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt Optimizer": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute size and ratio": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to temp location": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "RETURN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompt Optimizer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename File": {
+      "main": [
+        [
+          {
+            "node": "Upload to temp location",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5d254a44-9976-4598-b133-055b86af7d65",
+  "meta": {
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "ZsG9VgVGo4MWhHv9",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}

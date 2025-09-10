@@ -10,14 +10,14 @@
           "cachedResultName": "gpt-5"
         },
         "options": {
-          "timeout": 120000
+          "timeout": 500000
         }
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        -1280,
-        3380
+        -912,
+        3392
       ],
       "id": "a14ce44d-eef3-432b-93ec-78de1bdc010e",
       "name": "GPT-5",
@@ -27,42 +27,6 @@
           "name": "OpenAi account"
         }
       }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=Filtre rapidement ces 9 combinaisons PMF et garde seulement les 2 plus prometteuses :\n\n# MATRICE PMF\n{{ $json.tableau_1_text }}\n\n# CONTEXTE PROJET  \n{{ $('Start').item.json.formatted_analysis }}\n\n# CRITÈRES DE PRÉ-FILTRAGE\n- Cohérence problème/segment (éliminer les mismatches évidents)\n- Value prop réalisable avec les ressources projet\n- Testabilité rapide (< 4 semaines)\n\n# FORMAT JSON\n{\n  \"combinations_retenues\": [\n    {\n      \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n    // 2 combinaisons max\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}",
-        "hasOutputParser": true,
-        "messages": {
-          "messageValues": [
-            {
-              "message": "=Tu es un analyste business expert en validation rapide d'hypothèses.\nTu élimines rapidement les combinaisons PMF non-viables.\nTu retournes EXCLUSIVEMENT du JSON valide."
-            }
-          ]
-        },
-        "batching": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1.7,
-      "position": [
-        -1320,
-        3140
-      ],
-      "id": "1afd4211-679a-4ff4-a952-f761a6fe8a15",
-      "name": "Hypothese scoring - tableau 1"
-    },
-    {
-      "parameters": {
-        "jsonSchemaExample": "{\n  \"combinations_retenues\": [\n    {\n     \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}"
-      },
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.3,
-      "position": [
-        -1100,
-        3380
-      ],
-      "id": "6d114338-86a5-4846-8e1b-a356556eb314",
-      "name": "Structured Output Parser6"
     },
     {
       "parameters": {
@@ -84,40 +48,466 @@
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        -1540,
-        3140
+        -1536,
+        3152
       ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# MATRICE PMF - TEXTE LIBRE (9 combinaisons)\n{{ $json.tableau_1_text }}\n\n# CONTEXTE PROJET (référence)\n{{ $('Start').item.json.formatted_analysis }}\n\n# CONTRAINTES\n- Délai test: < 4 semaines\n- Ressources: raisonnables selon le contexte projet\n- Éliminer les mismatches évidents (problème ↔ segment ↔ VP)\n\n# FORMAT JSON STRICT ATTENDU\n{\n  \"lot\": \"1/3\", \n  \"total_combinations_input\": 9,\n  \"barreme\": {\n    \"fit_probleme_segment\": {\"poids\": 0.30},\n    \"fit_vp_probleme\": {\"poids\": 0.25},\n    \"testabilite_4_semaines\": {\"poids\": 0.20},\n    \"faisabilite_ressources\": {\"poids\": 0.15},\n    \"impact_court_terme\": {\"poids\": 0.10},\n    \"penalites\": {\n      \"similarite\": {\"max\": -0.5},\n      \"incertitude\": {\"max\": -0.5}\n    }\n  },\n  \"scoring_detail\": [\n    {\n      \"combinaison\": \"P#_S#_VP#\",\n      \"scores\": {\n        \"fit_probleme_segment\": 0-5,\n        \"fit_vp_probleme\": 0-5,\n        \"testabilite_4_semaines\": 0-5,\n        \"faisabilite_ressources\": 0-5,\n        \"impact_court_terme\": 0-5\n      },\n      \"penalites\": {\n        \"similarite\": 0 à -0.5,\n        \"incertitude\": 0 à -0.5\n      },\n      \"score_total\": \"float\",\n      \"motifs\": [\n        \"raison courte #1\",\n        \"raison courte #2\"\n      ],\n      \"test_rapide_propose\": \"expérience concrète < 4 semaines (ex: landing + offre + canal + KPI)\"\n    }\n    // 9 objets au total\n  ],\n  \"classement\": [\n    {\"combinaison\": \"P#_S#_VP#\", \"score_total\": \"float\"},\n    {\"combinaison\": \"P#_S#_VP#\", \"score_total\": \"float\"}\n    // jusqu’à 9, trié décroissant\n  ],\n  \"combinations_retenues\": [\n    {\n      \"id\": \"H1\",\n      \"combinaison\": \"P#_S#_VP#\",\n      \"resume\": \"1–2 phrases\",\n      \"raisons_clefs\": [\"raison 1\", \"raison 2\"],\n      \"test_rapide\": \"détail actionnable < 4 semaines (KPI, seuil succès)\"\n    },\n    {\n      \"id\": \"H2\",\n      \"combinaison\": \"P#_S#_VP#\",\n      \"resume\": \"1–2 phrases\",\n      \"raisons_clefs\": [\"raison 1\", \"raison 2\"],\n      \"test_rapide\": \"détail actionnable < 4 semaines (KPI, seuil succès)\"\n    }\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P#_S#_VP#\",\n      \"raison_elimination\": \"mismatch/complexité/test trop long/ressources indisponibles/etc.\"\n    }\n    // 7 objets\n  ],\n  \"notes\": {\n    \"incertitudes_detectees\": [\"élément manquant 1\", \"élément manquant 2\"],\n    \"recommandations\": [\"donnée à collecter pour prochaine itération\"]\n  }\n}\n\n# INSTRUCTIONS FINALES\n- Retourne UNIQUEMENT ce JSON. Pas de commentaires hors JSON.\n- Si deux combinaisons sont quasi-identiques, applique \"penalites.similarite\".\n- Si des infos clés manquent, indique-les dans \"notes.incertitudes_detectees\" et applique \"penalites.incertitude\".\n"
+            },
+            {
+              "content": "Tu es un analyste PMF senior spécialisé en pré-filtrage rapide et rigoureux d’hypothèses (Lean Startup). \nObjectif: à partir d’un bloc texte contenant 9 combinaisons P×S×VP, sélectionner les 2 plus prometteuses pour un test de 4 semaines max.\n\nMéthode:\n1) EXTRACTION: détecte précisément les 9 combinaisons via les marqueurs “COMBINAISON: P#_S#_VP#”. Pour chaque combinaison, récupère le texte associé (problème, segment, VP, marché cible).\n2) NORMALISATION: crée un objet interne {problem, segment, vp} par combinaison avec:\n   - problem.fit_segment (adéquation douleur↔personas)\n   - vp.fit_problem (adéquation bénéfice↔douleur)\n   - feasibility (ressources raisonnables/complexité)\n   - testability_4w (expérimentable en < 4 semaines)\n   - impact_proxy (potentiel d’impact mesurable à court terme)\n   - risk (risques clés: légaux, complexité go-to-market, dépendances)\n   - similarity_penalty (si combinaison quasi-redondante avec une autre du lot)\n   - uncertainty_penalty (si données critiques manquantes)\n3) SCORING (0–5 par critère, pondérations):\n   - Fit problème↔segment: 30%\n   - Fit VP↔problème: 25%\n   - Testabilité < 4 semaines: 20%\n   - Faisabilité (ressources réalistes): 15%\n   - Impact court terme (KPI early): 10%\n   Total = somme pondérée – pénalités (similarity/uncertainty, chacune 0 à –0,5).\n4) TIE-BREAKERS (ordre):\n   a) meilleure testabilité_4w,\n   b) meilleure faisabilité,\n   c) plus fort différenciateur explicite,\n   d) segment avec canal d’accès clair.\n5) SORTIE STRICTE: JSON valide uniquement, en français, suivant le schéma fourni dans le prompt utilisateur. Pas de texte hors JSON.\n6) GARDES-FOUS: aucune invention de chiffres non présents; si info manquante, explicite dans \"motifs\" et applique uncertainty_penalty.\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1328,
+        3632
+      ],
+      "id": "469fb186-be4e-4219-b2cb-160f09255890",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"retenues\": [\n    { \"combinaison\": \"P#_S#_VP#\", \"score\": 45, \"raison\": \"phrase courte\", \"test_rapide\": \"action <4 semaines\" }\n  ],\n  \"rejetees\": [\n    { \"combinaison\": \"P#_S#_VP#\", \"score\": 34, \"raison\": \"phrase courte\" }\n  ],\n  \"classement\": [\n    { \"combinaison\": \"P#_S#_VP#\", \"score\": 12 }\n  ]\n}\n",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        3328
+      ],
+      "id": "cb5328e2-5fe5-42ec-a275-d7091048d399",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1312,
+        2960
+      ],
+      "id": "79394005-53ac-49b8-a342-fe82f69b83d3",
+      "name": "GPT-",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"combinations_retenues\": [\n    {\n     \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1136,
+        2960
+      ],
+      "id": "e52f0480-6b78-4444-951d-23758ea93726",
+      "name": "Structured Output Parser7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Filtre rapidement ces 9 combinaisons PMF et garde seulement les 2 plus prometteuses :\n\n# MATRICE PMF\n{{ $json.tableau_1_text }}\n\n# CONTEXTE PROJET  \n{{ $('Start').item.json.formatted_analysis }}\n\n# CRITÈRES DE PRÉ-FILTRAGE\n- Cohérence problème/segment (éliminer les mismatches évidents)\n- Value prop réalisable avec les ressources projet\n- Testabilité rapide (< 4 semaines)\n\n# FORMAT JSON\n{\n  \"combinations_retenues\": [\n    {\n      \"id\": \"H1\",\n      \"probleme_id\": \"P1\",\n      \"probleme\":\"le probleme retenu\",\n      \"segment_id\": \"S1\", \n      \"segment\":\"le segment retenue\",\n      \"value_prop_id\": \"VP1\",\n      \"value_prop\":\"la value proposition retenue\",\n      \"resume\": \"string\",\n      \"raison_selection\": \"string courte\"\n    }\n    // 2 combinaisons max\n  ],\n  \"combinations_eliminees\": [\n    {\n      \"combinaison\": \"P2-S3-VP1\",\n      \"raison_elimination\": \"string\"\n    }\n  ]\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un analyste business expert en validation rapide d'hypothèses.\nTu élimines rapidement les combinaisons PMF non-viables.\nTu retournes EXCLUSIVEMENT du JSON valide."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1360,
+        2720
+      ],
+      "id": "77d4ebde-c813-4d86-aec4-51be98b9799e",
+      "name": "Prompt v1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# MATRICE PMF - TEXTE LIBRE (9 combinaisons)\n{{ $json.tableau_1.toJsonString() }}\n\n# CONTEXTE PROJET (référence)\n{{ $json.formatted_analysis }}\n\n# OBJECTIF\nSélectionne exactement 2 combinaisons à tester en < 4 semaines avec des ressources raisonnables.\nAttribue un score final (0–100) à TOUTES les 9 combinaisons (plus haut = meilleur).\n\n# RÈGLES DE DÉCISION (simples)\n- Cohérence Problème ↔ Segment ↔ Proposition de valeur\n- Testabilité réelle < 4 semaines (canal + action + KPI simples)\n- Faisabilité avec ressources raisonnables du contexte\n\n# FORMAT DE SORTIE EXCLUSIF (JSON minimal + scores)\n{\n  \"retenues\": [\n    { \"combinaison\": \"P#_S#_VP#\", \"score\": 0-100, \"raison\": \"phrase courte\", \"test_rapide\": \"action <4 semaines\" }\n  ],\n  \"rejetees\": [\n    { \"combinaison\": \"P#_S#_VP#\", \"score\": 0-100, \"raison\": \"phrase courte\" }\n  ],\n  \"classement\": [\n    { \"combinaison\": \"P#_S#_VP#\", \"score\": 0-100 }\n    // total 9 éléments triés du meilleur au moins bon\n  ]\n}\n\n# CONTRAINTES\n- Retourne EXCLUSIVEMENT le JSON ci-dessus (aucun autre champ, aucun texte hors JSON).\n- Les 2 \"retenues\" doivent avoir les 2 meilleurs scores.\n- Les 7 autres vont dans \"rejetees\".\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu es un analyste PMF senior spécialisé en pré-filtrage rapide et rigoureux d’hypothèses (Lean Startup). \nObjectif: à partir d’un bloc texte contenant 9 combinaisons P×S×VP, sélectionner les 2 plus prometteuses pour un test de 4 semaines max.\n\nMéthode:\n1) EXTRACTION: détecte précisément les 9 combinaisons via les marqueurs “COMBINAISON: P#_S#_VP#”. Pour chaque combinaison, récupère le texte associé (problème, segment, VP, marché cible).\n2) NORMALISATION: crée un objet interne {problem, segment, vp} par combinaison avec:\n   - problem.fit_segment (adéquation douleur↔personas)\n   - vp.fit_problem (adéquation bénéfice↔douleur)\n   - feasibility (ressources raisonnables/complexité)\n   - testability_4w (expérimentable en < 4 semaines)\n   - impact_proxy (potentiel d’impact mesurable à court terme)\n   - risk (risques clés: légaux, complexité go-to-market, dépendances)\n   - similarity_penalty (si combinaison quasi-redondante avec une autre du lot)\n   - uncertainty_penalty (si données critiques manquantes)\n3) SCORING (0–5 par critère, pondérations):\n   - Fit problème↔segment: 30%\n   - Fit VP↔problème: 25%\n   - Testabilité < 4 semaines: 20%\n   - Faisabilité (ressources réalistes): 15%\n   - Impact court terme (KPI early): 10%\n   Total = somme pondérée – pénalités (similarity/uncertainty, chacune 0 à –0,5).\n4) TIE-BREAKERS (ordre):\n   a) meilleure testabilité_4w,\n   b) meilleure faisabilité,\n   c) plus fort différenciateur explicite,\n   d) segment avec canal d’accès clair.\n5) SORTIE STRICTE: JSON valide uniquement, en français, suivant le schéma fourni dans le prompt utilisateur. Pas de texte hors JSON.\n6) GARDES-FOUS: aucune invention de chiffres non présents; si info manquante, explicite dans \"motifs\" et applique uncertainty_penalty.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -848,
+        3152
+      ],
+      "id": "28313dff-4b80-4c48-9a0b-d836f9234c04",
+      "name": "prompt v2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1552,
+        3360
+      ],
+      "id": "63b92a6c-dd0f-452b-8329-4257e926d615",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        3472
+      ],
+      "id": "a629a04a-6ecc-4d19-b090-4e64003d658a",
+      "name": "GPT-5-MINI",
+      "credentials": {
+        "openAiApi": {
+          "id": "xA5aDLFhcAyipXLc",
+          "name": "OpenAi account"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "formatted_analysis": "\nVISION DU PROJET:\n- Mission: Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés.\n- Problème central: Les restaurants de restauration rapide utilisent massivement des emballages jetables coûteux et polluants, sans solution simple et rentable de réemploi.\n- Solution proposée: Boîtes consignées, lavables et réutilisables avec consigne digitale (QR code) et logistique intégrée pour collecte et lavage afin de simplifier l'adoption.\n\nMARCHÉ CIBLE:\n- Segment principal: B2B — gérants de fast-food indépendants (35-50 ans), sensibles aux coûts et à l'image RSE, prioritairement restaurants bio et indépendants engagés.\n- Taille du marché: Non estimée (à mesurer) — recommander estimation locale pilotée à Chambéry puis extrapolation régionale/ européenne.\n- Concurrents principaux:\n    • Fournisseurs d'emballages jetables traditionnels\n  • Fournisseurs d'emballages biodégradables/compostables\n  • Plateformes/solutions de consigne digitale ou services logistiques tiers\n- Canaux d'acquisition:\n    • LinkedIn\n  • Emailing direct aux gérants\n  • Salons RSE / événements locaux\n  • Réseaux locaux d'entrepreneurs et bouche-à-oreille\n\nPRODUIT:\n- Proposition de valeur: Réduire jusqu'à 70% des déchets d'emballage des fast-foods tout en simplifiant l'opération via une consigne digitale et une logistique de lavage intégrée, réduisant coûts et impact environnemental.\n- Fonctionnalités clés:\n    • Boîtes réutilisables et lavables adaptées fast-food\n  • Consigne digitale via QR code pour suivi et retours\n  • Logistique intégrée de collecte / lavage / redistribution\n  • Tableau de bord de suivi des retours et d'utilisation\n  • Modèle de tarification/consigne configurable pour le restaurateur\n- Avantage concurrentiel: Offre end-to-end combinant consigne digitale + logistique intégrée, pensée pour la simplicité d'opération des indépendants (installation clé en main).\n\nCONTEXTE BUSINESS:\n- Stade du projet: mvp\n- Objectifs prioritaires:\n    • Confirmer l'intérêt du marché local (pilote à Chambéry)\n  • Valider le positionnement tarifaire et le modèle de consigne\n  • Signer 5 restaurants pilotes (seuil de succès déclaré)\n- Contraintes identifiées: Budget test limité (1000€) et durée courte (1 mois); livrables et outils de tracking non définis; barrières d'adoption = coût initial et complexité logistique perçue.\n\nHYPOTHÈSES DE DÉPART:\n- Sur le problème: Les fast-foods cherchent à réduire coûts et déchets mais manquent d'une solution réutilisable simple et rentable.\n- Sur la cible: Les gérants indépendants (35-50 ans) sont réceptifs aux solutions RSE si la mise en œuvre est simple et le ROI visible.\n- Sur la solution: Une offre avec consigne digitale et logistique intégrée sera suffisamment simple et économique pour qu'au moins 5 restaurants s'engagent en 1 mois et que les clients acceptent la consigne.\n\nGAPS ET QUESTIONS:\n- Informations manquantes:\n    • Estimation de la taille de marché (local puis européenne) et TAM/SAM/SOM\n  • Unit economics détaillés (coût par cycle lavage, coût logistique, coût matériel, marge)\n  • Modèle de pricing et montant de la consigne envisagé\n  • Données baseline du restaurant pilote (volume commandes, valeur client, taux de retour attendu)\n  • Livrables attendus du test et outils de tracking (métriques précises, méthode de collecte)\n  • Contraintes réglementaires et hygiène alimentaire applicables\n  • Plan opérationnel pour collecte/stockage/retour en cas d'échec client\n\n- Incohérences détectées:\n    • Objectif de test donné comme \"Confirmer l'intérêt du marché\" ou \"Evaluer le positionnement tarifaire\" — priorisation non claire\n  • Seuil de succès: 5 restaurants signés en 1 mois vs budget test de 1000€ — ressources probablement insuffisantes pour acquisition\n  • Livrables et outils de tracking sont 'undefined' alors qu'un MVP nécessite KPIs et méthode de collecte clairs\n\n- Zones de flou:\n    • Détail du service logistique (fréquence de collecte, rayon d'action, partenaire externe ou interne)\n  • Expérience client finale (comment se passe le retour en pratique, incitations pour le client)\n  • Capacité de production des boîtes, durabilité et coût unitaire\n  • Scalabilité du modèle (comment passer de pilote à déploiement multi-sites)\n  • Plan de gestion des pertes/permutations (p. ex. boîtes non retournées)\n\n---\n",
+          "tableau_1": {
+            "nom": "Combinaisons 1-9",
+            "description": "Premier lot de combinaisons Problème × Segment × Value Proposition",
+            "combinaisons": [
+              {
+                "combination_id": "P1_S1_VP1",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S1",
+                  "nom": "Gérants de fast-food indépendants engagés (Chambéry et alentours)",
+                  "description": "Indépendants 35–50 ans, sensibles aux coûts et à l’image RSE; cuisines fast-casual/à emporter; équipes 3–10 pers.; décisions rapides si ROI clair et mise en œuvre simple.",
+                  "taille_estimee": "Savoie (73) et alentours: ~400 fast-food/fast-casual indépendants; cible prioritaire bio/locaux/engagés: 80–120 établissements (sources: INSEE/CCI + annuaires locaux).",
+                  "canaux_acces": [
+                    "LinkedIn Sales Navigator (ciblage dirigeants restauration Chambéry/Annecy)",
+                    "Emailing ciblé via annuaires CCI Savoie",
+                    "Réseaux locaux (Chambéry Grand Lac Économie, French Tech in the Alps)"
+                  ],
+                  "comportements_cles": "Achats d’emballages mensuels via grossistes; arbitrage coût/qualité; ouverture à un pilote si opération simple et sans CAPEX; valorise la preuve locale."
+                },
+                "value_proposition": {
+                  "id": "VP1",
+                  "titre": "Réduire les coûts et les déchets d’emballage jusqu’à 70%",
+                  "description": "Système de boîtes réutilisables consignées avec logistique de collecte/lavage et tableau de bord ROI pour baisser le coût par commande et le volume de déchets.",
+                  "differenciateur": "Offre end-to-end locale (collecte/lavage) + consigne digitale sans friction; optimisée fast-food; pas de CAPEX, tarification à l’usage.",
+                  "preuve_valeur": "Pilote 30 jours: baseline vs post, €/commande emballage et kg de déchets évités mesurés; rapport ROI remis et validé par le gérant."
+                }
+              },
+              {
+                "combination_id": "P1_S1_VP2",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S1",
+                  "nom": "Gérants de fast-food indépendants engagés (Chambéry et alentours)",
+                  "description": "Indépendants 35–50 ans, sensibles aux coûts et à l’image RSE; cuisines fast-casual/à emporter; équipes 3–10 pers.; décisions rapides si ROI clair et mise en œuvre simple.",
+                  "taille_estimee": "Savoie (73) et alentours: ~400 fast-food/fast-casual indépendants; cible prioritaire bio/locaux/engagés: 80–120 établissements (sources: INSEE/CCI + annuaires locaux).",
+                  "canaux_acces": [
+                    "LinkedIn Sales Navigator (ciblage dirigeants restauration Chambéry/Annecy)",
+                    "Emailing ciblé via annuaires CCI Savoie",
+                    "Réseaux locaux (Chambéry Grand Lac Économie, French Tech in the Alps)"
+                  ],
+                  "comportements_cles": "Achats d’emballages mensuels via grossistes; arbitrage coût/qualité; ouverture à un pilote si opération simple et sans CAPEX; valorise la preuve locale."
+                },
+                "value_proposition": {
+                  "id": "VP2",
+                  "titre": "Déploiement express et expérience fluide (sans interruption)",
+                  "description": "Installation en 24h, QR code sans application, formation équipe, intégrations POS/plateformes; flux client simple et rapide.",
+                  "differenciateur": "Stack digitale prête à l’emploi + logistique synchronisée; kits comptoir, scripts et support sur site la première semaine.",
+                  "preuve_valeur": "Test éclair 7 jours: temps de service chronométré, taux d’adoption client >40%, zéro file d’attente additionnelle."
+                }
+              },
+              {
+                "combination_id": "P1_S1_VP3",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S1",
+                  "nom": "Gérants de fast-food indépendants engagés (Chambéry et alentours)",
+                  "description": "Indépendants 35–50 ans, sensibles aux coûts et à l’image RSE; cuisines fast-casual/à emporter; équipes 3–10 pers.; décisions rapides si ROI clair et mise en œuvre simple.",
+                  "taille_estimee": "Savoie (73) et alentours: ~400 fast-food/fast-casual indépendants; cible prioritaire bio/locaux/engagés: 80–120 établissements (sources: INSEE/CCI + annuaires locaux).",
+                  "canaux_acces": [
+                    "LinkedIn Sales Navigator (ciblage dirigeants restauration Chambéry/Annecy)",
+                    "Emailing ciblé via annuaires CCI Savoie",
+                    "Réseaux locaux (Chambéry Grand Lac Économie, French Tech in the Alps)"
+                  ],
+                  "comportements_cles": "Achats d’emballages mensuels via grossistes; arbitrage coût/qualité; ouverture à un pilote si opération simple et sans CAPEX; valorise la preuve locale."
+                },
+                "value_proposition": {
+                  "id": "VP3",
+                  "titre": "Zéro risque: garanties, conformité et preuve sociale",
+                  "description": "Contrat avec objectifs et remboursement si non atteints, conformité HACCP, assurance pertes, cas clients et labels RSE pour convaincre parties prenantes.",
+                  "differenciateur": "Combo garantie de performance + assurance + conformité auditée; badge public 'Zéro Déchet en cours' et témoignages pairs locaux.",
+                  "preuve_valeur": "POC 14–30 jours avec KPIs contractuels; certificat hygiène; vidéos témoignages et références du territoire."
+                }
+              },
+              {
+                "combination_id": "P1_S2_VP1",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S2",
+                  "nom": "Dark kitchens et restaurants à forte part livraison (AURA)",
+                  "description": "Cuisines sans salle et restos >60% de commandes via plateformes (Uber Eats/Deliveroo/Just Eat); priorisent vitesse, étanchéité et satisfaction livrée.",
+                  "taille_estimee": "AURA: 1 200–1 600 sites orientés livraison (estim. plateformes + SIRENE); cible initiale 100–200 autour de Chambéry/Grenoble/Annecy.",
+                  "canaux_acces": [
+                    "Partenariats locaux avec plateformes de livraison",
+                    "Prospection SIRENE filtrée 'livraison' + emailing",
+                    "Groupes WhatsApp/Slack de restaurateurs livraison"
+                  ],
+                  "comportements_cles": "Volumes soir/week-end; recherche fiabilité et standardisation; très sensibles aux avis clients et aux coûts par commande; testent volontiers sur un site pilote."
+                },
+                "value_proposition": {
+                  "id": "VP1",
+                  "titre": "Réduire les coûts et les déchets d’emballage jusqu’à 70%",
+                  "description": "Système de boîtes réutilisables consignées avec logistique de collecte/lavage et tableau de bord ROI pour baisser le coût par commande et le volume de déchets.",
+                  "differenciateur": "Offre end-to-end locale (collecte/lavage) + consigne digitale sans friction; optimisée fast-food; pas de CAPEX, tarification à l’usage.",
+                  "preuve_valeur": "Pilote 30 jours: baseline vs post, €/commande emballage et kg de déchets évités mesurés; rapport ROI remis et validé par le gérant."
+                }
+              },
+              {
+                "combination_id": "P1_S2_VP2",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S2",
+                  "nom": "Dark kitchens et restaurants à forte part livraison (AURA)",
+                  "description": "Cuisines sans salle et restos >60% de commandes via plateformes (Uber Eats/Deliveroo/Just Eat); priorisent vitesse, étanchéité et satisfaction livrée.",
+                  "taille_estimee": "AURA: 1 200–1 600 sites orientés livraison (estim. plateformes + SIRENE); cible initiale 100–200 autour de Chambéry/Grenoble/Annecy.",
+                  "canaux_acces": [
+                    "Partenariats locaux avec plateformes de livraison",
+                    "Prospection SIRENE filtrée 'livraison' + emailing",
+                    "Groupes WhatsApp/Slack de restaurateurs livraison"
+                  ],
+                  "comportements_cles": "Volumes soir/week-end; recherche fiabilité et standardisation; très sensibles aux avis clients et aux coûts par commande; testent volontiers sur un site pilote."
+                },
+                "value_proposition": {
+                  "id": "VP2",
+                  "titre": "Déploiement express et expérience fluide (sans interruption)",
+                  "description": "Installation en 24h, QR code sans application, formation équipe, intégrations POS/plateformes; flux client simple et rapide.",
+                  "differenciateur": "Stack digitale prête à l’emploi + logistique synchronisée; kits comptoir, scripts et support sur site la première semaine.",
+                  "preuve_valeur": "Test éclair 7 jours: temps de service chronométré, taux d’adoption client >40%, zéro file d’attente additionnelle."
+                }
+              },
+              {
+                "combination_id": "P1_S2_VP3",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S2",
+                  "nom": "Dark kitchens et restaurants à forte part livraison (AURA)",
+                  "description": "Cuisines sans salle et restos >60% de commandes via plateformes (Uber Eats/Deliveroo/Just Eat); priorisent vitesse, étanchéité et satisfaction livrée.",
+                  "taille_estimee": "AURA: 1 200–1 600 sites orientés livraison (estim. plateformes + SIRENE); cible initiale 100–200 autour de Chambéry/Grenoble/Annecy.",
+                  "canaux_acces": [
+                    "Partenariats locaux avec plateformes de livraison",
+                    "Prospection SIRENE filtrée 'livraison' + emailing",
+                    "Groupes WhatsApp/Slack de restaurateurs livraison"
+                  ],
+                  "comportements_cles": "Volumes soir/week-end; recherche fiabilité et standardisation; très sensibles aux avis clients et aux coûts par commande; testent volontiers sur un site pilote."
+                },
+                "value_proposition": {
+                  "id": "VP3",
+                  "titre": "Zéro risque: garanties, conformité et preuve sociale",
+                  "description": "Contrat avec objectifs et remboursement si non atteints, conformité HACCP, assurance pertes, cas clients et labels RSE pour convaincre parties prenantes.",
+                  "differenciateur": "Combo garantie de performance + assurance + conformité auditée; badge public 'Zéro Déchet en cours' et témoignages pairs locaux.",
+                  "preuve_valeur": "POC 14–30 jours avec KPIs contractuels; certificat hygiène; vidéos témoignages et références du territoire."
+                }
+              },
+              {
+                "combination_id": "P1_S3_VP1",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S3",
+                  "nom": "Organisateurs d’événements et campus zéro déchet",
+                  "description": "Festivals, salons, marchés, services événements universitaires; forte visibilité publique; objectifs ZD et contraintes locales de propreté.",
+                  "taille_estimee": "Savoie/Haute-Savoie: ~60 événements >1 000 visiteurs/an + 3 campus majeurs; 100–150 points de vente temporaires/an (agendas territoriaux + réseaux associatifs).",
+                  "canaux_acces": [
+                    "Services événementiels des mairies/agglo",
+                    "Réseau Zero Waste France et associations locales",
+                    "Salons professionnels RSE/événementiel (ex: Mountain Planet, OSV)"
+                  ],
+                  "comportements_cles": "Saisonnalité; contrats courts; appétence pour solutions clé en main avec staff briefé; valorisent garanties, conformité et communication RSE."
+                },
+                "value_proposition": {
+                  "id": "VP1",
+                  "titre": "Réduire les coûts et les déchets d’emballage jusqu’à 70%",
+                  "description": "Système de boîtes réutilisables consignées avec logistique de collecte/lavage et tableau de bord ROI pour baisser le coût par commande et le volume de déchets.",
+                  "differenciateur": "Offre end-to-end locale (collecte/lavage) + consigne digitale sans friction; optimisée fast-food; pas de CAPEX, tarification à l’usage.",
+                  "preuve_valeur": "Pilote 30 jours: baseline vs post, €/commande emballage et kg de déchets évités mesurés; rapport ROI remis et validé par le gérant."
+                }
+              },
+              {
+                "combination_id": "P1_S3_VP2",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S3",
+                  "nom": "Organisateurs d’événements et campus zéro déchet",
+                  "description": "Festivals, salons, marchés, services événements universitaires; forte visibilité publique; objectifs ZD et contraintes locales de propreté.",
+                  "taille_estimee": "Savoie/Haute-Savoie: ~60 événements >1 000 visiteurs/an + 3 campus majeurs; 100–150 points de vente temporaires/an (agendas territoriaux + réseaux associatifs).",
+                  "canaux_acces": [
+                    "Services événementiels des mairies/agglo",
+                    "Réseau Zero Waste France et associations locales",
+                    "Salons professionnels RSE/événementiel (ex: Mountain Planet, OSV)"
+                  ],
+                  "comportements_cles": "Saisonnalité; contrats courts; appétence pour solutions clé en main avec staff briefé; valorisent garanties, conformité et communication RSE."
+                },
+                "value_proposition": {
+                  "id": "VP2",
+                  "titre": "Déploiement express et expérience fluide (sans interruption)",
+                  "description": "Installation en 24h, QR code sans application, formation équipe, intégrations POS/plateformes; flux client simple et rapide.",
+                  "differenciateur": "Stack digitale prête à l’emploi + logistique synchronisée; kits comptoir, scripts et support sur site la première semaine.",
+                  "preuve_valeur": "Test éclair 7 jours: temps de service chronométré, taux d’adoption client >40%, zéro file d’attente additionnelle."
+                }
+              },
+              {
+                "combination_id": "P1_S3_VP3",
+                "probleme": {
+                  "id": "P1",
+                  "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                  "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                  "intensite": "forte",
+                  "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+                },
+                "segment": {
+                  "id": "S3",
+                  "nom": "Organisateurs d’événements et campus zéro déchet",
+                  "description": "Festivals, salons, marchés, services événements universitaires; forte visibilité publique; objectifs ZD et contraintes locales de propreté.",
+                  "taille_estimee": "Savoie/Haute-Savoie: ~60 événements >1 000 visiteurs/an + 3 campus majeurs; 100–150 points de vente temporaires/an (agendas territoriaux + réseaux associatifs).",
+                  "canaux_acces": [
+                    "Services événementiels des mairies/agglo",
+                    "Réseau Zero Waste France et associations locales",
+                    "Salons professionnels RSE/événementiel (ex: Mountain Planet, OSV)"
+                  ],
+                  "comportements_cles": "Saisonnalité; contrats courts; appétence pour solutions clé en main avec staff briefé; valorisent garanties, conformité et communication RSE."
+                },
+                "value_proposition": {
+                  "id": "VP3",
+                  "titre": "Zéro risque: garanties, conformité et preuve sociale",
+                  "description": "Contrat avec objectifs et remboursement si non atteints, conformité HACCP, assurance pertes, cas clients et labels RSE pour convaincre parties prenantes.",
+                  "differenciateur": "Combo garantie de performance + assurance + conformité auditée; badge public 'Zéro Déchet en cours' et témoignages pairs locaux.",
+                  "preuve_valeur": "POC 14–30 jours avec KPIs contractuels; certificat hygiène; vidéos témoignages et références du territoire."
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
   "connections": {
     "GPT-5": {
       "ai_languageModel": [
         [
           {
-            "node": "Hypothese scoring - tableau 1",
+            "node": "prompt v2",
             "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Structured Output Parser6": {
-      "ai_outputParser": [
-        [
-          {
-            "node": "Hypothese scoring - tableau 1",
-            "type": "ai_outputParser",
-            "index": 0
-          },
-          {
-            "node": "Hypothese scoring - tableau  2",
-            "type": "ai_outputParser",
-            "index": 0
-          },
-          {
-            "node": "Hypothese scoring - tableau 3",
-            "type": "ai_outputParser",
             "index": 0
           }
         ]
@@ -127,7 +517,62 @@
       "main": [
         [
           {
-            "node": "Hypothese scoring - tableau 1",
+            "node": "prompt v2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "prompt v2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Prompt v1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser7": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompt v1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5-MINI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "prompt v2",
             "type": "main",
             "index": 0
           }
@@ -139,8 +584,9 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "60870878-94c3-40c1-adb8-6dc929382a1f",
+  "versionId": "d0adb94e-8b35-4951-af54-d7615d744fc8",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
   },
   "id": "7MO9r8wEjRc7IVDC",

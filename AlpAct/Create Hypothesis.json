@@ -36,7 +36,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -3060,
+        -3056,
         3280
       ],
       "id": "129684a1-2316-47ee-89d5-31da09c0b838",
@@ -59,7 +59,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        -3160,
+        -3168,
         3040
       ],
       "id": "1d80afb5-8de4-4d6c-bdc1-f848f956df3c",
@@ -68,12 +68,12 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Contexte du projet :\n{{ $json.formatted_analysis }}\n\nTâche : Générer une matrice complète d’hypothèses PMF avec 3 variantes pour chaque dimension (problèmes, segments, propositions de valeur).\n\nInstructions pour les variantes :\n- PROBLÈMES (P1, P2, P3) :\n  - P1 = problème principal identifié\n  - P2 = autre angle du même pain point mais vécu différemment (ex: émotionnel, opérationnel, financier)\n  - P3 = un frein plus systémique ou caché qui empêche la résolution du problème\n- SEGMENTS (S1, S2, S3) :\n  - S1 = segment prioritaire évident\n  - S2 = segment adjacent ou niche proche\n  - S3 = early adopters atypiques ou segment extrême\n- VALUE PROPOSITIONS (VP1, VP2, VP3) :\n  - VP1 = bénéfice direct le plus attendu\n  - VP2 = différenciation sur la vitesse, l’expérience utilisateur ou l’intégration\n  - VP3 = angle de preuve sociale, réduction de risque, ou coût\n\nFormat JSON attendu :\n{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"Concise problem title in French\",\n      \"description\": \"Detailed pain point description explaining user frustration, frequency, and current inadequate solutions\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific validation method (surveys, interviews, behavioral data, etc.)\",\n      \"frequence_occurrence\": \"How often users encounter this problem\",\n      \"cout_inaction\": \"Cost or consequence of not solving this problem\"\n    },\n    {\n      \"id\": \"P2\",\n      \"titre\": \"Second distinct problem angle\",\n      \"description\": \"Different perspective on the core pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\", \n      \"mesurable_par\": \"Validation approach for this specific angle\",\n      \"frequence_occurrence\": \"Problem frequency for this variation\",\n      \"cout_inaction\": \"Impact of leaving this problem unsolved\"\n    },\n    {\n      \"id\": \"P3\",\n      \"titre\": \"Third unique problem angle\",\n      \"description\": \"Third distinct facet of the user struggle\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific measurement approach\",\n      \"frequence_occurrence\": \"How often this manifests\",\n      \"cout_inaction\": \"Consequences of inaction\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\",\n      \"nom\": \"Primary segment name in French\",\n      \"description\": \"Detailed characteristics including demographics, psychographics, and behavioral patterns\",\n      \"taille_estimee\": \"Market size with rationale (e.g., '50K users in France based on industry data')\",\n      \"canaux_acces\": [\"Primary channel\", \"Secondary channel\", \"Tertiary channel\"],\n      \"comportements_cles\": \"Key behaviors, decision-making patterns, and purchasing habits\",\n      \"budget_disponible\": \"Estimated spending capacity for this solution\",\n      \"urgence_besoin\": \"How urgently this segment needs the solution\"\n    },\n    {\n      \"id\": \"S2\", \n      \"nom\": \"Adjacent segment name\",\n      \"description\": \"Characteristics of related but distinct market segment\",\n      \"taille_estimee\": \"Different market size estimation with reasoning\",\n      \"canaux_acces\": [\"Different primary channel\", \"Alternative channels\"],\n      \"comportements_cles\": \"Distinct behavioral patterns for this segment\",\n      \"budget_disponible\": \"Budget considerations for this group\",\n      \"urgence_besoin\": \"Need urgency level\"\n    },\n    {\n      \"id\": \"S3\",\n      \"nom\": \"Alternative segment name\", \n      \"description\": \"Third market segment with unique characteristics\",\n      \"taille_estimee\": \"Third market size estimate with justification\",\n      \"canaux_acces\": [\"Unique access channels for this segment\"],\n      \"comportements_cles\": \"Specific behaviors distinguishing this group\",\n      \"budget_disponible\": \"Financial capacity assessment\",\n      \"urgence_besoin\": \"Problem urgency for this segment\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"Core value proposition title in French\",\n      \"description\": \"Primary benefit and how it solves the user's problem better than alternatives\",\n      \"differenciateur\": \"Clear competitive advantage and unique positioning vs existing solutions\",\n      \"preuve_valeur\": \"Specific method to demonstrate value (metrics, case studies, trials, etc.)\",\n      \"benefice_quantifiable\": \"Measurable outcome users can expect\",\n      \"temps_realisation\": \"Timeline to achieve promised benefits\"\n    },\n    {\n      \"id\": \"VP2\",\n      \"titre\": \"Alternative benefit angle\",\n      \"description\": \"Different value angle addressing same or related problems\",\n      \"differenciateur\": \"Distinct competitive positioning for this approach\", \n      \"preuve_valeur\": \"Value demonstration method for this variant\",\n      \"benefice_quantifiable\": \"Quantifiable benefit for this value prop\",\n      \"temps_realisation\": \"Expected timeframe for benefit realization\"\n    },\n    {\n      \"id\": \"VP3\",\n      \"titre\": \"Third value proposition angle\",\n      \"description\": \"Third distinct benefit perspective\", \n      \"differenciateur\": \"Unique differentiation approach\",\n      \"preuve_valeur\": \"Validation method for this value angle\",\n      \"benefice_quantifiable\": \"Measurable outcome specific to this VP\",\n      \"temps_realisation\": \"Timeline for achieving these benefits\"\n    }\n  ],\n  \"hypotheses_combinations\": [\n    {\n      \"hypothese_id\": \"VP1_S1_P1\",\n      \"description\": \"Brief description of this specific PMF hypothesis combining VP1, S1, and P1\",\n      \"confiance_niveau\": \"faible|moyenne|forte\",\n      \"test_priorite\": \"haute|moyenne|basse\",\n      \"validation_rapide\": \"Quick test method for this combination\"\n    }\n    // Include all 27 combinations (VP1-VP3 × S1-S3 × P1-P3)\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\",\n    \"langue_contenu\": \"français\",\n    \"framework_utilise\": \"Lean Startup + Customer Development\",\n    \"niveau_detail\": \"détaillé\"\n  }\n}\n\nRègles :\n- Produire 3 problèmes, 3 segments, 3 VP, puis 27 combinaisons complètes\n- Tous les textes doivent être en français\n- Inclure pour chaque problème un critère mesurable, pour chaque segment un canal d’accès précis, pour chaque VP une méthode de preuve de valeur\n- Sortir uniquement le JSON, sans aucun texte supplémentaire",
+        "text": "=Contexte du projet :\n{{ $json.formatted_analysis }}\n\nTâche : Générer une matrice complète d’hypothèses PMF avec 3 variantes pour chaque dimension (problèmes, segments, propositions de valeur).\n\nInstructions pour les variantes :\n- PROBLÈMES (P1, P2, P3) :\n  - P1 = problème principal identifié\n  - P2 = autre angle du même pain point mais vécu différemment (ex: émotionnel, opérationnel, financier)\n  - P3 = un frein plus systémique ou caché qui empêche la résolution du problème\n- SEGMENTS (S1, S2, S3) :\n  - S1 = segment prioritaire évident\n  - S2 = segment adjacent ou niche proche\n  - S3 = early adopters atypiques ou segment extrême\n- VALUE PROPOSITIONS (VP1, VP2, VP3) :\n  - VP1 = bénéfice direct le plus attendu\n  - VP2 = différenciation sur la vitesse, l’expérience utilisateur ou l’intégration\n  - VP3 = angle de preuve sociale, réduction de risque, ou coût\n\nFormat JSON attendu :\n{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"Concise problem title in French\",\n      \"description\": \"Detailed pain point description explaining user frustration, frequency, and current inadequate solutions\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific validation method (surveys, interviews, behavioral data, etc.)\",\n      \"frequence_occurrence\": \"How often users encounter this problem\",\n      \"cout_inaction\": \"Cost or consequence of not solving this problem\"\n    },\n    {\n      \"id\": \"P2\",\n      \"titre\": \"Second distinct problem angle\",\n      \"description\": \"Different perspective on the core pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\", \n      \"mesurable_par\": \"Validation approach for this specific angle\",\n      \"frequence_occurrence\": \"Problem frequency for this variation\",\n      \"cout_inaction\": \"Impact of leaving this problem unsolved\"\n    },\n    {\n      \"id\": \"P3\",\n      \"titre\": \"Third unique problem angle\",\n      \"description\": \"Third distinct facet of the user struggle\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"Specific measurement approach\",\n      \"frequence_occurrence\": \"How often this manifests\",\n      \"cout_inaction\": \"Consequences of inaction\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\",\n      \"nom\": \"Primary segment name in French\",\n      \"description\": \"Detailed characteristics including demographics, psychographics, and behavioral patterns\",\n      \"taille_estimee\": \"Market size with rationale (e.g., '50K users in France based on industry data')\",\n      \"canaux_acces\": [\"Primary channel\", \"Secondary channel\", \"Tertiary channel\"],\n      \"comportements_cles\": \"Key behaviors, decision-making patterns, and purchasing habits\",\n      \"budget_disponible\": \"Estimated spending capacity for this solution\",\n      \"urgence_besoin\": \"How urgently this segment needs the solution\",\n      \"market_type\":\"B2B ou B2C ou B2B2C\"\n    },\n    {\n      \"id\": \"S2\", \n      \"nom\": \"Adjacent segment name\",\n      \"description\": \"Characteristics of related but distinct market segment\",\n      \"taille_estimee\": \"Different market size estimation with reasoning\",\n      \"canaux_acces\": [\"Different primary channel\", \"Alternative channels\"],\n      \"comportements_cles\": \"Distinct behavioral patterns for this segment\",\n      \"budget_disponible\": \"Budget considerations for this group\",\n      \"urgence_besoin\": \"Need urgency level\",\n\"market_type\":\"B2B ou B2C ou B2B2C\"\n    },\n    {\n      \"id\": \"S3\",\n      \"nom\": \"Alternative segment name\", \n      \"description\": \"Third market segment with unique characteristics\",\n      \"taille_estimee\": \"Third market size estimate with justification\",\n      \"canaux_acces\": [\"Unique access channels for this segment\"],\n      \"comportements_cles\": \"Specific behaviors distinguishing this group\",\n      \"budget_disponible\": \"Financial capacity assessment\",\n      \"urgence_besoin\": \"Problem urgency for this segment\",\n\"market_type\":\"B2B ou B2C ou B2B2C\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"Core value proposition title in French\",\n      \"description\": \"Primary benefit and how it solves the user's problem better than alternatives\",\n      \"differenciateur\": \"Clear competitive advantage and unique positioning vs existing solutions\",\n      \"preuve_valeur\": \"Specific method to demonstrate value (metrics, case studies, trials, etc.)\",\n      \"benefice_quantifiable\": \"Measurable outcome users can expect\",\n      \"temps_realisation\": \"Timeline to achieve promised benefits\",\n    \"key_benefits\":[\"a list of 2-3 key benefits for this value proposition perceived by this customer segment\"],\n      \"product_name\": \"a name for this product/service from this value proposition\"\n    },\n    {\n      \"id\": \"VP2\",\n      \"titre\": \"Alternative benefit angle\",\n      \"description\": \"Different value angle addressing same or related problems\",\n      \"differenciateur\": \"Distinct competitive positioning for this approach\", \n      \"preuve_valeur\": \"Value demonstration method for this variant\",\n      \"benefice_quantifiable\": \"Quantifiable benefit for this value prop\",\n      \"temps_realisation\": \"Expected timeframe for benefit realization\",\n    \"key_benefits\":[\"a list of 2-3 key benefits for this value proposition perceived by this customer segment\"],\n      \"product_name\": \"a name for this product/service from this value proposition\"\n    },\n    {\n      \"id\": \"VP3\",\n      \"titre\": \"Third value proposition angle\",\n      \"description\": \"Third distinct benefit perspective\", \n      \"differenciateur\": \"Unique differentiation approach\",\n      \"preuve_valeur\": \"Validation method for this value angle\",\n      \"benefice_quantifiable\": \"Measurable outcome specific to this VP\",\n      \"temps_realisation\": \"Timeline for achieving these benefits\",\n    \"key_benefits\":[\"a list of 2-3 key benefits for this value proposition perceived by this customer segment\"],\n      \"product_name\": \"a name for this product/service from this value proposition\"\n    }\n  ],\n  \"hypotheses_combinations\": [\n    {\n      \"hypothese_id\": \"VP1_S1_P1\",\n      \"description\": \"Brief description of this specific PMF hypothesis combining VP1, S1, and P1\",\n      \"confiance_niveau\": \"faible|moyenne|forte\",\n      \"test_priorite\": \"haute|moyenne|basse\",\n      \"validation_rapide\": \"Quick test method for this combination\"\n    }\n    // Include all 27 combinations (VP1-VP3 × S1-S3 × P1-P3)\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\",\n    \"langue_contenu\": \"français\",\n    \"framework_utilise\": \"Lean Startup + Customer Development\",\n    \"niveau_detail\": \"détaillé\"\n  }\n}\n\nRègles :\n- Produire 3 problèmes, 3 segments, 3 VP, puis 27 combinaisons complètes\n- Tous les textes doivent être en français\n- Inclure pour chaque problème un critère mesurable, pour chaque segment un canal d’accès précis, pour chaque VP une méthode de preuve de valeur\n- Sortir uniquement le JSON, sans aucun texte supplémentaire",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
             {
-              "message": "=You are a Product-Market-Fit expert and business hypothesis validation specialist with deep expertise in startup methodology, customer discovery, and lean validation frameworks.\n\nYour role is to generate structured PMF matrices that explore *meaningfully different* angles of the same project through systematic variation of customer segments, value propositions, and problems addressed.\n\nCore Competencies:\n- Customer segmentation and behavioral analysis\n- Value proposition design and differentiation\n- Problem validation and measurement frameworks\n- Rapid hypothesis testing methodologies\n- Market sizing and opportunity assessment\n\nCritical Divergence Rules:\n- Each of the 3 variants for a dimension (problems, segments, value propositions) must explore *different perspectives*:\n  - Segments: demographic vs. psychographic vs. behavioral vs. niche B2B/B2C\n  - Problems: functional pain vs. emotional friction vs. systemic barrier\n  - Value propositions: efficiency vs. cost saving vs. experience enhancement\n- Do not produce superficial rewordings; each variant must stand alone as a distinct hypothesis.\n- Ensure each hypothesis is SMART and testable with clear validation methods.\n\nOutput Rules:\n- Return ONLY valid JSON, in French language\n- Include 27 hypotheses combinations (3 × 3 × 3)\n- Each combination must have a unique ID and a quick test method\n- No explanatory text outside the JSON\n"
+              "message": "=You are a Product-Market-Fit expert and business hypothesis validation specialist with deep expertise in startup methodology, customer discovery, and lean validation frameworks.\n\nYour role is to generate structured PMF matrices that explore *meaningfully different* angles of the same project through systematic variation of customer segments, value propositions, and problems addressed.\n\nCore Competencies:\n- Customer segmentation and behavioral analysis\n- Value proposition design and differentiation\n- Problem validation and measurement frameworks\n- Rapid hypothesis testing methodologies\n- Market sizing and opportunity assessment\n\nCritical Divergence Rules:\n- Each of the 3 variants for a dimension (problems, segments, value propositions) must explore *different perspectives*:\n  - Segments: demographic vs. psychographic vs. behavioral vs. niche B2B/B2C/B2B2C\n  - Problems: functional pain vs. emotional friction vs. systemic barrier\n  - Value propositions: efficiency vs. cost saving vs. experience enhancement\n- Do not produce superficial rewordings; each variant must stand alone as a distinct hypothesis.\n- Ensure each hypothesis is SMART and testable with clear validation methods.\n\nOutput Rules:\n- Return ONLY valid JSON, in French language\n- Include 27 hypotheses combinations (3 × 3 × 3)\n- Each combination must have a unique ID and a quick test method\n- No explanatory text outside the JSON\n"
             }
           ]
         },
@@ -82,7 +82,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        -1900,
+        -1904,
         3040
       ],
       "id": "57305cde-5173-4cfe-b11e-17560d421baf",
@@ -90,13 +90,13 @@
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"string\",\n      \"description\": \"string détaillée du pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"string (comment valider)\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\", \n      \"nom\": \"string\",\n      \"description\": \"string avec caractéristiques\",\n      \"taille_estimee\": \"string\",\n      \"canaux_acces\": [\"canal1\", \"canal2\"],\n      \"comportements_cles\": \"string\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"string\", \n      \"description\": \"string du bénéfice principal\",\n      \"differenciateur\": \"string (vs concurrence)\",\n      \"preuve_valeur\": \"string (comment démontrer)\"\n    }\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\"\n  }\n}\n"
+        "jsonSchemaExample": "{\n  \"problemes\": [\n    {\n      \"id\": \"P1\",\n      \"titre\": \"string\",\n      \"description\": \"string détaillée du pain point\",\n      \"intensite_estimee\": \"faible|moyenne|forte\",\n      \"mesurable_par\": \"string (comment valider)\"\n    }\n  ],\n  \"segments\": [\n    {\n      \"id\": \"S1\", \n      \"nom\": \"string\",\n      \"description\": \"string avec caractéristiques\",\n      \"taille_estimee\": \"string\",\n      \"canaux_acces\": [\"canal1\", \"canal2\"],\n      \"comportements_cles\": \"string\",\n      \"market_type\":\"string\"\n    }\n  ],\n  \"value_propositions\": [\n    {\n      \"id\": \"VP1\",\n      \"titre\": \"string\", \n      \"description\": \"string du bénéfice principal\",\n      \"differenciateur\": \"string (vs concurrence)\",\n      \"preuve_valeur\": \"string (comment démontrer)\",\n      \"key_benefits\":[\"a list of 2-3 key benefits for this value proposition perceived by this customer segment\"],\n      \"product_name\": \"a name for this product/service from this value proposition\"\n    }\n  ],\n  \"metadata\": {\n    \"projet\": \"{{ $('Creation contexte projet').item.json.output.vision_projet.mission }}\",\n    \"total_combinaisons\": 27,\n    \"genere_le\": \"{{ $now }}\"\n  }\n}\n"
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -1720,
-        3220
+        -1728,
+        3232
       ],
       "id": "bf633af2-5aae-4f79-863b-0b55a9f083f4",
       "name": "Structured Output Parser4"
@@ -114,8 +114,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        -3220,
-        3260
+        -3216,
+        3264
       ],
       "id": "c7579935-cc16-4ed6-9dea-0b24f4e338f7",
       "name": "GPT-5-MINI",
@@ -133,7 +133,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3420,
+        -3424,
         3040
       ],
       "id": "1ea8022b-01c7-4a24-b9f1-93ede22f228a",
@@ -146,7 +146,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1540,
+        -1536,
         3040
       ],
       "id": "15a70659-3d3b-4179-a209-792d6e8b71fb",
@@ -159,7 +159,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1320,
+        -1328,
         3040
       ],
       "id": "420239d7-db4b-49a9-86d9-3ae16d2c23e9",
@@ -172,7 +172,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -680,
+        -688,
         3040
       ],
       "id": "8ffb3c2d-424a-4b19-b29d-8de9c89cbd85",
@@ -224,8 +224,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        2840
+        -1024,
+        2848
       ],
       "name": "Call Scoring Tableau Hypotheses",
       "id": "0c3a2b5f-7252-4566-b552-8ea91e2331a8"
@@ -276,8 +276,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        3060
+        -1024,
+        3072
       ],
       "name": "Call Scoring Tableau Hypotheses1",
       "id": "e1063450-e8e7-424f-ba8d-f18b2ad80072"
@@ -328,8 +328,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        3300
+        -1024,
+        3312
       ],
       "name": "Call Scoring Tableau Hypotheses2",
       "id": "403e216a-3e7a-40bd-9973-d6d006e0ded4"
@@ -342,7 +342,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -600,
+        -608,
         2640
       ],
       "typeVersion": 1,
@@ -358,7 +358,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -140,
+        -144,
         2640
       ],
       "typeVersion": 1,
@@ -395,7 +395,7 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -460,
+        -464,
         3040
       ],
       "id": "77f2bfa3-d5f5-4338-985e-b53cbe6dc133",
@@ -409,7 +409,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -3420,
+        -3424,
         2640
       ],
       "typeVersion": 1,
@@ -473,8 +473,8 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        820,
-        3060
+        832,
+        3072
       ],
       "id": "3221981c-3cc7-4e65-a3d6-f8bfc6386682",
       "name": "Ajout des hypothèses dans Notion",
@@ -492,8 +492,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2580,
-        3260
+        -2576,
+        3264
       ],
       "id": "c1e3b68d-82e1-4101-b835-9c334377b8a9",
       "name": "JSON -> String"
@@ -589,8 +589,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        -2460,
-        3000
+        -2464,
+        3008
       ],
       "id": "ed54aa8e-ac9f-4292-8aac-51599da7d413",
       "name": "Save contexte projet",
@@ -612,7 +612,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2140,
+        -2144,
         3040
       ],
       "id": "2e1a0045-c1bd-4d0d-a645-11edda160cb9",
@@ -627,8 +627,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        420,
-        3060
+        432,
+        3072
       ],
       "id": "75fbf840-faa0-474c-aac0-593a2ccaae53",
       "name": "Merge2"
@@ -651,7 +651,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        40,
+        48,
         3040
       ],
       "id": "5e252e83-9dc5-4857-800a-f3e32c51d22e",
@@ -662,8 +662,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        440,
-        2780
+        448,
+        2784
       ],
       "id": "c434960a-7b5a-4cb1-ba7f-51f4f2ffffee",
       "name": "When clicking ‘Execute workflow’"
@@ -685,8 +685,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1300,
-        3080
+        1312,
+        3088
       ],
       "id": "7a2ff8b5-7ed1-4f84-a809-720e83415fcc",
       "name": "RETURN"
@@ -705,8 +705,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1020,
-        3060
+        1024,
+        3072
       ],
       "id": "66f2f5c4-92ae-4a39-a4e2-7a0274766bb2",
       "name": "Display Done Icon on Page",
@@ -733,7 +733,7 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        -2840,
+        -2848,
         2800
       ],
       "id": "332095cd-9b00-4663-80d3-caf1d2ad615b",
@@ -827,8 +827,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        620,
-        3060
+        624,
+        3072
       ],
       "id": "a8ea9550-9b03-42b7-a8e6-6c28df20c6c4",
       "name": "Ajout des hypotheses dans NocoDb",
@@ -886,7 +886,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        140,
+        144,
         3280
       ],
       "name": "Call GetNotionDatabaseId",
@@ -905,7 +905,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -4140,
+        -4144,
         3040
       ],
       "id": "d9a82e27-4f65-4b13-a124-4c8121e89780",
@@ -928,7 +928,7 @@
       "typeVersion": 1.2,
       "position": [
         -1920,
-        3240
+        3248
       ],
       "id": "7d308544-431c-44a4-a99d-3e6fffad611b",
       "name": "GPT-5 Calibrated",
@@ -940,6 +940,175 @@
         }
       },
       "notes": "Pour maximiser la divergence et éviter les redites :\nmodel: gpt-5\ntemperature: 0.9 (augmente la créativité/divergence)\ntop_p: 0.9 (favorise la diversité tout en restant cohérent)\nfrequency_penalty: 0.4 (évite répétitions)\npresence_penalty: 0.6 (encourage l’exploration de nouvelles idées)\nmax_tokens: 4000–6000 (il faut de la marge pour 27 combinaisons détaillées)"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7MO9r8wEjRc7IVDC",
+          "mode": "list",
+          "cachedResultName": "Scoring Tableau Hypotheses"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_analysis": "={{ $('JSON -> String').item.json.formatted_analysis }}",
+            "tableau_1_text": "={{ $json.tableau_1.toJsonString() }}"
+          },
+          "matchingColumns": [
+            "formatted_analysis",
+            "tableau_1_text"
+          ],
+          "schema": [
+            {
+              "id": "formatted_analysis",
+              "displayName": "formatted_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tableau_1_text",
+              "displayName": "tableau_1_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1008,
+        3584
+      ],
+      "name": "Call Scoring Tableau Hypotheses3",
+      "id": "a4be7331-18c2-47a3-83cd-0c04258278db"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -656,
+        3792
+      ],
+      "id": "a5f177cd-1882-4246-9c49-0c7ac24267cf",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7MO9r8wEjRc7IVDC",
+          "mode": "list",
+          "cachedResultName": "Scoring Tableau Hypotheses"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_analysis": "={{ $('JSON -> String').item.json.formatted_analysis }}",
+            "tableau_1_text": "={{ $json.tableau_2.toJsonString() }}"
+          },
+          "matchingColumns": [
+            "formatted_analysis",
+            "tableau_1_text"
+          ],
+          "schema": [
+            {
+              "id": "formatted_analysis",
+              "displayName": "formatted_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tableau_1_text",
+              "displayName": "tableau_1_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1008,
+        3824
+      ],
+      "name": "Call Scoring Tableau Hypotheses4",
+      "id": "c0c8da89-d860-4185-a43e-ad001a8a42e2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7MO9r8wEjRc7IVDC",
+          "mode": "list",
+          "cachedResultName": "Scoring Tableau Hypotheses"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_analysis": "={{ $('JSON -> String').item.json.formatted_analysis }}",
+            "tableau_1_text": "={{ $json.tableau_3.toJsonString() }}"
+          },
+          "matchingColumns": [
+            "formatted_analysis",
+            "tableau_1_text"
+          ],
+          "schema": [
+            {
+              "id": "formatted_analysis",
+              "displayName": "formatted_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tableau_1_text",
+              "displayName": "tableau_1_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -992,
+        4064
+      ],
+      "name": "Call Scoring Tableau Hypotheses5",
+      "id": "a48e9a5b-ea07-40a7-ad1c-9d4bb9417011"
     }
   ],
   "pinData": {
@@ -947,6 +1116,124 @@
       {
         "json": {
           "project_name": "GreenPack"
+        }
+      }
+    ],
+    "Generation hypothèses PMF": [
+      {
+        "json": {
+          "output": {
+            "problemes": [
+              {
+                "id": "P1",
+                "titre": "Coût et volume de déchets d’emballages jetables insoutenables",
+                "description": "Les fast-foods indépendants dépensent chaque mois une part significative de leur marge en emballages jetables et en gestion des déchets (achats, stockage, évacuation), avec des coûts volatils et une pression réglementaire croissante. Les solutions alternatives (biodégradables/compostables) restent chères et ne réduisent pas vraiment le volume de déchets. Fréquence quotidienne, impact direct sur la marge et la propreté en cuisine.",
+                "intensite_estimee": "forte",
+                "mesurable_par": "Audit 4 semaines: extraction des factures d’emballages (€/mois, €/commande), pesée des déchets (kg/semaine) et ratio déchets/100 commandes; comparaison baseline vs benchmarks locaux."
+              },
+              {
+                "id": "P2",
+                "titre": "Frictions opérationnelles et d’image liées au jetable",
+                "description": "Le personnel subit une charge mentale (réassort, tri, débordement de bacs), ce qui ralentit le service et dégrade l’expérience client. Les clients sensibles à l’écologie laissent des avis négatifs sur le jetable, affectant la réputation RSE et les ventes. Fréquence élevée aux heures de pointe; frustrations récurrentes.",
+                "intensite_estimee": "moyenne",
+                "mesurable_par": "Interviews (n=10), chronométrage caisse (sec/commande), NPS clients et analyse des avis Google/Instagram (occurrences de 'déchet', 'plastique', 'emballage')."
+              },
+              {
+                "id": "P3",
+                "titre": "Verrous systémiques: logistique, intégration SI et hygiène",
+                "description": "Même motivés, les gérants n’adoptent pas le réemploi faute d’infrastructure fiable (collecte/lavage), d’intégration digitale simple (POS/QR/plateformes) et de clarté réglementaire (HACCP, traçabilité). L’absence d’un fournisseur end-to-end et la peur du non-retour bloquent la décision.",
+                "intensite_estimee": "forte",
+                "mesurable_par": "Cartographie prestataires (nombre, rayon, SLA), test d’intégration POS sandbox, audit HACCP par consultant, micro-pilote de collecte J+1 (taux de retour, pertes, conformité)."
+              }
+            ],
+            "segments": [
+              {
+                "id": "S1",
+                "nom": "Gérants de fast-food indépendants engagés (Chambéry et alentours)",
+                "description": "Indépendants 35–50 ans, sensibles aux coûts et à l’image RSE; cuisines fast-casual/à emporter; équipes 3–10 pers.; décisions rapides si ROI clair et mise en œuvre simple.",
+                "taille_estimee": "Savoie (73) et alentours: ~400 fast-food/fast-casual indépendants; cible prioritaire bio/locaux/engagés: 80–120 établissements (sources: INSEE/CCI + annuaires locaux).",
+                "canaux_acces": [
+                  "LinkedIn Sales Navigator (ciblage dirigeants restauration Chambéry/Annecy)",
+                  "Emailing ciblé via annuaires CCI Savoie",
+                  "Réseaux locaux (Chambéry Grand Lac Économie, French Tech in the Alps)"
+                ],
+                "comportements_cles": "Achats d’emballages mensuels via grossistes; arbitrage coût/qualité; ouverture à un pilote si opération simple et sans CAPEX; valorise la preuve locale.",
+                "market_type": "B2B"
+              },
+              {
+                "id": "S2",
+                "nom": "Dark kitchens et restaurants à forte part livraison (AURA)",
+                "description": "Cuisines sans salle et restos >60% de commandes via plateformes (Uber Eats/Deliveroo/Just Eat); priorisent vitesse, étanchéité et satisfaction livrée.",
+                "taille_estimee": "AURA: 1 200–1 600 sites orientés livraison (estim. plateformes + SIRENE); cible initiale 100–200 autour de Chambéry/Grenoble/Annecy.",
+                "canaux_acces": [
+                  "Partenariats locaux avec plateformes de livraison",
+                  "Prospection SIRENE filtrée 'livraison' + emailing",
+                  "Groupes WhatsApp/Slack de restaurateurs livraison"
+                ],
+                "comportements_cles": "Volumes soir/week-end; recherche fiabilité et standardisation; très sensibles aux avis clients et aux coûts par commande; testent volontiers sur un site pilote.",
+                "market_type": "B2B2C"
+              },
+              {
+                "id": "S3",
+                "nom": "Organisateurs d’événements et campus zéro déchet",
+                "description": "Festivals, salons, marchés, services événements universitaires; forte visibilité publique; objectifs ZD et contraintes locales de propreté.",
+                "taille_estimee": "Savoie/Haute-Savoie: ~60 événements >1 000 visiteurs/an + 3 campus majeurs; 100–150 points de vente temporaires/an (agendas territoriaux + réseaux associatifs).",
+                "canaux_acces": [
+                  "Services événementiels des mairies/agglo",
+                  "Réseau Zero Waste France et associations locales",
+                  "Salons professionnels RSE/événementiel (ex: Mountain Planet, OSV)"
+                ],
+                "comportements_cles": "Saisonnalité; contrats courts; appétence pour solutions clé en main avec staff briefé; valorisent garanties, conformité et communication RSE.",
+                "market_type": "B2B"
+              }
+            ],
+            "value_propositions": [
+              {
+                "id": "VP1",
+                "titre": "Réduire les coûts et les déchets d’emballage jusqu’à 70%",
+                "description": "Système de boîtes réutilisables consignées avec logistique de collecte/lavage et tableau de bord ROI pour baisser le coût par commande et le volume de déchets.",
+                "differenciateur": "Offre end-to-end locale (collecte/lavage) + consigne digitale sans friction; optimisée fast-food; pas de CAPEX, tarification à l’usage.",
+                "preuve_valeur": "Pilote 30 jours: baseline vs post, €/commande emballage et kg de déchets évités mesurés; rapport ROI remis et validé par le gérant.",
+                "key_benefits": [
+                  "Jusqu’à -30 à -50% de coût d’emballage/commande",
+                  "Moins de rotations et de bacs débordants",
+                  "Indicateurs RSE prêts à communiquer"
+                ],
+                "product_name": "Pack Réemploi ROI"
+              },
+              {
+                "id": "VP2",
+                "titre": "Déploiement express et expérience fluide (sans interruption)",
+                "description": "Installation en 24h, QR code sans application, formation équipe, intégrations POS/plateformes; flux client simple et rapide.",
+                "differenciateur": "Stack digitale prête à l’emploi + logistique synchronisée; kits comptoir, scripts et support sur site la première semaine.",
+                "preuve_valeur": "Test éclair 7 jours: temps de service chronométré, taux d’adoption client >40%, zéro file d’attente additionnelle.",
+                "key_benefits": [
+                  "Onboarding en 1 jour",
+                  "Réduction du stress en caisse",
+                  "Compréhension client en <10 secondes"
+                ],
+                "product_name": "Starter Plug&Play"
+              },
+              {
+                "id": "VP3",
+                "titre": "Zéro risque: garanties, conformité et preuve sociale",
+                "description": "Contrat avec objectifs et remboursement si non atteints, conformité HACCP, assurance pertes, cas clients et labels RSE pour convaincre parties prenantes.",
+                "differenciateur": "Combo garantie de performance + assurance + conformité auditée; badge public 'Zéro Déchet en cours' et témoignages pairs locaux.",
+                "preuve_valeur": "POC 14–30 jours avec KPIs contractuels; certificat hygiène; vidéos témoignages et références du territoire.",
+                "key_benefits": [
+                  "Risque perçu minimal",
+                  "Crédibilité vis-à-vis des clients et autorités",
+                  "Décision d’achat accélérée"
+                ],
+                "product_name": "SafeSwitch Zéro Déchet"
+              }
+            ],
+            "metadata": {
+              "projet": "Réduire les déchets plastiques à usage unique grâce à des emballages réutilisables et consignés.",
+              "total_combinaisons": 27,
+              "genere_le": "2025-09-10T13:11:38+02:00"
+            }
+          }
         }
       }
     ]
@@ -1039,6 +1326,21 @@
         [
           {
             "node": "Code",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Scoring Tableau Hypotheses3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Scoring Tableau Hypotheses4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Scoring Tableau Hypotheses5",
             "type": "main",
             "index": 0
           }
@@ -1297,13 +1599,57 @@
           }
         ]
       ]
+    },
+    "Call Scoring Tableau Hypotheses3": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate only hypotheses retenus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Scoring Tableau Hypotheses4": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Call Scoring Tableau Hypotheses5": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "7b075ebc-3307-404e-b99d-8e47c08fe063",
+  "versionId": "ca2bb1b6-d882-4d1b-9360-45a60e9e9db8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
