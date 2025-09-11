@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "playwright": "^1.46.0"
+    "@azure/functions": "^4.8.0",
+    "playwright": "^1.55.0"
   }
 }
