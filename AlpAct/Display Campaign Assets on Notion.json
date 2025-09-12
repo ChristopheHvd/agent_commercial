@@ -1,0 +1,521 @@
+{
+  "name": "Display Campaign Assets on Notion",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "campaigns",
+              "type": "any"
+            },
+            {
+              "name": "project_name"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -112,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "w8fin9y3",
+        "projectId": "pb01kdovzticqxi",
+        "table": "mgkbmw38vd2aknn",
+        "limit": 1,
+        "options": {
+          "fields": [
+            "ID_Notion"
+          ],
+          "where": "(project_name,eq,GreenPack)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        672,
+        512
+      ],
+      "id": "62ffc4c4-3144-428c-beee-639253e91012",
+      "name": "Get ID Notion",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "A7ud9P88oTJkeL1f",
+          "name": "NocoDb AlpAct - Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        944,
+        368
+      ],
+      "id": "1c7622d5-27bd-4bb8-8df3-13dd1159b6e6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/blocks/{{ $json.id }}/children",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"children\": {{ $('Merge').item.json.blocks.toJsonString() }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        384
+      ],
+      "id": "899ab807-f102-4e53-b98f-689859318d03",
+      "name": "HTTP Request To Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Function Item\nfunction safeParse(x, fallback = {}) {\n  if (!x) return fallback;\n  if (typeof x === 'string') { try { return JSON.parse(x); } catch { return fallback; } }\n  if (typeof x === 'object') return x;\n  return fallback;\n}\nfunction mergeUnique(arrA, arrB) {\n  const out = []; const seen = new Set();\n  const arrs = [arrA, arrB].filter(Array.isArray);\n  for (const arr of arrs) for (let v of arr) {\n    if (typeof v === 'string') v = v.trim();\n    if (v && !seen.has(v)) { seen.add(v); out.push(v); }\n  }\n  return out;\n}\nconst rich = (t) => [{ type: 'text', text: { content: String(t ?? '') }}];\n\nfunction paragraph(text) {\n  return { object: 'block', type: 'paragraph', paragraph: { rich_text: rich(text) } };\n}\nfunction heading(level, text) {\n  const map = {1: 'heading_1', 2: 'heading_2', 3: 'heading_3'};\n  return { object: 'block', type: map[level], [map[level]]: { rich_text: rich(text) } };\n}\nfunction bullet(text) {\n  return { object: 'block', type: 'bulleted_list_item', bulleted_list_item: { rich_text: rich(text) } };\n}\nfunction codeBlock(text, lang = 'plain text') {\n  return { object: 'block', type: 'code', code: { rich_text: rich(text), language: lang } };\n}\nfunction imageExternal(url, alt) {\n  const b = { object: 'block', type: 'image', image: { type: 'external', external: { url } } };\n  if (alt) b.image.caption = [{ type: 'text', text: { content: alt } }];\n  return b;\n}\nfunction toggle(title, children = []) {\n  return { object: 'block', type: 'toggle', toggle: { rich_text: rich(title), children } };\n}\nconst divider = { object: 'block', type: 'divider', divider: {} };\n\nfunction normalizeVariant(v) {\n  const ad = safeParse(v.ad_json, {});\n  const currentArr = Array.isArray(v.current_ad_json) ? v.current_ad_json : [];\n  const baseFromCurrent = currentArr.length ? safeParse(currentArr[0], {}) : {};\n\n  const primary_text = v.primary_text ?? ad.primary_text ?? baseFromCurrent.primary_text ?? '';\n  const headlines = mergeUnique(ad.headlines, v.headlines ?? baseFromCurrent.headlines);\n  const descriptions = mergeUnique(ad.descriptions, v.descriptions ?? baseFromCurrent.descriptions);\n  const cta = v.cta ?? ad.cta ?? baseFromCurrent.cta ?? '';\n  const alt_text = v.alt_text ?? ad.alt_text ?? baseFromCurrent.alt_text ?? '';\n\n  const public_url =\n    v.public_url || v.preview_public_url || v.image_public_url ||\n    ad.public_url || ad.preview_public_url || ad.image_public_url || '';\n\n  return {\n    variant_id: v.variant_id ?? ad.variant_id ?? baseFromCurrent.variant_id ?? '',\n    primary_text, headlines, descriptions, cta, alt_text, public_url\n  };\n}\n\nfunction buildVariantColumn(v, fallbackLabel) {\n  if (!v) {\n    return {\n      object: 'block',\n      type: 'column',\n      column: { children: [ heading(3, `Variante ${fallbackLabel}`), paragraph('Aucune donnée pour cette variante.')] }\n    };\n  }\n  const textsChildren = [\n    paragraph(v.primary_text || '—'),\n    ...(v.headlines?.length ? [paragraph('Headlines :'), ...v.headlines.map(bullet)] : []),\n    ...(v.descriptions?.length ? [paragraph('Descriptions :'), ...v.descriptions.map(bullet)] : []),\n    paragraph(`CTA : ${v.cta || '—'}`)\n  ];\n  return {\n    object: 'block',\n    type: 'column',\n    column: {\n      children: [\n        heading(3, `Variante ${v.variant_id || ''}`),\n        ...(v.public_url ? [imageExternal(v.public_url, v.alt_text)] : [paragraph('⚠️ Image non disponible')]),\n        toggle('Textes', textsChildren),\n        codeBlock(v.public_url || 'no-public-url')\n      ]\n    }\n  };\n}\n\n// ---- MAIN ----\nconst campaigns = Array.isArray($json.campaigns) ? $json.campaigns : [];\n// Normalise, trie A→C et s’assure de 3 slots (A,B,C)\nconst norm = campaigns.map(normalizeVariant).sort((a,b) => String(a.variant_id).localeCompare(String(b.variant_id)));\nconst labels = ['A','B','C'];\nconst byLabel = new Map(norm.map(v => [String(v.variant_id).toUpperCase(), v]));\nconst columns = labels.map(L => buildVariantColumn(byLabel.get(L), L));\n\nconst blocks = [\n  heading(2, 'Campagne — 3 variantes'),\n  divider,\n  { object: 'block', type: 'column_list', column_list: { children: columns } },\n  divider\n];\n\nreturn { json: { blocks } };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        352
+      ],
+      "id": "86ac51a6-8aab-4813-8a84-96b33db77eb3",
+      "name": "Create Notion Blocks"
+    },
+    {
+      "parameters": {
+        "content": "## Idempotence",
+        "height": 400,
+        "width": 768
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1136,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "75d730fb-6183-4a4f-9070-8493410f8d4d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "258hRRJvTwdJTIUC",
+          "mode": "list",
+          "cachedResultName": "Get Notion Block Id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "targetBlockTitle": "=Campagne",
+            "targetMainPageId": "={{ $json.ID_Notion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "targetBlockTitle",
+              "displayName": "targetBlockTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "targetMainPageId",
+              "displayName": "targetMainPageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1232,
+        368
+      ],
+      "id": "05b4b74d-376f-4416-9398-dea70ff12cea",
+      "name": "Get Existing Campaign Blocks"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "24aa1872-1959-48ad-9a24-bb7c70fb85ae",
+              "leftValue": "={{ $json.block_id }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1456,
+        368
+      ],
+      "id": "a8dd4ee0-ecd4-4b5e-8cad-eb143baffb8b",
+      "name": "If blocks already exists"
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Merge').item.json.ID_Notion }}",
+          "mode": "id"
+        },
+        "title": "Campagne",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        384
+      ],
+      "id": "782600d8-daf6-4497-8540-8629d5030f8d",
+      "name": "Create a page",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "archive",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $json.block_id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        272
+      ],
+      "id": "8b379945-522f-46d2-af88-64a02c120eba",
+      "name": "Archive page",
+      "credentials": {
+        "notionApi": {
+          "id": "snOvbWupBFXeHmM7",
+          "name": "Notion AlpAct"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "campaigns": [
+            {
+              "success": true,
+              "preview_public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663135071.png",
+              "error": "rename: File already exists From: /public/tmp/images/greenBowlCounter_1757603254408.png To: /public/GreenPack/images/greenBowlCounter_1757603254408.png",
+              "image_public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/greenbowl_1757663131340.png",
+              "variant_id": "A",
+              "primary_text": "Marre du jetable ? GreenPack vous aide à passer aux contenants réutilisables et consignés sans perturber votre service. Mise en place clé en main, retours simplifiés (QR/code) et accompagnement équipe. Attirez une clientèle éco‑consciente et renforcez votre RSE. Réservez une démo.",
+              "headlines": [
+                "Passez au réemploi sans friction",
+                "Consigne simple pour fast‑food",
+                "Moins de plastique, plus de clients"
+              ],
+              "descriptions": [
+                "Solution clé en main de contenants réutilisables et consignés.",
+                "Onboarding équipe, logistique de retour et suivi inclus."
+              ],
+              "cta": "S’INSCRIRE",
+              "image_prompt": "Photo 4:5 (1080x1350), intérieur d’un fast‑food indépendant moderne. Le gérant derrière le comptoir tient un bol réutilisable vert avec logo générique « G » (pas de marque réelle). Comptoir en bois clair, cuisine propre en arrière‑plan, client souriant reçoit sa commande. Palette vert/blanc, lumière naturelle douce, style documentaire professionnel, profondeur de champ légère, rendu net, sans texte ni filigrane.",
+              "alt_text": "Gérant de fast‑food présentant un contenant réutilisable vert au comptoir.",
+              "current_ad_json": [
+                {
+                  "variant_id": "A",
+                  "primary_text": "Marre du jetable ? GreenPack vous aide à passer aux contenants réutilisables et consignés sans perturber votre service. Mise en place clé en main, retours simplifiés (QR/code) et accompagnement équipe. Attirez une clientèle éco‑consciente et renforcez votre RSE. Réservez une démo.",
+                  "headlines": [
+                    "Passez au réemploi sans friction",
+                    "Consigne simple pour fast‑food",
+                    "Moins de plastique, plus de clients"
+                  ],
+                  "descriptions": [
+                    "Solution clé en main de contenants réutilisables et consignés.",
+                    "Onboarding équipe, logistique de retour et suivi inclus."
+                  ],
+                  "cta": "S’INSCRIRE",
+                  "image_prompt": "Photo 4:5 (1080x1350), intérieur d’un fast‑food indépendant moderne. Le gérant derrière le comptoir tient un bol réutilisable vert avec logo générique « G » (pas de marque réelle). Comptoir en bois clair, cuisine propre en arrière‑plan, client souriant reçoit sa commande. Palette vert/blanc, lumière naturelle douce, style documentaire professionnel, profondeur de champ légère, rendu net, sans texte ni filigrane.",
+                  "alt_text": "Gérant de fast‑food présentant un contenant réutilisable vert au comptoir."
+                }
+              ],
+              "ad_json": "{\"variant_id\":\"A\",\"primary_text\":\"Marre du jetable ? GreenPack vous aide à passer aux contenants réutilisables et consignés sans perturber votre service. Mise en place clé en main, retours simplifiés (QR/code) et accompagnement équipe. Attirez une clientèle éco‑consciente et renforcez votre RSE. Réservez une démo.\",\"headlines\":[\"Passez au réemploi sans friction\",\"Consigne simple pour fast‑food\",\"Moins de plastique, plus de clients\"],\"descriptions\":[\"Solution clé en main de contenants réutilisables et consignés.\",\"Onboarding équipe, logistique de retour et suivi inclus.\"],\"cta\":\"S’INSCRIRE\",\"image_prompt\":\"Photo 4:5 (1080x1350), intérieur d’un fast‑food indépendant moderne. Le gérant derrière le comptoir tient un bol réutilisable vert avec logo générique « G » (pas de marque réelle). Comptoir en bois clair, cuisine propre en arrière‑plan, client souriant reçoit sa commande. Palette vert/blanc, lumière naturelle douce, style documentaire professionnel, profondeur de champ légère, rendu net, sans texte ni filigrane.\",\"alt_text\":\"Gérant de fast‑food présentant un contenant réutilisable vert au comptoir.\",\"preview_public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663135071.png\",\"image_public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/greenbowl_1757663131340.png\",\"public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663135071.png\"}",
+              "public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663135071.png"
+            },
+            {
+              "success": true,
+              "preview_public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663190670.png",
+              "error": "rename: File already exists From: /public/tmp/images/greenBowlCounter_1757603254408.png To: /public/GreenPack/images/greenBowlCounter_1757603254408.png",
+              "image_public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/qrScan_1757663187618.png",
+              "variant_id": "B",
+              "primary_text": "Transformez votre fast‑food en vitrine RSE : consigne simple, communication client prête à l’emploi et tableau de bord de suivi. Réduisez les déchets, fidélisez et différenciez‑vous du jetable. Découvrez comment ça marche en quelques étapes.",
+              "headlines": [
+                "Attirez les clients éco‑conscients",
+                "RSE concrète, sans complexité",
+                "Consigne qui donne envie de revenir"
+              ],
+              "descriptions": [
+                "Parcours client fluide : consigne, retour, remboursement.",
+                "Tableau de bord et support dédiés."
+              ],
+              "cta": "EN SAVOIR PLUS",
+              "image_prompt": "Photo 4:5 (1080x1350), comptoir de vente d’un restaurant rapide. Un employé scanne un QR code sur un contenant réutilisable vert foncé propre, avec un lecteur ou smartphone. Focus sur la main, le contenant et l’écran, arrière‑plan flou avec menus sans texte lisible. Ambiance lumineuse, couleurs vert/blanc, style reportage propre, sans logos réels, sans texte.",
+              "alt_text": "Employé scannant un QR code sur un contenant réutilisable au comptoir.",
+              "current_ad_json": [
+                {
+                  "variant_id": "B",
+                  "primary_text": "Transformez votre fast‑food en vitrine RSE : consigne simple, communication client prête à l’emploi et tableau de bord de suivi. Réduisez les déchets, fidélisez et différenciez‑vous du jetable. Découvrez comment ça marche en quelques étapes.",
+                  "headlines": [
+                    "Attirez les clients éco‑conscients",
+                    "RSE concrète, sans complexité",
+                    "Consigne qui donne envie de revenir"
+                  ],
+                  "descriptions": [
+                    "Parcours client fluide : consigne, retour, remboursement.",
+                    "Tableau de bord et support dédiés."
+                  ],
+                  "cta": "EN SAVOIR PLUS",
+                  "image_prompt": "Photo 4:5 (1080x1350), comptoir de vente d’un restaurant rapide. Un employé scanne un QR code sur un contenant réutilisable vert foncé propre, avec un lecteur ou smartphone. Focus sur la main, le contenant et l’écran, arrière‑plan flou avec menus sans texte lisible. Ambiance lumineuse, couleurs vert/blanc, style reportage propre, sans logos réels, sans texte.",
+                  "alt_text": "Employé scannant un QR code sur un contenant réutilisable au comptoir."
+                }
+              ],
+              "ad_json": "{\"variant_id\":\"B\",\"primary_text\":\"Transformez votre fast‑food en vitrine RSE : consigne simple, communication client prête à l’emploi et tableau de bord de suivi. Réduisez les déchets, fidélisez et différenciez‑vous du jetable. Découvrez comment ça marche en quelques étapes.\",\"headlines\":[\"Attirez les clients éco‑conscients\",\"RSE concrète, sans complexité\",\"Consigne qui donne envie de revenir\"],\"descriptions\":[\"Parcours client fluide : consigne, retour, remboursement.\",\"Tableau de bord et support dédiés.\"],\"cta\":\"EN SAVOIR PLUS\",\"image_prompt\":\"Photo 4:5 (1080x1350), comptoir de vente d’un restaurant rapide. Un employé scanne un QR code sur un contenant réutilisable vert foncé propre, avec un lecteur ou smartphone. Focus sur la main, le contenant et l’écran, arrière‑plan flou avec menus sans texte lisible. Ambiance lumineuse, couleurs vert/blanc, style reportage propre, sans logos réels, sans texte.\",\"alt_text\":\"Employé scannant un QR code sur un contenant réutilisable au comptoir.\",\"preview_public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663190670.png\",\"image_public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/qrScan_1757663187618.png\",\"public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663190670.png\"}",
+              "public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663190670.png"
+            },
+            {
+              "success": true,
+              "preview_public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663246778.png",
+              "error": "rename: File already exists From: /public/tmp/images/greenBowlCounter_1757603254408.png To: /public/GreenPack/images/greenBowlCounter_1757603254408.png",
+              "image_public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/return-station_1757663243629.png",
+              "variant_id": "C",
+              "primary_text": "Passer au réemploi peut être simple et rentable. GreenPack fournit contenants réutilisables, flux de retour et collecte avec partenaires, plus formation du personnel. Lancement progressif et support dédié pour maximiser l’acceptation et le taux de retour.",
+              "headlines": [
+                "Réemploi rentable pour votre resto",
+                "Moins de jetable, plus de fidélité",
+                "Simplifiez la consigne aujourd’hui"
+              ],
+              "descriptions": [
+                "Accompagnement de A à Z pour votre restaurant rapide.",
+                "Outils d’incitation et suivi des retours."
+              ],
+              "cta": "ACHETER",
+              "image_prompt": "Photo 4:5 (1080x1350), zone de retour dans un fast‑food : borne/point de collecte propre avec bac pour contenants réutilisables verts (logo générique « G »). Un client dépose un contenant, un autre récupère sa commande. Signalétique iconographique simple (pictos, pas de texte). Lumière naturelle, couleurs vert/blanc, style lifestyle documentaire, rendu net, sans logos réels, sans texte.",
+              "alt_text": "Client déposant un contenant réutilisable vert dans une borne de retour.",
+              "current_ad_json": [
+                {
+                  "variant_id": "C",
+                  "primary_text": "Passer au réemploi peut être simple et rentable. GreenPack fournit contenants réutilisables, flux de retour et collecte avec partenaires, plus formation du personnel. Lancement progressif et support dédié pour maximiser l’acceptation et le taux de retour.",
+                  "headlines": [
+                    "Réemploi rentable pour votre resto",
+                    "Moins de jetable, plus de fidélité",
+                    "Simplifiez la consigne aujourd’hui"
+                  ],
+                  "descriptions": [
+                    "Accompagnement de A à Z pour votre restaurant rapide.",
+                    "Outils d’incitation et suivi des retours."
+                  ],
+                  "cta": "ACHETER",
+                  "image_prompt": "Photo 4:5 (1080x1350), zone de retour dans un fast‑food : borne/point de collecte propre avec bac pour contenants réutilisables verts (logo générique « G »). Un client dépose un contenant, un autre récupère sa commande. Signalétique iconographique simple (pictos, pas de texte). Lumière naturelle, couleurs vert/blanc, style lifestyle documentaire, rendu net, sans logos réels, sans texte.",
+                  "alt_text": "Client déposant un contenant réutilisable vert dans une borne de retour."
+                }
+              ],
+              "ad_json": "{\"variant_id\":\"C\",\"primary_text\":\"Passer au réemploi peut être simple et rentable. GreenPack fournit contenants réutilisables, flux de retour et collecte avec partenaires, plus formation du personnel. Lancement progressif et support dédié pour maximiser l’acceptation et le taux de retour.\",\"headlines\":[\"Réemploi rentable pour votre resto\",\"Moins de jetable, plus de fidélité\",\"Simplifiez la consigne aujourd’hui\"],\"descriptions\":[\"Accompagnement de A à Z pour votre restaurant rapide.\",\"Outils d’incitation et suivi des retours.\"],\"cta\":\"ACHETER\",\"image_prompt\":\"Photo 4:5 (1080x1350), zone de retour dans un fast‑food : borne/point de collecte propre avec bac pour contenants réutilisables verts (logo générique « G »). Un client dépose un contenant, un autre récupère sa commande. Signalétique iconographique simple (pictos, pas de texte). Lumière naturelle, couleurs vert/blanc, style lifestyle documentaire, rendu net, sans logos réels, sans texte.\",\"alt_text\":\"Client déposant un contenant réutilisable vert dans une borne de retour.\",\"preview_public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663246778.png\",\"image_public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/return-station_1757663243629.png\",\"public_url\":\"https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663246778.png\"}",
+              "public_url": "https://files.cloudron.alpes-ia.fr/GreenPack/images/GreenPack_instapreview_1757663246778.png"
+            }
+          ],
+          "project_name": "GreenPack"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Create Notion Blocks",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get ID Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ID Notion": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Campaign Blocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Notion Blocks": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Campaign Blocks": {
+      "main": [
+        [
+          {
+            "node": "If blocks already exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If blocks already exists": {
+      "main": [
+        [
+          {
+            "node": "Archive page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a page": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request To Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Archive page": {
+      "main": [
+        [
+          {
+            "node": "Create a page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6828c57e-b530-4a5a-8941-00a457fcfa90",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb0d888b2669ace4f2f781e684ee8100f0ad3fd9239d2c021aab9cca9e9602ef"
+  },
+  "id": "fXCAukCwO6mwHr9l",
+  "tags": [
+    {
+      "createdAt": "2025-09-03T16:26:16.510Z",
+      "updatedAt": "2025-09-03T16:26:16.510Z",
+      "id": "fMhvLwPBTuM8eI5O",
+      "name": "AlpAct"
+    }
+  ]
+}
